@@ -1,1 +1,161 @@
+package BudgetingObjects;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+public class UserDisplayGUI extends JFrame {
+    private final User user;
+    private final DefaultTableModel model;
+    private final JLabel statusLabel;
+
+    public UserDisplayGUI(User user) {
+        this.user = user;
+
+        setTitle("My Finances - " + user.getName());
+        setSize(700, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // ----- Header -----
+        JLabel titleLabel = new JLabel("My Finances", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+
+        JLabel userLabel = new JLabel("User: " + user.getName());
+        userLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        // ----- Table -----
+        String[] columns = {"Name", "Amount", "Date", "Category"};
+        model = new DefaultTableModel(columns, 0);
+        JTable table = new JTable(model);
+        table.setEnabled(false);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        // ----- Status -----
+        statusLabel = new JLabel("", SwingConstants.CENTER);
+        statusLabel.setFont(new Font("SansSerif", Font.ITALIC, 13));
+        statusLabel.setForeground(Color.GRAY);
+
+        // ----- Buttons -----
+        JButton addButton = new JButton("Add Entry");
+        addButton.setForeground(new Color(0, 150, 0));
+
+        JButton removeButton = new JButton("Remove Entry");
+        removeButton.setForeground(Color.RED);
+
+        JButton categoryButton = new JButton("Category Display");
+        categoryButton.setForeground(Color.BLUE);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addButton);
+        buttonPanel.add(removeButton);
+        buttonPanel.add(categoryButton);
+
+        // ----- Layout -----
+        setLayout(new BorderLayout());
+        add(titleLabel, BorderLayout.NORTH);
+        add(userLabel, BorderLayout.WEST);
+        add(scrollPane, BorderLayout.CENTER);
+        add(statusLabel, BorderLayout.SOUTH);
+        add(buttonPanel, BorderLayout.PAGE_END);
+
+        // Load user data
+        refreshEntries();
+
+        // ----- Button Logic -----
+        addButton.addActionListener(e -> {
+            JTextField nameField = new JTextField();
+            JTextField categoryField = new JTextField();
+            JTextField amountField = new JTextField();
+
+            Object[] message = {
+                    "Name:", nameField,
+                    "Category:", categoryField,
+                    "Amount:", amountField
+            };
+
+            int option = JOptionPane.showConfirmDialog(this, message,
+                    "Add New Entry", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                try {
+                    String name = nameField.getText();
+                    String category = categoryField.getText();
+                    float amount = Float.parseFloat(amountField.getText());
+
+                    Entry entry = new Entry(name, category, amount, LocalDate.now());
+                    user.addEntry(entry);
+                    refreshEntries();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Invalid amount format!");
+                }
+            }
+        });
+
+        removeButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String name = (String) model.getValueAt(selectedRow, 0);
+                // remove first matching entry
+                ArrayList<Entry> entries = user.getEntries();
+                for (Entry entry : entries) {
+                    if (entry.getName().equals(name)) {
+                        entries.remove(entry);
+                        break;
+                    }
+                }
+                refreshEntries();
+            } else {
+                JOptionPane.showMessageDialog(this, "Select a row to remove.");
+            }
+        });
+
+        categoryButton.addActionListener(e -> {
+            String category = JOptionPane.showInputDialog(this,
+                    "Enter category name:");
+            if (category != null) {
+                ArrayList<Entry> filtered = user.getEntriesFromCategory(category);
+                if (filtered.isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "No entries found for category: " + category);
+                } else {
+                    StringBuilder sb = new StringBuilder("Entries in " + category + ":\n");
+                    for (Entry entry : filtered) {
+                        sb.append(entry.getName()).append(" - $")
+                                .append(entry.getAmount()).append(" (")
+                                .append(entry.getDate()).append(")\n");
+                    }
+                    JOptionPane.showMessageDialog(this, sb.toString());
+                }
+            }
+        });
+    }
+
+    private void refreshEntries() {
+        model.setRowCount(0);
+        ArrayList<Entry> entries = user.getEntries();
+
+        if (entries == null) {
+            statusLabel.setText("File Error - Does Not Exist");
+            return;
+        }
+
+        if (entries.isEmpty()) {
+            statusLabel.setText("No recent entries");
+            return;
+        }
+
+        for (Entry entry : entries) {
+            model.addRow(new Object[]{
+                    entry.getName(),
+                    String.format("%.2f", entry.getAmount()),
+                    entry.getDate(),
+                    entry.getCategory()
+            });
+        }
+        statusLabel.setText("");
+    }
+}
 
