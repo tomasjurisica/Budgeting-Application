@@ -51,5 +51,16 @@ public class Main {
         for (int i = 0; i < testGet.size(); i++) {
             System.out.print(testGet.get(i).getName());
         }
+
+        Household household = new Household();
+
+        // Demo data
+        u.addEntry(new Entry("Food", "Groceries", -120, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Clothes", "Shopping", -80, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Gym", "Fitness", -40, java.time.LocalDate.now()));
+        household.addUser(u);
+
+        new HomePage(household);
+
     }
 }
