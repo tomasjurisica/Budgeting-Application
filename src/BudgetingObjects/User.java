@@ -9,13 +9,29 @@ import static java.lang.Math.max;
 public class User {
     private String name;
 
+    private Household householdPointer;
+
     private ArrayList<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
 
     public User(String name) {
         this.name = name;
     }
 
-    // to be updated to not point to same arraylist, just for testing
+    /**
+     *
+     * @param h: household to be linked to
+     */
+    public void setHousehold (Household h) {
+        householdPointer = h;
+    }
+
+    /**
+     *
+     * @return The household this user is linked to. THIS IS NOT A COPY. Returns null if not linked to a household
+     */
+    public Household getHousehold () {
+        return householdPointer;
+    }
 
     public String getName() {
         return name;
