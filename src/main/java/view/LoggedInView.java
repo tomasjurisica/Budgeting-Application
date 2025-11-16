@@ -48,6 +48,7 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
         final JPanel buttons = new JPanel();
         logOut = new JButton("Log Out");
         buttons.add(logOut);
+        logOut.addActionListener(e -> logoutController.execute());
 
         changePassword = new JButton("Change Password");
         buttons.add(changePassword);
@@ -55,7 +56,6 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
         logOut.addActionListener(this);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setPreferredSize(new Dimension(350, 600));
 
         passwordInputField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -91,17 +91,6 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
                                 currentState.getUsername(),
                                 currentState.getPassword()
                         );
-                    }
-                }
-        );
-
-        logOut.addActionListener(
-                // This creates an anonymous subclass of ActionListener and instantiates it.
-                evt -> {
-                    if (evt.getSource().equals(logOut)) {
-                        final LoggedInState currentState = loggedInViewModel.getState();
-
-                        this.logoutController.execute();
                     }
                 }
         );
@@ -151,7 +140,7 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
     }
 
     public void setLogoutController(LogoutController logoutController) {
-        // save the logout controller in the instance variable.
+        // Save the logout controller in the instance variable.
         this.logoutController = logoutController;
     }
 }
