@@ -39,7 +39,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         // Add logo
         java.net.URL logoURL = getClass().getResource("/logo.png");
         ImageIcon originalIcon = new ImageIcon(logoURL);
-        Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
         ImageIcon logoIcon = new ImageIcon(scaledImage);
         JLabel logoLabel = new JLabel(logoIcon);
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -50,6 +50,12 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
         final LabelTextPanel repeatPasswordInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField);
+
+        // Limit the width so they don’t stretch
+        Dimension fieldSize = new Dimension(300, 40); // width 300, height 40 (adjust as needed)
+        usernameInfo.setMaximumSize(fieldSize);
+        passwordInfo.setMaximumSize(fieldSize);
+        repeatPasswordInfo.setMaximumSize(fieldSize);
 
         final JPanel buttons = new JPanel();
         toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
