@@ -95,6 +95,17 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
                 }
         );
 
+        logOut.addActionListener(
+                // This creates an anonymous subclass of ActionListener and instantiates it.
+                evt -> {
+                    if (evt.getSource().equals(logOut)) {
+                        final LoggedInState currentState = loggedInViewModel.getState();
+
+                        this.logoutController.execute();
+                    }
+                }
+        );
+
         this.add(title);
         this.add(usernameInfo);
         this.add(username);
@@ -140,6 +151,7 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
     }
 
     public void setLogoutController(LogoutController logoutController) {
-        // TODO: save the logout controller in the instance variable.
+        // save the logout controller in the instance variable.
+        this.logoutController = logoutController;
     }
 }
