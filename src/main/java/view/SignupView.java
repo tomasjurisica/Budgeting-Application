@@ -35,7 +35,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         // Add logo
         java.net.URL logoURL = getClass().getResource("/logo.png");
         ImageIcon originalIcon = new ImageIcon(logoURL);
-        Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         ImageIcon logoIcon = new ImageIcon(scaledImage);
         JLabel logoLabel = new JLabel(logoIcon);
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -48,7 +48,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField);
 
         // Limit the width so they don’t stretch
-        Dimension fieldSize = new Dimension(300, 40); // width 300, height 40 (adjust as needed)
+        Dimension fieldSize = new Dimension(300, 40);
         usernameInfo.setMaximumSize(fieldSize);
         passwordInfo.setMaximumSize(fieldSize);
         repeatPasswordInfo.setMaximumSize(fieldSize);
@@ -91,12 +91,16 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(350, 600));
 
-        //this.add(title);
         this.add(logoLabel);
+        this.add(Box.createVerticalStrut(15));
         this.add(usernameInfo);
+        this.add(Box.createVerticalStrut(15));
         this.add(passwordInfo);
+        this.add(Box.createVerticalStrut(15));
         this.add(repeatPasswordInfo);
+        this.add(Box.createVerticalStrut(30));
         this.add(buttons);
+
     }
 
     private void addUsernameListener() {

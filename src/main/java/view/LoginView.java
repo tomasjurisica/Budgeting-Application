@@ -36,8 +36,13 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         this.loginViewModel = loginViewModel;
         this.loginViewModel.addPropertyChangeListener(this);
 
-        final JLabel title = new JLabel("Login Screen");
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Add logo
+        java.net.URL logoURL = getClass().getResource("/logo.png");
+        ImageIcon originalIcon = new ImageIcon(logoURL);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        ImageIcon logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
                 new JLabel("Username"), usernameInputField);
@@ -45,10 +50,14 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 new JLabel("Password"), passwordInputField);
 
         final JPanel buttons = new JPanel();
-        logIn = new JButton("log in");
-        buttons.add(logIn);
         toSignUp = new JButton("Go to Sign Up");
         buttons.add(toSignUp);
+        logIn = new JButton("Log in");
+        buttons.add(logIn);
+
+        Dimension fieldSize = new Dimension(300, 40);
+        usernameInfo.setMaximumSize(fieldSize);
+        passwordInfo.setMaximumSize(fieldSize);
 
         logIn.addActionListener(
                 new ActionListener() {
@@ -124,10 +133,13 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
             }
         });
 
-        this.add(title);
+        this.add(logoLabel);
+        this.add(Box.createVerticalStrut(15));
         this.add(usernameInfo);
+        this.add(Box.createVerticalStrut(15));
         this.add(usernameErrorField);
         this.add(passwordInfo);
+        this.add(Box.createVerticalStrut(15));
         this.add(buttons);
     }
 
