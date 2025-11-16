@@ -28,7 +28,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     private final JLabel passwordErrorField = new JLabel();
 
     private final JButton logIn;
-    private final JButton cancel;
+    private final JButton toSignUp;
     private LoginController loginController = null;
 
     public LoginView(LoginViewModel loginViewModel) {
@@ -47,8 +47,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         final JPanel buttons = new JPanel();
         logIn = new JButton("log in");
         buttons.add(logIn);
-        cancel = new JButton("cancel");
-        buttons.add(cancel);
+        toSignUp = new JButton("Go to Sign Up");
+        buttons.add(toSignUp);
 
         logIn.addActionListener(
                 new ActionListener() {
@@ -65,7 +65,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 }
         );
 
-        cancel.addActionListener(
+        toSignUp.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         loginController.switchToSignUpView();
