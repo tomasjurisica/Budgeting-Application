@@ -1,4 +1,4 @@
-package main.java.interface_adapter.signup;
+package interface_adapter.signup;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginState;
