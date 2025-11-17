@@ -30,7 +30,7 @@ public class HomePage extends JFrame {
         homeTopBar.add(homeButton, BorderLayout.WEST);
 
         JButton menuButton = new JButton("\u2630");
-        menuButton.setFont(new Font("SansSerif", Font.BOLD, 20));
+        menuButton.setFont(new Font("SansSerif", Font.BOLD, 24));
         menuButton.setFocusPainted(false);
         menuButton.setBorderPainted(false);
         menuButton.setContentAreaFilled(false);
@@ -45,7 +45,7 @@ public class HomePage extends JFrame {
         navTopBar.setPreferredSize(new Dimension(getWidth(), 50));
 
         JButton closeNavButton = new JButton("X");
-        closeNavButton.setFont(new Font("SansSerif", Font.BOLD, 20));
+        closeNavButton.setFont(new Font("Arial", Font.BOLD, 20));
         closeNavButton.setFocusPainted(false);
         closeNavButton.setBorderPainted(false);
         closeNavButton.setContentAreaFilled(false);
@@ -101,9 +101,13 @@ public class HomePage extends JFrame {
         PieChartPanel piePanel = new PieChartPanel(categoryTotals, totalSpent);
         piePanel.setPreferredSize(new Dimension(450, 450));
 
+        JLabel categoryLabel = new JLabel("Category Spending: ");
+        categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+
         JPanel categoryList = new JPanel();
         categoryList.setLayout(new BoxLayout(categoryList, BoxLayout.Y_AXIS));
 
+        categoryList.add(categoryLabel);
         for (String category : categoryTotals.keySet()) {
             float amt = categoryTotals.get(category);
             JLabel label = new JLabel(category + ": $" + amt);
@@ -130,14 +134,14 @@ public class HomePage extends JFrame {
             item.addActionListener(e -> monthButton.setText(item.getText() + "\u25BC"));
             monthMenu.add(item);
         }
+        monthMenu.add("Full Year");
 
         monthButton.addActionListener(e -> monthMenu.show(monthButton, 0, monthButton.getHeight()));
 
         JPanel topCenterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topCenterPanel.setBackground(Color.WHITE);
         topCenterPanel.add(monthButton);
 
-        JPanel pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        JPanel pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, -40));
         pieWrapper.add(piePanel);
 
         JPanel center = new JPanel(new BorderLayout());
@@ -170,5 +174,6 @@ public class HomePage extends JFrame {
     private void refreshHome() {
         revalidate();
         repaint();
+        System.out.println("Home Refreshed");
     }
 }
