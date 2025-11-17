@@ -2,6 +2,7 @@ package BudgetingObjects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import static java.lang.Math.max;
@@ -52,6 +53,66 @@ public class User {
      */
     public ArrayList<Entry> getEntries(int year, int month) {
         ArrayList<Entry> returnList = new ArrayList<>();
+
+        int lastDay = 28;
+
+        // I know this sucks but like
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            lastDay = 31;
+        }
+        else if (month == 4 || month == 6 || month == 9 || month == 11) {
+            lastDay = 30;
+        }
+        else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
+            lastDay = 29;
+        }
+
+        LocalDate firstDate = LocalDate.of(year, month, 1);
+        LocalDate lastDate = LocalDate.of(year, month, lastDay);
+
+        int top = entries.size() - 1;
+        int bottom = 0;
+        int startIndex = -1;
+
+        while (top >= bottom) {
+            int middle = (top - bottom) / 2 + bottom;
+
+            if (entries.get(middle).getDate().isAfter(lastDate)) {
+                top = middle - 1;
+            }
+            else if (entries.get(middle).getDate().isBefore(firstDate)) {
+                bottom = middle + 1;
+            }
+            else {
+                startIndex = middle;
+                top = middle - 1;
+            }
+        }
+
+        top = entries.size() - 1;
+        bottom = 0;
+        int endIndex = -1;
+
+        while (top >= bottom) {
+            int middle = (top - bottom) / 2 + bottom;
+
+            if (entries.get(middle).getDate().isAfter(lastDate)) {
+                top = middle - 1;
+            }
+            else if (entries.get(middle).getDate().isBefore(firstDate)) {
+                bottom = middle + 1;
+            }
+            else {
+                endIndex = middle;
+                bottom = middle + 1;
+            }
+        }
+
+        if (startIndex != -1 && endIndex != -1){
+            for(int i=0; i+startIndex<=endIndex;i++){
+                returnList.add(entries.get(i));
+            }
+        }
 
         return returnList;
     }
