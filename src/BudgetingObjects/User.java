@@ -2,17 +2,14 @@ package BudgetingObjects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
-
-import static java.lang.Math.max;
+import java.util.List;
 
 public class User {
-    private String name;
+    private final String name;
 
     private Household householdPointer;
 
-    private ArrayList<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
+    private final List<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
 
     public User(String name) {
         this.name = name;
@@ -46,7 +43,6 @@ public class User {
     }
 
     /**
-     * NOT IMPLEMENTED YET
      * @param year: The year of entries to be returned.
      * @param month: The month of entries to be returned.
      * @return Returns an arraylist of entries from the given year and month, in chronological order. Returns an empty list if no entries that month.
@@ -56,7 +52,7 @@ public class User {
 
         int lastDay = 28;
 
-        // I know this sucks but like
+        // Calculate last day of month
         if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
             lastDay = 31;
         }
@@ -70,44 +66,10 @@ public class User {
         LocalDate firstDate = LocalDate.of(year, month, 1);
         LocalDate lastDate = LocalDate.of(year, month, lastDay);
 
-        int top = entries.size() - 1;
-        int bottom = 0;
-        int startIndex = -1;
+        int startIndex = getStartIndex(firstDate, lastDate);
+        int endIndex = getEndIndex(firstDate, lastDate);
 
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(lastDate)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(firstDate)) {
-                bottom = middle + 1;
-            }
-            else {
-                startIndex = middle;
-                top = middle - 1;
-            }
-        }
-
-        top = entries.size() - 1;
-        bottom = 0;
-        int endIndex = -1;
-
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(lastDate)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(firstDate)) {
-                bottom = middle + 1;
-            }
-            else {
-                endIndex = middle;
-                bottom = middle + 1;
-            }
-        }
-
+        // If indexes are valid, add all values in range to return list
         if (startIndex != -1 && endIndex != -1){
             for(int i=0; i+startIndex<=endIndex;i++){
                 returnList.add(entries.get(i));
@@ -128,43 +90,9 @@ public class User {
 
         ArrayList<Entry> returnList = new ArrayList<>();
 
-        int top = entries.size() - 1;
-        int bottom = 0;
-        int startIndex = -1;
+        int startIndex = getStartIndex(dateOf, dateOf);
 
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(dateOf)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(dateOf)) {
-                bottom = middle + 1;
-            }
-            else {
-                startIndex = middle;
-                top = middle - 1;
-            }
-        }
-
-        top = entries.size() - 1;
-        bottom = 0;
-        int endIndex = -1;
-
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(dateOf)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(dateOf)) {
-                bottom = middle + 1;
-            }
-            else {
-                endIndex = middle;
-                bottom = middle + 1;
-            }
-        }
+        int endIndex = getEndIndex(dateOf, dateOf);
 
         if (startIndex != -1 && endIndex != -1){
             for(int i=0; i+startIndex<=endIndex;i++){
@@ -176,9 +104,60 @@ public class User {
     }
 
     /**
-     * @param category Case-sensitive. Category to retrieve entries of the same type.
-     * @return An arraylist of all entries with the corresponding category. Sorted in chronological order. Returns an empty list if no entries match the category.
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered
+     * @param lastDate the last date in range to be considered
+     * @return the starting index of entries from specific date(s)
      */
+    private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
+        int top = entries.size() - 1;
+        int bottom = 0;
+        int startIndex = -1;
+
+        while (top >= bottom) {
+            int middle = (top - bottom) / 2 + bottom;
+
+            if (entries.get(middle).getDate().isAfter(lastDate)) {
+                top = middle - 1;
+            }
+            else if (entries.get(middle).getDate().isBefore(firstDate)) {
+                bottom = middle + 1;
+            }
+            else {
+                startIndex = middle;
+                top = middle - 1;
+            }
+        }
+        return startIndex;
+    }
+
+    /**
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered
+     * @param lastDate the last date in range to be considered
+     * @return the ending index of entries from specific date(s)
+     */
+    private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
+        int top = entries.size() - 1;
+        int bottom = 0;
+        int endIndex = -1;
+
+        while (top >= bottom) {
+            int middle = (top - bottom) / 2 + bottom;
+
+            if (entries.get(middle).getDate().isAfter(lastDate)) {
+                top = middle - 1;
+            } else if (entries.get(middle).getDate().isBefore(firstDate)) {
+                bottom = middle + 1;
+            } else {
+                endIndex = middle;
+                bottom = middle + 1;
+            }
+        }
+        return endIndex;
+    }
+
+    /*
     public ArrayList<Entry> getEntriesFromCategory (String category) {
         ArrayList<Entry> returnList = new ArrayList<>();
 
@@ -202,6 +181,7 @@ public class User {
 
         return returnList;
     }
+    */
 
     /**
      * Adds the given entry to the user's entries.
@@ -216,24 +196,33 @@ public class User {
             entries.add(newEntry);
         }
         else {
+            int bot = 0;
             int top = entries.size() - 1;
-            int bottom = 0;
-            int middle = entries.size() / 2;
+            int endIndex = 0;
 
-
-            while (top-bottom >= 2) {
-                if (entries.get(middle).getDate().isAfter(checkedDate)) {
-                    top = middle;
-                    middle = middle / 2;
+            while (bot <= top) {
+                int mid = ((bot + top) / 2) + bot;
+                if (!entries.get(mid).getDate().isAfter(checkedDate)) {
+                    endIndex = mid + 1;
+                    bot = mid + 1;
                 }
                 else {
-                    bottom = middle;
-                    middle = top + bottom / 2;
+                    top = mid - 1;
                 }
             }
 
+            // int endIndex = getEndIndex(newEntry.getDate(), newEntry.getDate());
 
-            entries.add(top, newEntry);
+            /*
+            if (endIndex == -1) {
+                entries.addFirst(newEntry);
+            }
+            else if (entries.get(endIndex).getDate().isBefore(newEntry.getDate())) {
+
+            }
+            */
+
+            entries.add(endIndex, newEntry);
 
         }
     }
