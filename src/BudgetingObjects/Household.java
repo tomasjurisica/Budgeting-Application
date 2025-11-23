@@ -3,7 +3,7 @@ package BudgetingObjects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Household {
+public class Household implements EntrySorting{
     private final ArrayList<User> users = new ArrayList<>();
 
     private final ArrayList<SharedEntry> sharedEntries = new ArrayList<>();
@@ -80,9 +80,36 @@ public class Household {
      * @param users The users who are contributing to the entry
      * @param contributions The specific contributions made by each user in dollars, in the order of the users list
      */
-    public void addEntry(Entry entry, List<User> users, float[] contributions) {
+    void addEntry(Entry entry, List<User> users, float[] contributions) {
         SharedEntry addedEntry = new SharedEntry(entry, users, contributions);
 
         this.addSharedEntry(addedEntry);
+    }
+
+    void addEntry(SharedEntry entry) {
+        this.addSharedEntry(entry);
+    }
+
+    /**
+     * Adds the given list of entries to the user's entries.
+     *
+     * @param listOfEntries: List of entries SORTED in chronological order.
+     */
+    void addEntry(List<SharedEntry> listOfEntries) {
+        if (sharedEntries.isEmpty()) {
+            sharedEntries.addAll(listOfEntries);
+        }
+        else {
+            int i = 0;
+            int j = 0;
+
+            while (j < listOfEntries.size()) {
+                if (sharedEntries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
+                    sharedEntries.add(i, listOfEntries.get(j));
+                    j++;
+                }
+                i++;
+            }
+        }
     }
 }
