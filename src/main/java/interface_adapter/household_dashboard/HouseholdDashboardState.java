@@ -1,22 +1,22 @@
-package interface_adapter.logged_in;
+package interface_adapter.household_dashboard;
 
 /**
  * The State information representing the logged-in user.
  */
-public class LoggedInState {
+public class HouseholdDashboardState {
     private String username = "";
 
     private String password = "";
     private String passwordError;
 
-    public LoggedInState(LoggedInState copy) {
+    public HouseholdDashboardState(HouseholdDashboardState copy) {
         username = copy.username;
         password = copy.password;
         passwordError = copy.passwordError;
     }
 
     // Because of the previous copy constructor, the default constructor must be explicit.
-    public LoggedInState() {
+    public HouseholdDashboardState() {
 
     }
 

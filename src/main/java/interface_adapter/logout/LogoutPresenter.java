@@ -1,8 +1,8 @@
 package interface_adapter.logout;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.LoggedInState;
-import interface_adapter.logged_in.LoggedInViewModel;
+import interface_adapter.household_dashboard.HouseholdDashboardState;
+import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import use_case.logout.LogoutOutputBoundary;
@@ -13,14 +13,14 @@ import use_case.logout.LogoutOutputData;
  */
 public class LogoutPresenter implements LogoutOutputBoundary {
 
-    private LoggedInViewModel loggedInViewModel;
+    private HouseholdDashboardViewModel householdDashboardViewModel;
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
 
     public LogoutPresenter(ViewManagerModel viewManagerModel,
-                           LoggedInViewModel loggedInViewModel,
+                           HouseholdDashboardViewModel householdDashboardViewModel,
                            LoginViewModel loginViewModel) {
-        this.loggedInViewModel = loggedInViewModel;
+        this.householdDashboardViewModel = householdDashboardViewModel;
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
         // assign to the three instance variables.
@@ -36,12 +36,12 @@ public class LogoutPresenter implements LogoutOutputBoundary {
 
         // have prepareSuccessView update the LoggedInState
         // 1. get the LoggedInState out of the appropriate View Model,
-        final LoggedInState loggedInState = loggedInViewModel.getState();
+        final HouseholdDashboardState householdDashboardState = householdDashboardViewModel.getState();
         // 2. set the username in the state to the empty string
-        loggedInState.setUsername("");
-        loggedInState.setPassword("");
+        householdDashboardState.setUsername("");
+        householdDashboardState.setPassword("");
         // 3. firePropertyChanged so that the View that is listening is updated.
-        loggedInViewModel.firePropertyChange();
+        householdDashboardViewModel.firePropertyChange();
 
         // have prepareSuccessView update the LoginState
         // 1. get the LoginState out of the appropriate View Model,

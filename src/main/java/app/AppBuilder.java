@@ -3,7 +3,7 @@ package app;
 import data_access.FileUserDataAccessObject;
 import entity.HouseholdFactory;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.logged_in.LoggedInViewModel;
+import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -21,7 +21,7 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.LoggedInView;
+import view.HouseholdDashboardView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
@@ -48,8 +48,8 @@ public class AppBuilder {
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
-    private LoggedInViewModel loggedInViewModel;
-    private LoggedInView loggedInView;
+    private HouseholdDashboardViewModel householdDashboardViewModel;
+    private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
 
     public AppBuilder() {
@@ -71,9 +71,9 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoggedInView() {
-        loggedInViewModel = new LoggedInViewModel();
-        loggedInView = new LoggedInView(loggedInViewModel);
-        cardPanel.add(loggedInView, loggedInView.getViewName());
+        householdDashboardViewModel = new HouseholdDashboardViewModel();
+        householdDashboardView = new HouseholdDashboardView(householdDashboardViewModel);
+        cardPanel.add(householdDashboardView, householdDashboardView.getViewName());
         return this;
     }
 
@@ -90,7 +90,7 @@ public class AppBuilder {
 
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel, signupViewModel);
+                householdDashboardViewModel, loginViewModel, signupViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
                 userDataAccessObject, loginOutputBoundary);
 
@@ -106,13 +106,13 @@ public class AppBuilder {
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel);
+                householdDashboardViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
-        loggedInView.setLogoutController(logoutController);
+        householdDashboardView.setLogoutController(logoutController);
         return this;
     }
 
