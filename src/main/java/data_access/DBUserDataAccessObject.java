@@ -1,11 +1,10 @@
 package data_access;
 
-import entity.User;
-import entity.UserFactory;
+import entity.Household;
+import entity.HouseholdFactory;
 import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -17,7 +16,6 @@ import java.io.IOException;
  */
 public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                                                LoginUserDataAccessInterface,
-                                               ChangePasswordUserDataAccessInterface,
                                                LogoutUserDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
@@ -26,16 +24,16 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
-    private final UserFactory userFactory;
+    private final HouseholdFactory householdFactory;
 
     private String currentUsername;
 
-    public DBUserDataAccessObject(UserFactory userFactory) {
-        this.userFactory = userFactory;
+    public DBUserDataAccessObject(HouseholdFactory householdFactory) {
+        this.householdFactory = householdFactory;
     }
 
     @Override
-    public User get(String username) {
+    public Household get(String username) {
         // Make an API call to get the user object.
         final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final Request request = new Request.Builder()
@@ -52,13 +50,11 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 final String name = userJSONObject.getString(USERNAME);
                 final String password = userJSONObject.getString(PASSWORD);
 
-                return userFactory.create(name, password);
-            }
-            else {
+                return householdFactory.create(name, password);
+            } else {
                 throw new RuntimeException(responseBody.getString(MESSAGE));
             }
-        }
-        catch (IOException | JSONException ex) {
+        } catch (IOException | JSONException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -88,22 +84,21 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
             //                throw new RuntimeException(responseBody.getString("message"));
             return responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE;
-        }
-        catch (IOException | JSONException ex) {
+        } catch (IOException | JSONException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void save(User user) {
+    public void save(Household household) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
 
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
-        requestBody.put(USERNAME, user.getName());
-        requestBody.put(PASSWORD, user.getPassword());
+        requestBody.put(USERNAME, household.getHouseholdID());
+        requestBody.put(PASSWORD, household.getPassword());
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
         final Request request = new Request.Builder()
                 .url("http://vm003.teach.cs.toronto.edu:20112/user")
@@ -117,45 +112,10 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
                 // success!
-            }
-            else {
+            } else {
                 throw new RuntimeException(responseBody.getString(MESSAGE));
             }
-        }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    public void changePassword(User user) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                                        .build();
-
-        // POST METHOD
-        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
-        final JSONObject requestBody = new JSONObject();
-        requestBody.put(USERNAME, user.getName());
-        requestBody.put(PASSWORD, user.getPassword());
-        final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
-        final Request request = new Request.Builder()
-                                    .url("http://vm003.teach.cs.toronto.edu:20112/user")
-                                    .method("PUT", body)
-                                    .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                                    .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                // success!
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
-        }
-        catch (IOException | JSONException ex) {
+        } catch (IOException | JSONException ex) {
             throw new RuntimeException(ex);
         }
     }

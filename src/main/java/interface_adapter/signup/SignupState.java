@@ -35,7 +35,7 @@ public class SignupState {
         return repeatPasswordError;
     }
 
-    public void setUsername(String username) {
+    public void setHouseholdID(String username) {
         this.username = username;
     }
 
@@ -62,7 +62,7 @@ public class SignupState {
     @Override
     public String toString() {
         return "SignupState{"
-                + "username='" + username + '\''
+                + "householdID='" + username + '\''
                 + ", password='" + password + '\''
                 + ", repeatPassword='" + repeatPassword + '\''
                 + '}';

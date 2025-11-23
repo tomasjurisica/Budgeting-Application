@@ -1,6 +1,6 @@
 package use_case.login;
 
-import entity.User;
+import entity.Household;
 
 /**
  * DAO interface for the Login Use Case.
@@ -16,16 +16,16 @@ public interface LoginUserDataAccessInterface {
 
     /**
      * Saves the user.
-     * @param user the user to save
+     * @param household the user to save
      */
-    void save(User user);
+    void save(Household household);
 
     /**
      * Returns the user with the given username.
      * @param username the username to look up
      * @return the user with the given username
      */
-    User get(String username);
+    Household get(String username);
 
     void setCurrentUsername(String name);
 

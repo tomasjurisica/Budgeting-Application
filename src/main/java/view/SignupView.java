@@ -78,8 +78,8 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 evt -> signupController.switchToLoginView()
         );
 
-        addUsernameListener();
-        addPasswordListener();
+        addHouseholdIDListener();
+        addHouseholdPasswordListener();
         addRepeatPasswordListener();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -97,12 +97,12 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
     }
 
-    private void addUsernameListener() {
+    private void addHouseholdIDListener() {
         householdIDInputField.getDocument().addDocumentListener(new DocumentListener() {
 
             private void documentListenerHelper() {
                 final SignupState currentState = signupViewModel.getState();
-                currentState.setUsername(householdIDInputField.getText());
+                currentState.setHouseholdID(householdIDInputField.getText());
                 signupViewModel.setState(currentState);
             }
 
@@ -123,7 +123,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         });
     }
 
-    private void addPasswordListener() {
+    private void addHouseholdPasswordListener() {
         passwordInputField.getDocument().addDocumentListener(new DocumentListener() {
 
             private void documentListenerHelper() {
@@ -176,8 +176,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     }
 
     @Override
-    public void actionPerformed(ActionEvent evt) {
-    }
+    public void actionPerformed(ActionEvent evt) {}
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

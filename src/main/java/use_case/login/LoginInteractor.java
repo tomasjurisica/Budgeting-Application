@@ -1,6 +1,6 @@
 package use_case.login;
 
-import entity.User;
+import entity.Household;
 
 /**
  * The Login Interactor.
@@ -29,11 +29,11 @@ public class LoginInteractor implements LoginInputBoundary {
             }
             else {
 
-                final User user = userDataAccessObject.get(loginInputData.getUsername());
+                final Household household = userDataAccessObject.get(loginInputData.getUsername());
 
                 userDataAccessObject.setCurrentUsername(username);
 
-                final LoginOutputData loginOutputData = new LoginOutputData(user.getName());
+                final LoginOutputData loginOutputData = new LoginOutputData(household.getHouseholdID());
                 loginPresenter.prepareSuccessView(loginOutputData);
             }
         }
