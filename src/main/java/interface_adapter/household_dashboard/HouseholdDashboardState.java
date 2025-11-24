@@ -36,11 +36,4 @@ public class HouseholdDashboardState {
         return password;
     }
 
-    public void setPasswordError(String passwordError) {
-        this.passwordError = passwordError;
-    }
-
-    public String getPasswordError() {
-        return passwordError;
-    }
 }

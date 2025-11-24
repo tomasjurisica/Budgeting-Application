@@ -40,7 +40,8 @@ public class AppBuilder {
     // of the classes from the data_access package
 
     // DAO version using local file storage
-    final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject("users.csv", householdFactory);
+    final FileUserDataAccessObject userDataAccessObject =
+            new FileUserDataAccessObject("data/users.json", householdFactory);
 
     // DAO version using a shared external database
     // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);

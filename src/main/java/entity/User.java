@@ -147,35 +147,35 @@ public class User {
      *
      * @param newEntry: Entry to be added into this user's entries.
      */
-    public void addEntry(Entry newEntry) {
-        LocalDate checkedDate = newEntry.getDate();
-
-        // adds to end if entries is empty or if the new entry is the most recent item chronologically
-        if (entries.isEmpty() || !entries.getLast().getDate().isAfter(checkedDate)) {
-            entries.add(newEntry);
-        }
-        else {
-            int top = entries.size() - 1;
-            int bottom = 0;
-            int middle = entries.size() / 2;
-
-
-            while (top-bottom >= 2) {
-                if (entries.get(middle).getDate().isAfter(checkedDate)) {
-                    top = middle;
-                    middle = middle / 2;
-                }
-                else {
-                    bottom = middle;
-                    middle = top + bottom / 2;
-                }
-            }
-
-
-            entries.add(top, newEntry);
-
-        }
-    }
+//    public void addEntry(Entry newEntry) {
+//        LocalDate checkedDate = newEntry.getDate();
+//
+//        // adds to end if entries is empty or if the new entry is the most recent item chronologically
+//        if (entries.isEmpty() || !entries.getLast().getDate().isAfter(checkedDate)) {
+//            entries.add(newEntry);
+//        }
+//        else {
+//            int top = entries.size() - 1;
+//            int bottom = 0;
+//            int middle = entries.size() / 2;
+//
+//
+//            while (top-bottom >= 2) {
+//                if (entries.get(middle).getDate().isAfter(checkedDate)) {
+//                    top = middle;
+//                    middle = middle / 2;
+//                }
+//                else {
+//                    bottom = middle;
+//                    middle = top + bottom / 2;
+//                }
+//            }
+//
+//
+//            entries.add(top, newEntry);
+//
+//        }
+//    }
 
     /**
      * Adds the given list of entries to the user's entries.

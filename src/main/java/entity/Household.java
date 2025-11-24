@@ -47,4 +47,13 @@ public class Household {
         return users;
     }
 
+    public void addHouseholdEntry(Entry entry) {
+        householdEntries.add(entry);
+    }
+
+    public ArrayList<Entry> getHouseholdEntries() {
+        return new ArrayList<>(householdEntries);
+    }
+
+
 }
