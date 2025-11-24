@@ -8,24 +8,18 @@ import java.util.List;
 public class HouseholdDashboardState {
 
     private String username;
-    private Household household; // <- add this
-    private List<User> users;
+    private Household household;
+    private final List<User> users = new ArrayList<>();
 
-    public HouseholdDashboardState() {
-        this.username = "";
-        this.users = new ArrayList<>();
-    }
-
-
-    // getter and setter for username
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    // getter and setter for users
-    public List<User> getUsers() { return users; }
-    public void setUsers(List<User> users) { this.users = users; }
+    public Household getHousehold() { return household; }
+    public void setHousehold(Household household) { this.household = household; }
 
-    // getter and setter for household
-    public Household getHousehold() { return household; } // <- add this
-    public void setHousehold(Household household) { this.household = household; } // <- add this
+    public String getHouseholdID() {
+        return household != null ? household.getHouseholdID() : "";
+    }
+
+    public List<User> getUsers() { return users; }
 }
