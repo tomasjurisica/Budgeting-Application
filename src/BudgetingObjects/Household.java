@@ -1,9 +1,10 @@
 package BudgetingObjects;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Household implements EntrySorting{
+public class Household{
     private final ArrayList<User> users = new ArrayList<>();
 
     private final ArrayList<SharedEntry> sharedEntries = new ArrayList<>();
@@ -41,19 +42,43 @@ public class Household implements EntrySorting{
         return new ArrayList<>(sharedEntries);
     }
 
+    public ArrayList<Entry> getSharedEntries(int year, int month) {
+        ArrayList<Entry> returnList = new ArrayList<>();
+
+        int lastDay = 28;
+
+        // Calculate last day of month
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            lastDay = 31;
+        }
+        else if (month == 4 || month == 6 || month == 9 || month == 11) {
+            lastDay = 30;
+        }
+        else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
+            lastDay = 29;
+        }
+
+        LocalDate firstDate = LocalDate.of(year, month, 1);
+        LocalDate lastDate = LocalDate.of(year, month, lastDay);
+
+        int startIndex = getStartIndex(firstDate, lastDate);
+        int endIndex = getEndIndex(firstDate, lastDate);
+
+        // If indexes are valid, add all values in range to return list
+        if (startIndex != -1 && endIndex != -1){
+            for(int i=0; i+startIndex<=endIndex;i++){
+                returnList.add(sharedEntries.get(i + startIndex));
+            }
+        }
+
+        return returnList;
+    }
+
     /**
      * @return Returns the admin of the household.
      */
     public User getAdmin() {
         return users.getFirst();
-    }
-
-    /**
-     * Adds the shared entry. NOT IN CHRONOLOGICAL ORDER YET
-     * @param sharedEntry The shared entry to be added
-     */
-    public void addSharedEntry(SharedEntry sharedEntry) {
-        sharedEntries.add(sharedEntry);
     }
 
     /**
@@ -74,20 +99,26 @@ public class Household implements EntrySorting{
     }
 
     /**
-     * NOT FULLY IMPLEMENTED TO BE IN CHRONOLOGICAL ORDER. WILL BE UPDATED
-     * Adds an entry to the household. VALID CALL ONLY IF MADE BY ADMIN.
-     * @param entry The entry to be added
-     * @param users The users who are contributing to the entry
-     * @param contributions The specific contributions made by each user in dollars, in the order of the users list
+     * Adds a new shared entry to the household. In chronological order
+     * @param newEntry sharedEntry to be added to the household
      */
-    void addEntry(Entry entry, List<User> users, float[] contributions) {
-        SharedEntry addedEntry = new SharedEntry(entry, users, contributions);
+    void addSharedEntry(SharedEntry newEntry) {
+        LocalDate checkedDate = newEntry.getDate();
 
-        this.addSharedEntry(addedEntry);
-    }
+        // adds to end if entries is empty or if the new entry is the most recent item chronologically
+        if (sharedEntries.isEmpty() || !sharedEntries.getLast().getDate().isAfter(checkedDate)) {
+            sharedEntries.add(newEntry);
+        }
+        else {
+            int i = 0;
 
-    void addEntry(SharedEntry entry) {
-        this.addSharedEntry(entry);
+            while (i < sharedEntries.size() && !sharedEntries.get(i).getDate().isAfter(checkedDate)) {
+                i++;
+            }
+
+            sharedEntries.add(i, newEntry);
+
+        }
     }
 
     /**
@@ -111,5 +142,44 @@ public class Household implements EntrySorting{
                 i++;
             }
         }
+    }
+
+    /**
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the starting index of entries from specific date(s). Returns -1 if date does not exist
+     */
+    private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
+        int i = 0;
+
+        while (i < sharedEntries.size()) {
+            if (!sharedEntries.get(i).getDate().isBefore(firstDate) && !sharedEntries.get(i).getDate().isAfter(lastDate)) {
+                return i;
+            }
+            i ++;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the ending index of entries from specific date(s). Returns -1 if date does not exist
+     */
+    private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
+        int result = -1;
+        int i = 0;
+
+        while (i < sharedEntries.size()) {
+            if (!sharedEntries.get(i).getDate().isBefore(firstDate) && !sharedEntries.get(i).getDate().isAfter(lastDate)) {
+                result = i;
+            }
+            i ++;
+        }
+
+        return result;
     }
 }

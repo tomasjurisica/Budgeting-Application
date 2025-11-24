@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User{
     private final String name;
 
     private Household householdPointer;
@@ -72,7 +72,7 @@ public class User {
         // If indexes are valid, add all values in range to return list
         if (startIndex != -1 && endIndex != -1){
             for(int i=0; i+startIndex<=endIndex;i++){
-                returnList.add(entries.get(i));
+                returnList.add(entries.get(i + startIndex));
             }
         }
 
@@ -105,83 +105,42 @@ public class User {
 
     /**
      * Helper method for returning entries from a date range
-     * @param firstDate the first date in range to be considered
-     * @param lastDate the last date in range to be considered
-     * @return the starting index of entries from specific date(s)
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the starting index of entries from specific date(s). Returns -1 if date does not exist
      */
     private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
-        int top = entries.size() - 1;
-        int bottom = 0;
-        int startIndex = -1;
+        int i = 0;
 
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(lastDate)) {
-                top = middle - 1;
+        while (i < entries.size()) {
+            if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
+                return i;
             }
-            else if (entries.get(middle).getDate().isBefore(firstDate)) {
-                bottom = middle + 1;
-            }
-            else {
-                startIndex = middle;
-                top = middle - 1;
-            }
+            i ++;
         }
-        return startIndex;
+
+        return -1;
     }
 
     /**
      * Helper method for returning entries from a date range
-     * @param firstDate the first date in range to be considered
-     * @param lastDate the last date in range to be considered
-     * @return the ending index of entries from specific date(s)
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the ending index of entries from specific date(s). Returns -1 if date does not exist
      */
     private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
-        int top = entries.size() - 1;
-        int bottom = 0;
-        int endIndex = -1;
+        int result = -1;
+        int i = 0;
 
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(lastDate)) {
-                top = middle - 1;
-            } else if (entries.get(middle).getDate().isBefore(firstDate)) {
-                bottom = middle + 1;
-            } else {
-                endIndex = middle;
-                bottom = middle + 1;
+        while (i < entries.size()) {
+            if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
+                result = i;
             }
-        }
-        return endIndex;
-    }
-
-    /*
-    public ArrayList<Entry> getEntriesFromCategory (String category) {
-        ArrayList<Entry> returnList = new ArrayList<>();
-
-        for (Entry entry : entries) {
-            if (Objects.equals(entry.getCategory(), category)) {
-                returnList.add(entry);
-            }
+            i ++;
         }
 
-        return returnList;
+        return result;
     }
-
-    public ArrayList<Entry> getEntriesFromCategory (String category, LocalDate dateOf) {
-        ArrayList<Entry> returnList = new ArrayList<>();
-
-        for (Entry entry : getEntries(dateOf)) {
-            if (Objects.equals(entry.getCategory(), category)) {
-                returnList.add(entry);
-            }
-        }
-
-        return returnList;
-    }
-    */
 
     /**
      * Adds the given entry to the user's entries.
@@ -196,33 +155,13 @@ public class User {
             entries.add(newEntry);
         }
         else {
-            int bot = 0;
-            int top = entries.size() - 1;
-            int endIndex = 0;
+            int i = 0;
 
-            while (bot <= top) {
-                int mid = ((bot + top) / 2) + bot;
-                if (!entries.get(mid).getDate().isAfter(checkedDate)) {
-                    endIndex = mid + 1;
-                    bot = mid + 1;
-                }
-                else {
-                    top = mid - 1;
-                }
+            while (i < entries.size() && !entries.get(i).getDate().isAfter(checkedDate)) {
+                i++;
             }
 
-            // int endIndex = getEndIndex(newEntry.getDate(), newEntry.getDate());
-
-            /*
-            if (endIndex == -1) {
-                entries.addFirst(newEntry);
-            }
-            else if (entries.get(endIndex).getDate().isBefore(newEntry.getDate())) {
-
-            }
-            */
-
-            entries.add(endIndex, newEntry);
+            entries.add(i, newEntry);
 
         }
     }
@@ -249,4 +188,32 @@ public class User {
             }
         }
     }
+
+
+    // Dead classes
+    /*
+    public ArrayList<Entry> getEntriesFromCategory (String category) {
+        ArrayList<Entry> returnList = new ArrayList<>();
+
+        for (Entry entry : entries) {
+            if (Objects.equals(entry.getCategory(), category)) {
+                returnList.add(entry);
+            }
+        }
+
+        return returnList;
+    }
+
+    public ArrayList<Entry> getEntriesFromCategory (String category, LocalDate dateOf) {
+        ArrayList<Entry> returnList = new ArrayList<>();
+
+        for (Entry entry : getEntries(dateOf)) {
+            if (Objects.equals(entry.getCategory(), category)) {
+                returnList.add(entry);
+            }
+        }
+
+        return returnList;
+    }
+    */
 }
