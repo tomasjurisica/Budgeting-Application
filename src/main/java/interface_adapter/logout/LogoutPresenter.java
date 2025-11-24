@@ -39,7 +39,7 @@ public class LogoutPresenter implements LogoutOutputBoundary {
         final HouseholdDashboardState householdDashboardState = householdDashboardViewModel.getState();
         // 2. set the username in the state to the empty string
         householdDashboardState.setUsername("");
-        householdDashboardState.setPassword("");
+        //householdDashboardState.setPassword("");
         // 3. firePropertyChanged so that the View that is listening is updated.
         householdDashboardViewModel.firePropertyChange();
 

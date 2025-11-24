@@ -72,11 +72,12 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoggedInView() {
-        householdDashboardViewModel = new HouseholdDashboardViewModel();
+        householdDashboardViewModel = new HouseholdDashboardViewModel(); // interactor injected after login
         householdDashboardView = new HouseholdDashboardView(householdDashboardViewModel);
         cardPanel.add(householdDashboardView, householdDashboardView.getViewName());
         return this;
     }
+
 
     public AppBuilder addSignupUseCase() {
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,

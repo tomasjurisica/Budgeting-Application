@@ -30,11 +30,11 @@ public class LoginInteractor implements LoginInputBoundary {
             else {
 
                 final Household household = userDataAccessObject.get(loginInputData.getUsername());
-
                 userDataAccessObject.setCurrentUsername(username);
 
-                final LoginOutputData loginOutputData = new LoginOutputData(household.getHouseholdID());
+                final LoginOutputData loginOutputData = new LoginOutputData(username, household);
                 loginPresenter.prepareSuccessView(loginOutputData);
+
             }
         }
     }

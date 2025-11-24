@@ -28,17 +28,20 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void prepareSuccessView(LoginOutputData response) {
-        // On success, update the loggedInViewModel's state
-        final HouseholdDashboardState householdDashboardState = householdDashboardViewModel.getState();
-        householdDashboardState.setUsername(response.getUsername());
-        this.householdDashboardViewModel.firePropertyChange();
+        HouseholdDashboardState state = householdDashboardViewModel.getState();
+        state.setUsername(response.getUsername());
+        state.setHousehold(response.getHousehold()); // set the real household
 
-        // and clear everything from the LoginViewModel's state
+        // Inject interactor with real household
+        use_case.household.AddUserInteractor interactor = new use_case.household.AddUserInteractor(response.getHousehold(), householdDashboardViewModel);
+        householdDashboardViewModel.setAddUserInteractor(interactor);
+
+        householdDashboardViewModel.firePropertyChange();
+
+        // switch views
         loginViewModel.setState(new LoginState());
-
-        // switch to the logged in view
-        this.viewManagerModel.setState(householdDashboardViewModel.getViewName());
-        this.viewManagerModel.firePropertyChange();
+        viewManagerModel.setState(householdDashboardViewModel.getViewName());
+        viewManagerModel.firePropertyChange();
     }
 
     @Override

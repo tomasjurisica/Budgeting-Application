@@ -1,39 +1,31 @@
 package interface_adapter.household_dashboard;
 
-/**
- * The State information representing the logged-in user.
- */
+import entity.Household;
+import entity.User;
+import java.util.ArrayList;
+import java.util.List;
+
 public class HouseholdDashboardState {
-    private String username = "";
 
-    private String password = "";
-    private String passwordError;
+    private String username;
+    private Household household; // <- add this
+    private List<User> users;
 
-    public HouseholdDashboardState(HouseholdDashboardState copy) {
-        username = copy.username;
-        password = copy.password;
-        passwordError = copy.passwordError;
-    }
-
-    // Because of the previous copy constructor, the default constructor must be explicit.
     public HouseholdDashboardState() {
-
+        this.username = "";
+        this.users = new ArrayList<>();
     }
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    // getter and setter for username
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    // getter and setter for users
+    public List<User> getUsers() { return users; }
+    public void setUsers(List<User> users) { this.users = users; }
 
-    public String getPassword() {
-        return password;
-    }
-
+    // getter and setter for household
+    public Household getHousehold() { return household; } // <- add this
+    public void setHousehold(Household household) { this.household = household; } // <- add this
 }
