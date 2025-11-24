@@ -3,6 +3,7 @@ package view;
 import interface_adapter.household_dashboard.HouseholdDashboardState;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.logout.LogoutController;
+import interface_adapter.select_user.SelectUserController;
 import entity.User;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
     private final String viewName = "logged in";
     private final HouseholdDashboardViewModel householdDashboardViewModel;
     private LogoutController logoutController;
+    private SelectUserController SelectUserController;
 
     private final JLabel householdID;
     private JPanel roommatesPanel;
@@ -96,6 +98,14 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
                 for (User roommate : housemates) {
                     JButton button = new JButton(roommate.getName());
                     button.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                    // Wire button click to SelectUserController
+                    button.addActionListener(e -> {
+                        if (SelectUserController != null) {
+                            SelectUserController.execute(roommate.getName());
+                        }
+                    });
+
                     roommatesPanel.add(button);
                     roommatesPanel.add(Box.createVerticalStrut(5));
                 }
@@ -118,5 +128,9 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
 
     public void setLogoutController(LogoutController logoutController) {
         this.logoutController = logoutController;
+    }
+
+    public void setSelectUserController(SelectUserController controller) {
+        this.SelectUserController = controller;
     }
 }
