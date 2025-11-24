@@ -1,5 +1,7 @@
 package BudgetingObjects;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,21 +15,30 @@ public class SharedEntry extends Entry{
 
     /**
      * Creates a SharedEntry.
-     * @param hEntry the shared entry for the whole household
+     * @param headEntry the shared entry for the whole household
      * @param users the list of users for this entry
-     * @param contributed the dollar amount contributed by each user. Total sum should add to hEntry's amount
-     *                    Note: May be changed to give percents instead of contribution
+     * @param percents the percent contributed by each user.
      */
-    public SharedEntry(Entry hEntry, List<User> users, float[] contributed) {
-       super(hEntry.getName(), hEntry.getCategory(), hEntry.getAmount(), hEntry.getDate());
+    public SharedEntry(Entry headEntry, List<User> users, float[] percents) {
+       super(headEntry.getName(), headEntry.getCategory(), headEntry.getAmount(), headEntry.getDate());
        this.users = users;
-       this.contributed = contributed;
+       this.contributed = new float[percents.length];
 
+       int i = 0;
 
-        int i = 0;
+       for (float percent : percents) {
+           BigDecimal contribution = BigDecimal.valueOf(headEntry.getAmount() * percent);
+           contribution = contribution.setScale(2, RoundingMode.HALF_UP);
+           this.contributed[i] = contribution.floatValue();
+
+           i++;
+       }
+
+        i = 0;
 
        for (User user : users) {
-           Entry addedEntry = new Entry(hEntry.getName(), hEntry.getCategory(), contributed[i], hEntry.getDate());
+           Entry addedEntry = new Entry(headEntry.getName(),
+                   headEntry.getCategory(), this.contributed[i], headEntry.getDate());
            user.addEntry(addedEntry);
            this.entries.add(addedEntry);
 
@@ -35,17 +46,23 @@ public class SharedEntry extends Entry{
        }
     }
 
+    /**
+     * @return Returns a copy of the list of users on this shared entry.
+     */
     public List<User> getUsers() {
-        return users;
+        return new ArrayList<>(users);
     }
 
+    /**
+     * @return Returns the dollar amount each user contributes to the total
+     */
     public float[] getContributed() {
         return contributed;
     }
 
     /**
      *
-     * @return Returns arraylist of entries
+     * @return Returns a copy of the arraylist of entries
      */
     public List<Entry> getEntries() {
         return new ArrayList<>(entries);
