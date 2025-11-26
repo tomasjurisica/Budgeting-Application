@@ -1,4 +1,5 @@
-package use_case;
+package use_case.detailed_spending;
+
 /**
  * The output boundary for the Detailed Spending Use Case.
  */

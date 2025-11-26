@@ -1,4 +1,4 @@
-package use_case;
+package use_case.detailed_spending;
 
 public class DetailedSpendingInputData {
     private final String userName;
