@@ -1,3 +1,7 @@
+package app;
+import view.HomePageView;
+
+
 import BudgetingObjects.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -55,12 +59,19 @@ public class Main {
         Household household = new Household();
 
         // Demo data
-        u.addEntry(new Entry("Food", "Groceries", -120, java.time.LocalDate.now()));
-        u.addEntry(new Entry("Clothes", "Shopping", -80, java.time.LocalDate.now()));
-        u.addEntry(new Entry("Gym", "Fitness", -40, java.time.LocalDate.now()));
+        u.addEntry(new Entry("WholeFoods", "Groceries", -120, java.time.LocalDate.now()));
+        u.addEntry(new Entry("TNT", "Groceries", -50, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Shoppers", "Groceries", -60, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Ikea", "Household Items", -80, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Winners", "Household Items", -50, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Dollarama", "Household Items", -35, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Electricity", "House Bills", -50, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Water", "House Bills", -30, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Rent", "House Bills", -1500, java.time.LocalDate.now()));
+        u.addEntry(new Entry("Gym", "Fitness", -40, LocalDate.of(2020, 1, 3)));
+        // u.addEntry(new Entry("Gym", "Fitness", -40, LocalDate.of(2025, 11, 23)));
         household.addUser(u);
-
-        new HomePage(household);
+        new HomePageView(household);
 
     }
 }
