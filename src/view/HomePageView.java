@@ -5,13 +5,37 @@ import java.awt.*;
 import java.util.*;
 import BudgetingObjects.*;
 
-public class HomePage extends JFrame {
+import java.time.LocalDate;
+
+import data_access.InMemoryDetailedSpendingDataAccess;
+
+import interface_adapter.detailed_spending.DetailedSpendingViewModel;
+import interface_adapter.detailed_spending.DetailedSpendingPresenter;
+import interface_adapter.detailed_spending.DetailedSpendingController;
+import use_case.detailed_spending.DetailedSpendingInputBoundary;
+import use_case.detailed_spending.DetailedSpendingInteractor;
+import use_case.detailed_spending.DetailedSpendingOutputBoundary;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
+
+public class HomePageView extends JFrame {
     private Household household;
     private JPanel homeTopBar;
     private JPanel navTopBar;
     private JPanel currentTopBar;
 
-    public HomePage(Household household) {
+    public HomePageView(Household household) {
+            DetailedSpendingViewModel detailedSpendingViewModel =
+                    new DetailedSpendingViewModel();
+            DetailedSpendingView detailedSpendingView =
+                    new DetailedSpendingView(detailedSpendingViewModel);
+            DetailedSpendingOutputBoundary presenter =
+                    new DetailedSpendingPresenter(detailedSpendingViewModel);
+            DetailedSpendingUserDataAccessInterface userDataAccess =
+                    new InMemoryDetailedSpendingDataAccess(household);
+            DetailedSpendingInputBoundary interactor =
+                    new DetailedSpendingInteractor(userDataAccess, presenter);
+            DetailedSpendingController detailedSpendingController =
+                    new DetailedSpendingController(interactor);
         this.household = household;
 
         setTitle("Budgeting App");
@@ -100,7 +124,15 @@ public class HomePage extends JFrame {
             }
         }
 
-        PieChartPanel piePanel = new PieChartPanel(categoryTotals, totalSpent);
+        // CHANGE WHEN REAL LOGGED-IN USER ADDED
+        String username = "DefaultUser";
+        int month = LocalDate.now().getMonthValue();
+        int year = LocalDate.now().getYear();
+
+        PieChartPanel piePanel = new PieChartPanel(categoryTotals,
+                totalSpent,
+                detailedSpendingController,
+                username, month, year);
         piePanel.setPreferredSize(new Dimension(450, 450));
 
         JLabel categoryLabel = new JLabel("Category Spending: ");
