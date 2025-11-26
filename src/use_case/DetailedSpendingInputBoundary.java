@@ -1,5 +1,8 @@
 package use_case;
 
+/**
+ * Detailed Spending Use Case.
+ */
 public interface DetailedSpendingInputBoundary {
     /**
      * Execute the Detailed Spending Use Case.
