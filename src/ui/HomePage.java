@@ -1,7 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import BudgetingObjects.*;
+import controllers.AddEntryController;
+import viewmodels.HomePageViewModel;
 
 public class HomePage extends JFrame {
     private Household household;
@@ -9,8 +15,18 @@ public class HomePage extends JFrame {
     private JPanel navTopBar;
     private JPanel currentTopBar;
 
-    public HomePage(Household household) {
+    private final AddEntryController addEntryController;
+    private final HomePageViewModel viewModel;
+
+    private PieChartPanel piePanel;
+    private JPanel categoryList;
+    private JButton addButton;
+    private JLabel categoryLabel;
+
+    public HomePage(Household household, AddEntryController addEntryController, HomePageViewModel viewModel) {
         this.household = household;
+        this.addEntryController = addEntryController;
+        this.viewModel = viewModel;
 
         setTitle("Budgeting App");
         setSize(350, 600);
@@ -82,38 +98,24 @@ public class HomePage extends JFrame {
         menuButton.addActionListener(e -> switchTopBar(navTopBar));
         closeNavButton.addActionListener(e -> switchTopBar(homeTopBar));
 
-        ArrayList<Entry> entries = new ArrayList<>();
-        for(User user : household.getUsers()) {
-            entries.addAll(user.getEntries());
+        List<Entry> initialEntries = new ArrayList<>();
+        for (User user : household.getUsers()) {
+            initialEntries.addAll(user.getEntries());
         }
+        viewModel.setEntries(initialEntries);
 
-        float totalSpent = 0f;
-        Map<String, Float> categoryTotals = new HashMap<>();
+        Map<String, Float> categoryTotals = computeCategoryTotals(viewModel.getEntries());
+        float totalSpent = categoryTotals.values().stream().reduce(0f, Float::sum);
 
-        for(Entry e: entries) {
-            if (e.getAmount() < 0){
-                float amt = -e.getAmount();
-                totalSpent += amt;
-                categoryTotals.merge(e.getCategory(), amt, Float::sum);
-            }
-        }
-
-        PieChartPanel piePanel = new PieChartPanel(categoryTotals, totalSpent);
+        piePanel = new PieChartPanel(categoryTotals, totalSpent);
         piePanel.setPreferredSize(new Dimension(450, 450));
 
-        JLabel categoryLabel = new JLabel("Category Spending: ");
+        categoryLabel = new JLabel("Category Spending: ");
         categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        JPanel categoryList = new JPanel();
+        categoryList = new JPanel();
         categoryList.setLayout(new BoxLayout(categoryList, BoxLayout.Y_AXIS));
-
-        categoryList.add(categoryLabel);
-        for (String category : categoryTotals.keySet()) {
-            float amt = categoryTotals.get(category);
-            JLabel label = new JLabel(category + ": $" + amt);
-            label.setFont(new Font("Arial", Font.PLAIN, 18));
-            categoryList.add(label);
-        }
+        populateCategoryList(categoryList, categoryTotals);
 
         JScrollPane scrollPane = new JScrollPane(categoryList);
 
@@ -151,7 +153,7 @@ public class HomePage extends JFrame {
 
         add(center, BorderLayout.CENTER);
 
-        JButton addButton = new JButton("+");
+        addButton = new JButton("+");
         addButton.setFont(new Font("Arial", Font.BOLD, 30));
         addButton.setPreferredSize(new Dimension(70, 70));
 
@@ -160,7 +162,76 @@ public class HomePage extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
+        addButton.addActionListener(ev -> openAddEntryDialog());
+
+        viewModel.addListener(entries -> {
+            Map<String, Float> newTotals = computeCategoryTotals(entries);
+            float newTotal = newTotals.values().stream().reduce(0f, Float::sum);
+
+            remove(piePanel);
+            piePanel = new PieChartPanel(newTotals, newTotal);
+            piePanel.setPreferredSize(new Dimension(450, 450));
+            pieWrapper.removeAll();
+            pieWrapper.add(piePanel);
+            pieWrapper.revalidate();
+            pieWrapper.repaint();
+
+            categoryList.removeAll();
+            populateCategoryList(categoryList, newTotals);
+            categoryList.revalidate();
+            categoryList.repaint();
+        });
+
         setVisible(true);
+    }
+
+    private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
+        Map<String, Float> categoryTotals = new LinkedHashMap<>();
+        float totalSpent = 0f;
+        for (Entry e : entries) {
+            if (e.getAmount() < 0) {
+                float amt = -e.getAmount();
+                totalSpent += amt;
+                categoryTotals.merge(e.getCategory(), amt, Float::sum);
+            }
+        }
+        return categoryTotals;
+    }
+
+    private void populateCategoryList(JPanel categoryListPanel, Map<String, Float> categoryTotals) {
+        categoryListPanel.add(categoryLabel);
+        for (String category : categoryTotals.keySet()) {
+            float amt = categoryTotals.get(category);
+            JLabel label = new JLabel(category + ": $" + amt);
+            label.setFont(new Font("Arial", Font.PLAIN, 18));
+            categoryListPanel.add(label);
+        }
+    }
+
+    private void openAddEntryDialog() {
+        JTextField nameField = new JTextField();
+        JTextField categoryField = new JTextField();
+        JTextField amountField = new JTextField();
+        JTextField dateField = new JTextField(java.time.LocalDate.now().toString());
+
+        final JComponent[] inputs = new JComponent[] {
+                new JLabel("Name:"), nameField,
+                new JLabel("Category:"), categoryField,
+                new JLabel("Amount (use negative for expenses):"), amountField,
+                new JLabel("Date (YYYY-MM-DD):"), dateField
+        };
+        int result = JOptionPane.showConfirmDialog(this, inputs, "Add Entry", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String name = nameField.getText();
+                String category = categoryField.getText();
+                float amount = Float.parseFloat(amountField.getText());
+                LocalDate date = LocalDate.parse(dateField.getText());
+                addEntryController.addEntry(name, category, amount, date);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input: " + ex.getMessage());
+            }
+        }
     }
 
     private void switchTopBar(JPanel newTopBar) {
