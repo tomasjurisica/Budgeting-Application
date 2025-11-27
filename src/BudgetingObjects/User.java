@@ -2,16 +2,14 @@ package BudgetingObjects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
-import static java.lang.Math.max;
-
-public class User {
-    private String name;
+public class User{
+    private final String name;
 
     private Household householdPointer;
 
-    private ArrayList<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
+    private final List<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
 
     public User(String name) {
         this.name = name;
@@ -45,13 +43,38 @@ public class User {
     }
 
     /**
-     * NOT IMPLEMENTED YET
      * @param year: The year of entries to be returned.
      * @param month: The month of entries to be returned.
      * @return Returns an arraylist of entries from the given year and month, in chronological order. Returns an empty list if no entries that month.
      */
     public ArrayList<Entry> getEntries(int year, int month) {
         ArrayList<Entry> returnList = new ArrayList<>();
+
+        int lastDay = 28;
+
+        // Calculate last day of month
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            lastDay = 31;
+        }
+        else if (month == 4 || month == 6 || month == 9 || month == 11) {
+            lastDay = 30;
+        }
+        else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
+            lastDay = 29;
+        }
+
+        LocalDate firstDate = LocalDate.of(year, month, 1);
+        LocalDate lastDate = LocalDate.of(year, month, lastDay);
+
+        int startIndex = getStartIndex(firstDate, lastDate);
+        int endIndex = getEndIndex(firstDate, lastDate);
+
+        // If indexes are valid, add all values in range to return list
+        if (startIndex != -1 && endIndex != -1){
+            for(int i=0; i+startIndex<=endIndex;i++){
+                returnList.add(entries.get(i + startIndex));
+            }
+        }
 
         return returnList;
     }
@@ -67,43 +90,9 @@ public class User {
 
         ArrayList<Entry> returnList = new ArrayList<>();
 
-        int top = entries.size() - 1;
-        int bottom = 0;
-        int startIndex = -1;
+        int startIndex = getStartIndex(dateOf, dateOf);
 
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(dateOf)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(dateOf)) {
-                bottom = middle + 1;
-            }
-            else {
-                startIndex = middle;
-                top = middle - 1;
-            }
-        }
-
-        top = entries.size() - 1;
-        bottom = 0;
-        int endIndex = -1;
-
-        while (top >= bottom) {
-            int middle = (top - bottom) / 2 + bottom;
-
-            if (entries.get(middle).getDate().isAfter(dateOf)) {
-                top = middle - 1;
-            }
-            else if (entries.get(middle).getDate().isBefore(dateOf)) {
-                bottom = middle + 1;
-            }
-            else {
-                endIndex = middle;
-                bottom = middle + 1;
-            }
-        }
+        int endIndex = getEndIndex(dateOf, dateOf);
 
         if (startIndex != -1 && endIndex != -1){
             for(int i=0; i+startIndex<=endIndex;i++){
@@ -115,31 +104,42 @@ public class User {
     }
 
     /**
-     * @param category Case-sensitive. Category to retrieve entries of the same type.
-     * @return An arraylist of all entries with the corresponding category. Sorted in chronological order. Returns an empty list if no entries match the category.
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the starting index of entries from specific date(s). Returns -1 if date does not exist
      */
-    public ArrayList<Entry> getEntriesFromCategory (String category) {
-        ArrayList<Entry> returnList = new ArrayList<>();
+    private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
+        int i = 0;
 
-        for (Entry entry : entries) {
-            if (Objects.equals(entry.getCategory(), category)) {
-                returnList.add(entry);
+        while (i < entries.size()) {
+            if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
+                return i;
             }
+            i ++;
         }
 
-        return returnList;
+        return -1;
     }
 
-    public ArrayList<Entry> getEntriesFromCategory (String category, LocalDate dateOf) {
-        ArrayList<Entry> returnList = new ArrayList<>();
+    /**
+     * Helper method for returning entries from a date range
+     * @param firstDate the first date in range to be considered.
+     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @return the ending index of entries from specific date(s). Returns -1 if date does not exist
+     */
+    private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
+        int result = -1;
+        int i = 0;
 
-        for (Entry entry : getEntries(dateOf)) {
-            if (Objects.equals(entry.getCategory(), category)) {
-                returnList.add(entry);
+        while (i < entries.size()) {
+            if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
+                result = i;
             }
+            i ++;
         }
 
-        return returnList;
+        return result;
     }
 
     /**
@@ -155,24 +155,13 @@ public class User {
             entries.add(newEntry);
         }
         else {
-            int top = entries.size() - 1;
-            int bottom = 0;
-            int middle = entries.size() / 2;
+            int i = 0;
 
-
-            while (top-bottom >= 2) {
-                if (entries.get(middle).getDate().isAfter(checkedDate)) {
-                    top = middle;
-                    middle = middle / 2;
-                }
-                else {
-                    bottom = middle;
-                    middle = top + bottom / 2;
-                }
+            while (i < entries.size() && !entries.get(i).getDate().isAfter(checkedDate)) {
+                i++;
             }
 
-
-            entries.add(top, newEntry);
+            entries.add(i, newEntry);
 
         }
     }
@@ -199,4 +188,32 @@ public class User {
             }
         }
     }
+
+
+    // Dead classes
+    /*
+    public ArrayList<Entry> getEntriesFromCategory (String category) {
+        ArrayList<Entry> returnList = new ArrayList<>();
+
+        for (Entry entry : entries) {
+            if (Objects.equals(entry.getCategory(), category)) {
+                returnList.add(entry);
+            }
+        }
+
+        return returnList;
+    }
+
+    public ArrayList<Entry> getEntriesFromCategory (String category, LocalDate dateOf) {
+        ArrayList<Entry> returnList = new ArrayList<>();
+
+        for (Entry entry : getEntries(dateOf)) {
+            if (Objects.equals(entry.getCategory(), category)) {
+                returnList.add(entry);
+            }
+        }
+
+        return returnList;
+    }
+    */
 }

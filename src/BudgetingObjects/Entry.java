@@ -17,7 +17,7 @@ public class Entry {
     public Entry(String name, String category, float amount, LocalDate date) {
         this.name = name;
         this.category = category;
-        this. amount = amount;
+        this.amount = amount;
         this.date = date;
     }
 
@@ -27,7 +27,10 @@ public class Entry {
      * @param amount Amount of the entry. Negative for expenses, positive for income
      */
     public Entry(String name, float amount) {
-
+        this.name = name;
+        this.amount = amount;
+        this.category = "N/A";
+        this.date = LocalDate.now();
     }
 
     public String getName() {
