@@ -102,7 +102,7 @@ public class Household{
      * Adds a new shared entry to the household. In chronological order
      * @param newEntry sharedEntry to be added to the household
      */
-    void addSharedEntry(SharedEntry newEntry) {
+    public void addSharedEntry(SharedEntry newEntry) {
         LocalDate checkedDate = newEntry.getDate();
 
         // adds to end if entries is empty or if the new entry is the most recent item chronologically
