@@ -3,6 +3,7 @@ package BudgetingObjects;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class User{
     private final String name;
@@ -189,9 +190,16 @@ public class User{
         }
     }
 
+    /**
+     * Remove the given entry from this user's entries.
+     *
+     * @param entry entry to remove
+     * @return true if removed, false if not found
+     */
+    public boolean removeEntry(Entry entry) {
+        return entries.remove(entry);
+    }
 
-    // Dead classes
-    /*
     public ArrayList<Entry> getEntriesFromCategory (String category) {
         ArrayList<Entry> returnList = new ArrayList<>();
 
@@ -215,5 +223,4 @@ public class User{
 
         return returnList;
     }
-    */
 }

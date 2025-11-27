@@ -5,14 +5,21 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import interface_adapters.add_entry.AddEntryController;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+
 
 public class UserDisplayGUI extends JFrame {
     private final User user;
     private final DefaultTableModel model;
     private final JLabel statusLabel;
+    private JTable table;
+    private final AddEntryController addEntryController;
 
-    public UserDisplayGUI(User user) {
+    public UserDisplayGUI(User user, AddEntryController addEntryController) {
         this.user = user;
+        this.addEntryController = addEntryController;
 
         setTitle("My Finances - " + user.getName());
         setSize(700, 400);
@@ -23,14 +30,22 @@ public class UserDisplayGUI extends JFrame {
         JLabel titleLabel = new JLabel("My Finances", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
-        JLabel userLabel = new JLabel("User: " + user.getName());
+        JLabel userLabel = new JLabel("User: " + user.getName(), SwingConstants.CENTER);
         userLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(titleLabel);
+        headerPanel.add(userLabel);
 
         // ----- Table -----
         String[] columns = {"Name", "Amount", "Date", "Category"};
         model = new DefaultTableModel(columns, 0);
-        JTable table = new JTable(model);
-        table.setEnabled(false);
+        table = new JTable(model);
+        table.setRowSelectionAllowed(true);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(table);
 
         // ----- Status -----
@@ -55,8 +70,7 @@ public class UserDisplayGUI extends JFrame {
 
         // ----- Layout -----
         setLayout(new BorderLayout());
-        add(titleLabel, BorderLayout.NORTH);
-        add(userLabel, BorderLayout.WEST);
+        add(headerPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.PAGE_END);
@@ -81,18 +95,19 @@ public class UserDisplayGUI extends JFrame {
 
             if (option == JOptionPane.OK_OPTION) {
                 try {
-                    String name = nameField.getText();
-                    String category = categoryField.getText();
-                    float amount = Float.parseFloat(amountField.getText());
+                    String name = nameField.getText().trim();
+                    String category = categoryField.getText().trim();
+                    float amount = Float.parseFloat(amountField.getText().trim());
 
-                    Entry entry = new Entry(name, category, amount, LocalDate.now());
-                    user.addEntry(entry);
+                    addEntryController.addEntry(name, category, amount, LocalDate.now());
+
                     refreshEntries();
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Invalid amount format!");
                 }
             }
         });
+
 
         removeButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
@@ -102,7 +117,7 @@ public class UserDisplayGUI extends JFrame {
                 ArrayList<Entry> entries = user.getEntries();
                 for (Entry entry : entries) {
                     if (entry.getName().equals(name)) {
-                        entries.remove(entry);
+                        user.removeEntry(entry);
                         break;
                     }
                 }
