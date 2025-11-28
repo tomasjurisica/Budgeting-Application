@@ -1,4 +1,4 @@
-package BudgetingObjects;
+package entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,13 +9,29 @@ import static java.lang.Math.max;
 public class User {
     private String name;
 
+    private Household householdPointer;
+
     private ArrayList<Entry> entries = new ArrayList<>(); // stores all entries, sorted in chronological order
 
     public User(String name) {
         this.name = name;
     }
 
-    // to be updated to not point to same arraylist, just for testing
+    /**
+     *
+     * @param h: household to be linked to
+     */
+    public void setHousehold (Household h) {
+        householdPointer = h;
+    }
+
+    /**
+     *
+     * @return The household this user is linked to. THIS IS NOT A COPY. Returns null if not linked to a household
+     */
+    public Household getHousehold () {
+        return householdPointer;
+    }
 
     public String getName() {
         return name;
@@ -131,35 +147,35 @@ public class User {
      *
      * @param newEntry: Entry to be added into this user's entries.
      */
-    public void addEntry(Entry newEntry) {
-        LocalDate checkedDate = newEntry.getDate();
-
-        // adds to end if entries is empty or if the new entry is the most recent item chronologically
-        if (entries.isEmpty() || !entries.getLast().getDate().isAfter(checkedDate)) {
-            entries.add(newEntry);
-        }
-        else {
-            int top = entries.size() - 1;
-            int bottom = 0;
-            int middle = entries.size() / 2;
-
-
-            while (top-bottom >= 2) {
-                if (entries.get(middle).getDate().isAfter(checkedDate)) {
-                    top = middle;
-                    middle = middle / 2;
-                }
-                else {
-                    bottom = middle;
-                    middle = top + bottom / 2;
-                }
-            }
-
-
-            entries.add(top, newEntry);
-
-        }
-    }
+//    public void addEntry(Entry newEntry) {
+//        LocalDate checkedDate = newEntry.getDate();
+//
+//        // adds to end if entries is empty or if the new entry is the most recent item chronologically
+//        if (entries.isEmpty() || !entries.getLast().getDate().isAfter(checkedDate)) {
+//            entries.add(newEntry);
+//        }
+//        else {
+//            int top = entries.size() - 1;
+//            int bottom = 0;
+//            int middle = entries.size() / 2;
+//
+//
+//            while (top-bottom >= 2) {
+//                if (entries.get(middle).getDate().isAfter(checkedDate)) {
+//                    top = middle;
+//                    middle = middle / 2;
+//                }
+//                else {
+//                    bottom = middle;
+//                    middle = top + bottom / 2;
+//                }
+//            }
+//
+//
+//            entries.add(top, newEntry);
+//
+//        }
+//    }
 
     /**
      * Adds the given list of entries to the user's entries.

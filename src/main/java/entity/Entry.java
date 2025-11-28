@@ -1,4 +1,4 @@
-package BudgetingObjects;
+package entity;
 
 import java.time.LocalDate;
 
