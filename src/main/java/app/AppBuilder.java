@@ -41,7 +41,7 @@ public class AppBuilder {
 
     // DAO version using local file storage
     final FileUserDataAccessObject userDataAccessObject =
-            new FileUserDataAccessObject("data/users.json", householdFactory);
+            new FileUserDataAccessObject("src/main/java/data_access/users.json", householdFactory);
 
     // DAO version using a shared external database
     // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
