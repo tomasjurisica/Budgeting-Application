@@ -57,15 +57,11 @@ public class UserDisplayGUI extends JFrame {
         JButton addButton = new JButton("Add Entry");
         addButton.setForeground(new Color(0, 150, 0));
 
-        JButton removeButton = new JButton("Remove Entry");
-        removeButton.setForeground(Color.RED);
-
         JButton categoryButton = new JButton("Category Display");
         categoryButton.setForeground(Color.BLUE);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
         buttonPanel.add(categoryButton);
 
         // ----- Layout -----
@@ -105,25 +101,6 @@ public class UserDisplayGUI extends JFrame {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Invalid amount format!");
                 }
-            }
-        });
-
-
-        removeButton.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow >= 0) {
-                String name = (String) model.getValueAt(selectedRow, 0);
-                // remove first matching entry
-                ArrayList<Entry> entries = user.getEntries();
-                for (Entry entry : entries) {
-                    if (entry.getName().equals(name)) {
-                        user.removeEntry(entry);
-                        break;
-                    }
-                }
-                refreshEntries();
-            } else {
-                JOptionPane.showMessageDialog(this, "Select a row to remove.");
             }
         });
 
