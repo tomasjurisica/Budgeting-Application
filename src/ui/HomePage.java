@@ -8,7 +8,7 @@ package ui;
 import BudgetingObjects.Entry;
 import BudgetingObjects.Household;
 import BudgetingObjects.User;
-import controllers.AddEntryController;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,32 +22,31 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+
 import viewmodels.HomePageViewModel;
+import usecases.homedisplay.*;
+
 
 public class HomePage extends JFrame {
     private Household household;
     private JPanel homeTopBar;
     private JPanel navTopBar;
     private JPanel currentTopBar;
-    private final AddEntryController addEntryController;
     private final HomePageViewModel viewModel;
     private PieChartPanel piePanel;
     private JPanel categoryList;
     private JButton addButton;
     private JLabel categoryLabel;
 
-    public HomePage(Household household, AddEntryController addEntryController, HomePageViewModel viewModel) {
+    public HomePage(Household household, HomePageViewModel viewModel) {
         this.household = household;
-        this.addEntryController = addEntryController;
+     //   this.addEntryController = addEntryController;
         this.viewModel = viewModel;
         this.setTitle("Budgeting App");
         this.setSize(500, 600);
@@ -107,13 +106,16 @@ public class HomePage extends JFrame {
         homeButton.addActionListener((e) -> this.refreshHome());
         menuButton.addActionListener((e) -> this.switchTopBar(this.navTopBar));
         closeNavButton.addActionListener((e) -> this.switchTopBar(this.homeTopBar));
-        List<Entry> initialEntries = new ArrayList();
-
-        for(User user : household.getUsers()) {
-            initialEntries.addAll(user.getEntries());
+        HomeDisplayInteractor interactor = new HomeDisplayInteractor(viewModel);
+        List<Entry> allEntries = new ArrayList<>();
+        for (User user : household.getUsers()) {
+            allEntries.addAll(user.getEntries());
         }
+        HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
 
-        viewModel.setEntries(initialEntries);
+        HomeDisplayInteractor interactors = new HomeDisplayInteractor(viewModel);
+        interactors.execute(request);
+
         Map<String, Float> categoryTotals = this.computeCategoryTotals(viewModel.getEntries());
         float totalSpent = (Float)categoryTotals.values().stream().reduce(0.0F, Float::sum);
         this.piePanel = new PieChartPanel(categoryTotals, totalSpent);
