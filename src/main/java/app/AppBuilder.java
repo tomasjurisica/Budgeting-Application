@@ -3,6 +3,9 @@ package app;
 import data_access.FileUserDataAccessObject;
 import entity.HouseholdFactory;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.detailed_spending.DetailedSpendingController;
+import interface_adapter.detailed_spending.DetailedSpendingPresenter;
+import interface_adapter.detailed_spending.DetailedSpendingViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -12,6 +15,7 @@ import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import use_case.detailed_spending.*;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -21,10 +25,7 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.HouseholdDashboardView;
-import view.LoginView;
-import view.SignupView;
-import view.ViewManager;
+import view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,8 @@ public class AppBuilder {
     private HouseholdDashboardViewModel householdDashboardViewModel;
     private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
+    private DetailedSpendingView detailedSpendingView;
+    private DetailedSpendingViewModel detailedSpendingViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -75,6 +78,13 @@ public class AppBuilder {
         householdDashboardViewModel = new HouseholdDashboardViewModel(); // interactor injected after login
         householdDashboardView = new HouseholdDashboardView(householdDashboardViewModel);
         cardPanel.add(householdDashboardView, householdDashboardView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addDetailedSpendingView() {
+        detailedSpendingViewModel = new DetailedSpendingViewModel();
+        detailedSpendingView = new DetailedSpendingView(detailedSpendingViewModel);
+        cardPanel.add(detailedSpendingView, detailedSpendingView.getViewName());
         return this;
     }
 
@@ -122,6 +132,19 @@ public class AppBuilder {
         householdDashboardView.setLogoutController(logoutController);
         return this;
     }
+
+    public AppBuilder addDetailedSpendingUseCase() {
+        final DetailedSpendingOutputBoundary detailedSpendingOutputBoundary = new DetailedSpendingPresenter(detailedSpendingViewModel);
+
+        final DetailedSpendingInputBoundary detailedSpendingInteractor =
+                new DetailedSpendingInteractor(userDataAccessObject, detailedSpendingOutputBoundary);
+
+        final DetailedSpendingController detailedSpendingController = new DetailedSpendingController(detailedSpendingInteractor);
+        detailedSpendingView.setDetailedSpendingController(detailedSpendingController);
+        return this;
+    }
+
+
 
     public JFrame build() {
         final JFrame application = new JFrame("User Login Example");
