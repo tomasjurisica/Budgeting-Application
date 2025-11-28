@@ -4,9 +4,11 @@ import entity.Entry;
 import entity.Household;
 import entity.HouseholdFactory;
 import entity.User;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +30,9 @@ import java.util.Map;
 public class FileUserDataAccessObject implements
         SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
-        LogoutUserDataAccessInterface {
+        LogoutUserDataAccessInterface,
+        DetailedSpendingUserDataAccessInterface
+{
 
     private final File jsonFile;
     // Map stores HouseholdID (String) -> Household object
@@ -181,4 +186,24 @@ public class FileUserDataAccessObject implements
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
     }
+
+    @Override
+    public List<Entry> getEntries(String username, int year, int month) {
+        List<Entry> result = new ArrayList<>();
+
+        Household household = accounts.get(username);
+        if (household == null) {
+            return result;
+        }
+
+        for (User user : household.getUsers()) {
+            for (Entry entry : user.getEntries()) {
+                LocalDate date = entry.getDate();
+                if (date.getYear() == year && date.getMonthValue() == month) {
+                    result.add(entry);
+                }
+            }
+        }
+        return result;
+}
 }
