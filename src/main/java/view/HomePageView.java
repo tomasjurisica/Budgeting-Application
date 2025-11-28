@@ -7,6 +7,14 @@ import entity.Household;
 import entity.Entry;
 import entity.User;
 
+import interface_adapter.detailed_spending.DetailedSpendingViewModel;
+import interface_adapter.detailed_spending.DetailedSpendingPresenter;
+import interface_adapter.detailed_spending.DetailedSpendingController;
+import use_case.detailed_spending.DetailedSpendingInputBoundary;
+import use_case.detailed_spending.DetailedSpendingInteractor;
+import use_case.detailed_spending.DetailedSpendingOutputBoundary;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
+
 public class HomePageView extends JFrame {
     private Household household;
     private JPanel homeTopBar;
