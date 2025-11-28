@@ -88,7 +88,26 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
             HouseholdDashboardState state = (HouseholdDashboardState) evt.getNewValue();
-            householdID.setText(state.getHousehold().getHouseholdID());
+
+            // Check for error and show popup
+            String errorMessage = state.getAddUserError();
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        errorMessage,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                // Clear the error after showing it
+                state.setAddUserError(null);
+            }
+
+            // Set household ID, with null check
+            if (state.getHousehold() != null) {
+                householdID.setText(state.getHousehold().getHouseholdID());
+            } else {
+                householdID.setText("");
+            }
 
             // Clear old buttons
             roommatesPanel.removeAll();

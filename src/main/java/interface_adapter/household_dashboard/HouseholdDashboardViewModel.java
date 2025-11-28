@@ -27,7 +27,14 @@ public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardSta
     // Called by the interactor to update the state/UI
     @Override
     public void present(AddUserOutputData outputData) {
+        getState().setAddUserError(null); // Clear any previous errors
         getState().getUsers().add(outputData.getUser());
+        firePropertyChange();
+    }
+
+    @Override
+    public void prepareFailView(String errorMessage) {
+        getState().setAddUserError(errorMessage);
         firePropertyChange();
     }
 }

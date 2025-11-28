@@ -18,8 +18,18 @@ public class AddUserInteractor implements AddUserInputBoundary {
 
     @Override
     public void addUser(AddUserInputData inputData) {
+        String name = inputData.getName();
+
+        // Check if a user with the same name already exists in the household
+        for (User existingUser : household.getUsers()) {
+            if (existingUser.getName().equalsIgnoreCase(name)) {
+                outputBoundary.prepareFailView("A roommate with the name \"" + name + "\" already exists.");
+                return;
+            }
+        }
+
         // Create new user and add to household
-        User user = new User(inputData.getName());
+        User user = new User(name);
         household.addUser(user);
 
         // Persist to JSON
