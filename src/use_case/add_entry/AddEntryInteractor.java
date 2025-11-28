@@ -1,6 +1,7 @@
 package use_case.add_entry;
 
 import BudgetingObjects.Entry;
+import BudgetingObjects.IndividualEntry;
 
 public class AddEntryInteractor implements AddEntryInputBoundary {
 
@@ -33,7 +34,7 @@ public class AddEntryInteractor implements AddEntryInputBoundary {
             category = "N/A";
         }
 
-        Entry entry = new Entry(name, category, amount, inputData.getDate());
+        Entry entry = new IndividualEntry(name, category, amount, inputData.getDate());
         userDataAccess.addEntry(entry);
 
         AddEntryOutputData outputData = new AddEntryOutputData(

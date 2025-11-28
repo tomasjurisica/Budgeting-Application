@@ -16,13 +16,12 @@ import java.time.LocalDate;
 
 /**
  * Data access object for a single user's entries.
- *
  * - On construction, it loads existing entries from a CSV file.
  * - On addEntry, it updates the in-memory User and appends to the file.
  *
  * File format (comma-separated, one entry per line):
  *   name,category,amount,date
- * e.g. 2025-10-05.
+ *   e.g. 2025-10-05.
  */
 public class UserEntryDataAccessObject implements AddEntryUserDataAccessInterface {
 
