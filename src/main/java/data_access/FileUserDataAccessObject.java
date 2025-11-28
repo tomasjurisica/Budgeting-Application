@@ -187,6 +187,7 @@ public class FileUserDataAccessObject implements
         return accounts.containsKey(identifier);
     }
 
+    // Entries don't depend on each user, depends on household so changed the for loop
     @Override
     public List<Entry> getEntries(String username, int year, int month) {
         List<Entry> result = new ArrayList<>();
@@ -195,15 +196,12 @@ public class FileUserDataAccessObject implements
         if (household == null) {
             return result;
         }
-
-        for (User user : household.getUsers()) {
-            for (Entry entry : user.getEntries()) {
+            for (Entry entry : household.getHouseholdEntries()) {
                 LocalDate date = entry.getDate();
                 if (date.getYear() == year && date.getMonthValue() == month) {
                     result.add(entry);
                 }
             }
-        }
         return result;
 }
 }
