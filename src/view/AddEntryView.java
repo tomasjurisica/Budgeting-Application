@@ -6,6 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +16,15 @@ import interface_adapter.add_entry.AddEntryState;
 import use_case.add_entry.AddEntryOutputData;
 
 // will be removed
-import BudgetingObjects.*;
 
 
 public class AddEntryView extends JFrame implements PropertyChangeListener {
     // panels
+    private final JTextField nameField = new JTextField(12);
+    private final JTextField categoryField = new JTextField(12);
+    private final JTextField dayField = new JTextField(2);
+    private final JTextField monthField = new JTextField(2);
+    private final JTextField yearField = new JTextField(4);
     private final JTextField amountField = new JTextField(10);
     private final JPanel percentagePanel = new JPanel(new GridLayout(0, 2));
     private final List<JTextField> percentageFields = new ArrayList<>();
@@ -34,7 +39,7 @@ public class AddEntryView extends JFrame implements PropertyChangeListener {
     // CA
     private final AddEntryViewModel viewModel;
 
-    public AddEntryView(List<User> users, AddEntryViewModel viewModel) {
+    public AddEntryView(AddEntryViewModel viewModel) {
         // CA
         this.viewModel = viewModel;
         this.viewModel.addPropertyChangeListener(this);
@@ -50,25 +55,20 @@ public class AddEntryView extends JFrame implements PropertyChangeListener {
         // Enter name
         JPanel namePanel = new JPanel();
         namePanel.add(new JLabel("Entry Name:"));
-        JTextField nameField = new JTextField(12);
         namePanel.add(nameField);
 
         // Enter category
         JPanel categoryPanel = new JPanel();
         categoryPanel.add(new JLabel("Entry Category:"));
-        JTextField categoryField = new JTextField(12);
         categoryPanel.add(categoryField);
 
         // Enter date
         JPanel datePanel = new JPanel();
         datePanel.add(new JLabel("Date of Entry (DD/MM/YYYY)"));
-        JTextField dayField = new JTextField(2);
         datePanel.add(dayField);
         datePanel.add(new JLabel("/"));
-        JTextField monthField = new JTextField(2);
         datePanel.add(monthField);
         datePanel.add(new JLabel("/"));
-        JTextField yearField = new JTextField(4);
         datePanel.add(yearField);
         datePanel.add(amountField);
 
@@ -169,23 +169,37 @@ public class AddEntryView extends JFrame implements PropertyChangeListener {
     }
 
     private void onAdd() {
+        if (selectedUserNames.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Error: No users selected");
+            return;
+        }
+
         try {
-            // Get total, round to 2 decimals
+            // Get information name/category/date
+            String name = nameField.getText();
+
+            String category = categoryField.getText();
+
+            int day = Integer.parseInt(dayField.getText());
+            int month = Integer.parseInt(monthField.getText());
+            int year = Integer.parseInt(yearField.getText());
+
+            // Create date object
+            LocalDate entryDate = LocalDate.of(year, month, day);
+
+            // Get contribution, round to 2 decimal places
             BigDecimal contribution = BigDecimal.valueOf(Float.parseFloat(amountField.getText()));
             contribution = contribution.setScale(2, RoundingMode.HALF_UP);
             float total = contribution.floatValue();
 
+            // turn percents to string array
+            float[] percents = new float[percentageFields.size()];
 
-            /*
-               !!!
-               Need to check list of users isn't empty
-               !!!
-             */
-
-            // Get users and their percents
+            for (int i = 0; i < percentageFields.size(); i++) {
+                percents[i] = Float.parseFloat(percentageFields.get(i).getText());
+            }
 
             // Need to hook up to CA
-            System.out.println("\n" + total + "\n");
 
 
         }
