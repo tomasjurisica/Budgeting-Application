@@ -87,6 +87,7 @@ public class HomePageView extends JPanel {
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
         for(int i = 1; i <= 3; ++i) {
+
             JButton iconButton = new JButton("★");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
