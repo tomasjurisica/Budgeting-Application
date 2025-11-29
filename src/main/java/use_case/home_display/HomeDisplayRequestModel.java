@@ -1,4 +1,4 @@
-package use_case.homedisplay;
+package use_case.home_display;
 
 import java.util.List;
 import entity.Entry;

@@ -178,7 +178,10 @@ public class User {
             int j = 0;
 
             while (j < listOfEntries.size()) {
-                if (entries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
+                if (i >= entries.size()) {
+                    entries.add(listOfEntries.get(j));
+                    j++;
+                } else if (entries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
                     entries.add(i, listOfEntries.get(j));
                     j++;
                 }

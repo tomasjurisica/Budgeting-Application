@@ -1,45 +1,57 @@
 package interface_adapter.home_page;
 
+import entity.Entry;
 import interface_adapter.ViewModel;
 import use_case.select_user.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class HomePageViewModel extends ViewModel<HomePageState>
-    implements SelectUserOutputBoundary {
+public class HomePageViewModel {
+        private final List<Entry> entries = new ArrayList();
+        private final List<Consumer<List<Entry>>> listeners = new ArrayList();
+        private String lastMessage = "";
 
-    private SelectUserInputBoundary selectUserInteractor;
+        public synchronized void setEntries(List<Entry> newEntries) {
+            this.entries.clear();
+            if (newEntries != null) {
+                this.entries.addAll(newEntries);
+            }
 
-    public HomePageViewModel() {
-        super("home page");
-        setState(new HomePageState());
-    }
-
-    public void setSelectUserInteractor(SelectUserInputBoundary interactor) {
-        this.selectUserInteractor = interactor;
-    }
-
-    // Called by the controller
-    public void selectUser(String roommateName) {
-        if (roommateName == null || roommateName.trim().isEmpty() ||
-            selectUserInteractor == null) {
-            return;
+            this.notifyListeners();
         }
 
-        selectUserInteractor.execute(
-            new SelectUserInputData(roommateName)
-        );
-    }
+        public synchronized void addEntry(Entry e) {
+            this.entries.add(e);
+            this.notifyListeners();
+        }
 
-    @Override
-    public void execute(SelectUserInputData inputData) {
+        public synchronized List<Entry> getEntries() {
+            return new ArrayList(this.entries);
+        }
 
-    }
+        public synchronized void addListener(Consumer<List<Entry>> listener) {
+            this.listeners.add(listener);
+        }
 
-    // Called by the interactor to update the UI/state
-    @Override
+        private void notifyListeners() {
+            List<Entry> snapshot = this.getEntries();
+
+            for(Consumer<List<Entry>> l : this.listeners) {
+                l.accept(snapshot);
+            }
+
+        }
+
+        public synchronized String getLastMessage() {
+            return this.lastMessage;
+        }
+
+        public synchronized void setLastMessage(String m) {
+            this.lastMessage = m;
+        }
+
     public void present(SelectUserOutputData outputData) {
-        getState().setSelectedUser(outputData.roommateName());
-        firePropertyChange();
     }
 }

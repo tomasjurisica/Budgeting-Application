@@ -6,7 +6,7 @@ import entity.Household;
 import entity.HouseholdFactory;
 import entity.User;
 import interface_adapter.ViewManagerModel;
-import viewmodels.HomePageViewModel;
+import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -17,7 +17,7 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import repositories.InMemoryEntryRepository;
-import ui.HomePage;
+import view.HomePageView;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -62,8 +62,8 @@ public class AppBuilder {
     private LoginView loginView;
     private Household household;
     private InMemoryEntryRepository repo;
-    private HomePageViewModel homePageViewModel;
-    private HomePage homePage;
+    private interface_adapter.home_page.HomePageViewModel homePageViewModel;
+    private HomePageView homePage;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
