@@ -125,7 +125,8 @@ public class FileUserDataAccessObject implements
 
                     // User Entries
                     JSONArray userEntriesJson = userJson.getJSONArray("entries");
-                    user.addEntry(jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
+                    user.addEntry(
+                        jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
 
                     household.addUser(user);
                 }

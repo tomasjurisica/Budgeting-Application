@@ -62,9 +62,9 @@ public class SignupState {
     @Override
     public String toString() {
         return "SignupState{"
-                + "householdID='" + username + '\''
-                + ", password='" + password + '\''
-                + ", repeatPassword='" + repeatPassword + '\''
-                + '}';
+            + "householdID='" + username + '\''
+            + ", password='" + password + '\''
+            + ", repeatPassword='" + repeatPassword + '\''
+            + '}';
     }
 }

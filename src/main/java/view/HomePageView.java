@@ -1,66 +1,93 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import entity.Household;
 import entity.Entry;
+import entity.Household;
 import entity.User;
 
-public class HomePageView extends JFrame {
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
+import interface_adapter.home_page.HomePageViewModel;
+import use_case.home_display.*;
+
+
+public class HomePageView extends JPanel {
+    private final String viewName = "home page";
     private Household household;
     private JPanel homeTopBar;
     private JPanel navTopBar;
     private JPanel currentTopBar;
+    private final HomePageViewModel viewModel;
+    private PieChartPanel piePanel;
+    private JPanel categoryList;
+    private JButton addButton;
+    private JLabel categoryLabel;
+    private JPanel pieWrapper;
+    private JScrollPane scrollPane;
 
-    public HomePageView(Household household) {
-        this.household = household;
+    public HomePageView(HomePageViewModel viewModel) {
+        this.viewModel = viewModel;
+        this.setLayout(new BorderLayout());
+        this.setPreferredSize(new Dimension(350, 600));
 
-        setTitle("Budgeting App");
-        setSize(350, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        initializeUI();
+    }
 
-        homeTopBar = new JPanel(new BorderLayout());
-        homeTopBar.setBackground(new Color(42, 42, 42));
-        homeTopBar.setPreferredSize(new Dimension(getWidth(), 50));
-
-        JButton homeButton = new JButton("\u2302");
+    private void initializeUI() {
+        // Top bar
+        this.homeTopBar = new JPanel(new BorderLayout());
+        this.homeTopBar.setBackground(new Color(42, 42, 42));
+        this.homeTopBar.setPreferredSize(new Dimension(350, 50));
+        JButton homeButton = new JButton("⌂");
         homeButton.setFont(new Font("SansSerif", Font.BOLD, 20));
         homeButton.setFocusPainted(false);
         homeButton.setBorderPainted(false);
         homeButton.setContentAreaFilled(false);
         homeButton.setForeground(Color.white);
-        homeTopBar.add(homeButton, BorderLayout.WEST);
-
-        JButton menuButton = new JButton("\u2630");
+        this.homeTopBar.add(homeButton, BorderLayout.WEST);
+        JButton menuButton = new JButton("☰");
         menuButton.setFont(new Font("SansSerif", Font.BOLD, 24));
         menuButton.setFocusPainted(false);
         menuButton.setBorderPainted(false);
         menuButton.setContentAreaFilled(false);
         menuButton.setForeground(Color.white);
-        homeTopBar.add(menuButton, BorderLayout.EAST);
+        this.homeTopBar.add(menuButton, BorderLayout.EAST);
+        this.currentTopBar = this.homeTopBar;
+        this.add(this.currentTopBar, BorderLayout.NORTH);
 
-        currentTopBar = homeTopBar;
-        add(currentTopBar, BorderLayout.NORTH);
-
-        navTopBar = new JPanel(new BorderLayout());
-        navTopBar.setBackground(new Color(42, 42, 42));
-        navTopBar.setPreferredSize(new Dimension(getWidth(), 50));
-
+        // Navigation bar
+        this.navTopBar = new JPanel(new BorderLayout());
+        this.navTopBar.setBackground(new Color(42, 42, 42));
+        this.navTopBar.setPreferredSize(new Dimension(350, 50));
         JButton closeNavButton = new JButton("X");
         closeNavButton.setFont(new Font("Arial", Font.BOLD, 20));
         closeNavButton.setFocusPainted(false);
         closeNavButton.setBorderPainted(false);
         closeNavButton.setContentAreaFilled(false);
         closeNavButton.setForeground(Color.white);
-        navTopBar.add(closeNavButton, BorderLayout.WEST);
-
+        this.navTopBar.add(closeNavButton, BorderLayout.WEST);
         JPanel navButtonsPanel = new JPanel();
         navButtonsPanel.setBackground(new Color(42, 42, 42));
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
-        for (int i = 1; i <= 6; i++) {
+        for(int i = 1; i <= 6; ++i) {
             JButton iconButton = new JButton("★");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
@@ -72,112 +99,144 @@ public class HomePageView extends JFrame {
 
         JPanel rightNavWrapper = new JPanel(new BorderLayout());
         rightNavWrapper.setBackground(new Color(42, 42, 42));
-
         JPanel separatorPanel = new JPanel();
         separatorPanel.setPreferredSize(new Dimension(2, 40));
         separatorPanel.setBackground(Color.LIGHT_GRAY);
-
         rightNavWrapper.add(separatorPanel, BorderLayout.WEST);
         rightNavWrapper.add(navButtonsPanel, BorderLayout.CENTER);
+        this.navTopBar.add(rightNavWrapper, BorderLayout.CENTER);
+        homeButton.addActionListener((e) -> this.refreshHome());
+        menuButton.addActionListener((e) -> this.switchTopBar(this.navTopBar));
+        closeNavButton.addActionListener((e) -> this.switchTopBar(this.homeTopBar));
 
-        navTopBar.add(rightNavWrapper, BorderLayout.CENTER);
+        // Initialize center content (will be populated when household is set)
+        this.categoryLabel = new JLabel("Category Spending: ");
+        this.categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        this.categoryList = new JPanel();
+        this.categoryList.setLayout(new BoxLayout(this.categoryList, BoxLayout.Y_AXIS));
 
-        homeButton.addActionListener(e -> refreshHome());
-        menuButton.addActionListener(e -> switchTopBar(navTopBar));
-        closeNavButton.addActionListener(e -> switchTopBar(homeTopBar));
+        // Create empty pie chart initially
+        Map<String, Float> emptyTotals = new LinkedHashMap<>();
+        this.piePanel = new PieChartPanel(emptyTotals, 0.0F);
+        this.piePanel.setPreferredSize(new Dimension(300, 300));
 
-        ArrayList<Entry> entries = new ArrayList<>();
-        for(User user : household.getUsers()) {
-            entries.addAll(user.getEntries());
+        this.pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, -40));
+        this.pieWrapper.add(this.piePanel);
+
+        JButton monthButton = new JButton("This Month ▼");
+        monthButton.setFont(new Font("Arial", Font.BOLD, 16));
+        monthButton.setFocusPainted(false);
+        monthButton.setBorderPainted(false);
+        monthButton.setContentAreaFilled(false);
+        monthButton.setForeground(Color.black);
+        JPopupMenu monthMenu = new JPopupMenu();
+        String[] months = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        int currentMonth = LocalDate.now().getMonthValue();
+
+        for(int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); --i) {
+            JMenuItem item = new JMenuItem(months[i]);
+            item.addActionListener((e) -> monthButton.setText(item.getText() + "▼"));
+            monthMenu.add(item);
         }
 
-        float totalSpent = 0f;
-        Map<String, Float> categoryTotals = new HashMap<>();
+        monthMenu.add("Full Year");
+        monthButton.addActionListener((e) -> monthMenu.show(monthButton, 0, monthButton.getHeight()));
+        JPanel topCenterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topCenterPanel.add(monthButton);
 
-        for(Entry e: entries) {
-            if (e.getAmount() < 0){
+        this.scrollPane = new JScrollPane(this.categoryList);
+        JPanel center = new JPanel(new BorderLayout());
+        center.add(topCenterPanel, BorderLayout.NORTH);
+        center.add(this.pieWrapper, BorderLayout.CENTER);
+        center.add(this.scrollPane, BorderLayout.SOUTH);
+        this.add(center, BorderLayout.CENTER);
+
+        // Bottom button
+        this.addButton = new JButton("+");
+        this.addButton.setFont(new Font("Arial", Font.BOLD, 30));
+        this.addButton.setPreferredSize(new Dimension(70, 70));
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(this.addButton);
+        this.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Listen to viewModel changes
+        viewModel.addListener((entries) -> {
+            Map<String, Float> newTotals = this.computeCategoryTotals(entries);
+            float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
+            this.pieWrapper.remove(this.piePanel);
+            this.piePanel = new PieChartPanel(newTotals, newTotal);
+            this.piePanel.setPreferredSize(new Dimension(300, 300));
+            this.pieWrapper.removeAll();
+            this.pieWrapper.add(this.piePanel);
+            this.pieWrapper.revalidate();
+            this.pieWrapper.repaint();
+            this.categoryList.removeAll();
+            this.populateCategoryList(this.categoryList, newTotals);
+            this.categoryList.revalidate();
+            this.categoryList.repaint();
+        });
+    }
+
+    public void setHousehold(Household household) {
+        this.household = household;
+        refreshData();
+    }
+
+    private void refreshData() {
+        if (household == null) {
+            return;
+        }
+
+        HomeDisplayInteractor interactor = new HomeDisplayInteractor(viewModel);
+        List<Entry> allEntries = new ArrayList<>();
+        for (User user : household.getUsers()) {
+            allEntries.addAll(user.getEntries());
+        }
+        HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
+        interactor.execute(request);
+    }
+
+    private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
+        Map<String, Float> categoryTotals = new LinkedHashMap();
+        float totalSpent = 0.0F;
+
+        for(Entry e : entries) {
+            if (e.getAmount() < 0.0F) {
                 float amt = -e.getAmount();
                 totalSpent += amt;
                 categoryTotals.merge(e.getCategory(), amt, Float::sum);
             }
         }
 
-        PieChartPanel piePanel = new PieChartPanel(categoryTotals, totalSpent);
-        piePanel.setPreferredSize(new Dimension(450, 450));
+        return categoryTotals;
+    }
 
-        JLabel categoryLabel = new JLabel("Category Spending: ");
-        categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+    private void populateCategoryList(JPanel categoryListPanel, Map<String, Float> categoryTotals) {
+        categoryListPanel.add(this.categoryLabel);
 
-        JPanel categoryList = new JPanel();
-        categoryList.setLayout(new BoxLayout(categoryList, BoxLayout.Y_AXIS));
-
-        categoryList.add(categoryLabel);
-        for (String category : categoryTotals.keySet()) {
-            float amt = categoryTotals.get(category);
+        for(String category : categoryTotals.keySet()) {
+            float amt = (Float)categoryTotals.get(category);
             JLabel label = new JLabel(category + ": $" + amt);
             label.setFont(new Font("Arial", Font.PLAIN, 18));
-            categoryList.add(label);
+            categoryListPanel.add(label);
         }
-
-        JScrollPane scrollPane = new JScrollPane(categoryList);
-
-        JButton monthButton = new JButton("This Month \u25BC");
-        monthButton.setFont(new Font("Arial", Font.BOLD, 16));
-        monthButton.setFocusPainted(false);
-        monthButton.setBorderPainted(false);
-        monthButton.setContentAreaFilled(false);
-        monthButton.setForeground(Color.black);
-
-        JPopupMenu monthMenu = new JPopupMenu();
-        String[] months = {"January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"};
-        int currentMonth = java.time.LocalDate.now().getMonthValue();
-
-        for (int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); i--) {
-            JMenuItem item = new JMenuItem(months[i]);
-            item.addActionListener(e -> monthButton.setText(item.getText() + "\u25BC"));
-            monthMenu.add(item);
-        }
-        monthMenu.add("Full Year");
-
-        monthButton.addActionListener(e -> monthMenu.show(monthButton, 0, monthButton.getHeight()));
-
-        JPanel topCenterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topCenterPanel.add(monthButton);
-
-        JPanel pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, -40));
-        pieWrapper.add(piePanel);
-
-        JPanel center = new JPanel(new BorderLayout());
-        center.add(topCenterPanel, BorderLayout.NORTH);
-        center.add(pieWrapper, BorderLayout.CENTER);
-        center.add(scrollPane, BorderLayout.SOUTH);
-
-        add(center, BorderLayout.CENTER);
-
-        JButton addButton = new JButton("+");
-        addButton.setFont(new Font("Arial", Font.BOLD, 30));
-        addButton.setPreferredSize(new Dimension(70, 70));
-
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.add(addButton);
-
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        setVisible(true);
     }
 
     private void switchTopBar(JPanel newTopBar) {
-        remove(currentTopBar);
-        currentTopBar = newTopBar;
-        add(currentTopBar, BorderLayout.NORTH);
-        revalidate();
-        repaint();
+        this.remove(this.currentTopBar);
+        this.currentTopBar = newTopBar;
+        this.add(this.currentTopBar, BorderLayout.NORTH);
+        this.revalidate();
+        this.repaint();
     }
 
     private void refreshHome() {
-        revalidate();
-        repaint();
+        this.revalidate();
+        this.repaint();
         System.out.println("Home Refreshed");
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }

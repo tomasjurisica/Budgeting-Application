@@ -10,7 +10,8 @@ public class AddUserInteractor implements AddUserInputBoundary {
     private final AddUserOutputBoundary outputBoundary;
     private final FileUserDataAccessObject userDAO;
 
-    public AddUserInteractor(Household household, AddUserOutputBoundary outputBoundary, FileUserDataAccessObject userDAO) {
+    public AddUserInteractor(Household household, AddUserOutputBoundary outputBoundary,
+                             FileUserDataAccessObject userDAO) {
         this.household = household;
         this.outputBoundary = outputBoundary;
         this.userDAO = userDAO;
@@ -18,7 +19,7 @@ public class AddUserInteractor implements AddUserInputBoundary {
 
     @Override
     public void addUser(AddUserInputData inputData) {
-        String name = inputData.getName();
+        String name = inputData.name();
 
         // Check if a user with the same name already exists in the household
         for (User existingUser : household.getUsers()) {

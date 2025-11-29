@@ -12,10 +12,18 @@ public class HouseholdDashboardState {
     private final List<User> users = new ArrayList<>();
     private String addUserError;
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public Household getHousehold() { return household; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Household getHousehold() {
+        return household;
+    }
+
     public void setHousehold(Household household) {
         this.household = household;
         // Populate users list from household when household is set
@@ -31,10 +39,17 @@ public class HouseholdDashboardState {
         return household != null ? household.getHouseholdID() : "";
     }
 
-    public List<User> getUsers() { return users; }
+    public List<User> getUsers() {
+        return users;
+    }
 
-    public String getAddUserError() { return addUserError; }
-    public void setAddUserError(String addUserError) { this.addUserError = addUserError; }
+    public String getAddUserError() {
+        return addUserError;
+    }
+
+    public void setAddUserError(String addUserError) {
+        this.addUserError = addUserError;
+    }
 
     /**
      * Refreshes the users list from the household.

@@ -10,5 +10,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="eed3si9n.gigahorse.okhttp_2.10" level="project" />
+    <orderEntry type="library" name="json-20250517-javadoc" level="project" />
+    <orderEntry type="library" name="json-20250517" level="project" />
   </component>
 </module>

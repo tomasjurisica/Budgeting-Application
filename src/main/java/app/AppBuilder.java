@@ -1,23 +1,34 @@
 package app;
 
 import data_access.FileUserDataAccessObject;
+import entity.Entry;
+import entity.Household;
 import entity.HouseholdFactory;
+import entity.User;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.select_user.SelectUserController;
+import interface_adapter.select_user.SelectUserPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import repositories.InMemoryEntryRepository;
+import view.HomePageView;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
+import use_case.select_user.SelectUserInputBoundary;
+import use_case.select_user.SelectUserInteractor;
+import use_case.select_user.SelectUserOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -27,7 +38,9 @@ import view.SignupView;
 import view.ViewManager;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -52,6 +65,10 @@ public class AppBuilder {
     private HouseholdDashboardViewModel householdDashboardViewModel;
     private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
+    private Household household;
+    private InMemoryEntryRepository repo;
+    private interface_adapter.home_page.HomePageViewModel homePageViewModel;
+    private HomePageView homePage;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -75,6 +92,16 @@ public class AppBuilder {
         householdDashboardViewModel = new HouseholdDashboardViewModel(); // interactor injected after login
         householdDashboardView = new HouseholdDashboardView(householdDashboardViewModel);
         cardPanel.add(householdDashboardView, householdDashboardView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addHomePageView() {
+        // Ensure homePageViewModel is initialized
+        if (homePageViewModel == null) {
+            homePageViewModel = new HomePageViewModel();
+        }
+        homePage = new HomePageView(homePageViewModel);
+        cardPanel.add(homePage, homePage.getViewName());
         return this;
     }
 
@@ -109,6 +136,7 @@ public class AppBuilder {
 
     /**
      * Adds the Logout Use Case to the application.
+     *
      * @return this builder
      */
     public AppBuilder addLogoutUseCase() {
@@ -120,6 +148,60 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);
+        return this;
+    }
+
+    /**
+     * Adds the SelectUser Use Case to the application.
+     *
+     * @return this builder
+     */
+    public AppBuilder addSelectUserUseCase() {
+        // Ensure homePageViewModel and homePageView are initialized
+        if (homePageViewModel == null) {
+            homePageViewModel = new HomePageViewModel();
+        }
+        if (homePage == null) {
+            homePage = new HomePageView(homePageViewModel);
+            cardPanel.add(homePage, homePage.getViewName());
+        }
+
+        final SelectUserOutputBoundary selectUserPresenter = new SelectUserPresenter(
+                homePageViewModel,
+                viewManagerModel,
+                householdDashboardViewModel,
+                homePage
+        );
+
+        final SelectUserInputBoundary selectUserInteractor = new SelectUserInteractor(selectUserPresenter);
+
+        final SelectUserController selectUserController = new SelectUserController(selectUserInteractor);
+        householdDashboardView.setSelectUserController(selectUserController);
+        return this;
+    }
+
+    public AppBuilder initBudgetingObjects() {
+        User u = new User("Name");
+        ArrayList<Entry> foodEntry = new ArrayList<>();
+        foodEntry.add(new Entry("Food", "Groceries", -120, java.time.LocalDate.now()));
+        u.addEntry(foodEntry);
+
+        ArrayList<Entry> healthEntry = new ArrayList<>();
+        healthEntry.add(new Entry("Health", "Health", -80, java.time.LocalDate.now()));
+        u.addEntry(healthEntry);
+
+        household = new Household("defaultPassword", "defaultID");
+        household.addUser(u);
+
+        repo = new InMemoryEntryRepository();
+        for (User user : household.getUsers()) {
+            for (Entry e : user.getEntries()) {
+                repo.addEntry(e);  // pass each Entry individually
+            }
+
+            homePageViewModel = new HomePageViewModel();
+            homePageViewModel.setEntries(repo.GetAllEntries());
+        }
         return this;
     }
 
