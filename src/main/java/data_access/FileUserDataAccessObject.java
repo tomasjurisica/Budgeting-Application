@@ -1,9 +1,7 @@
 package data_access;
 
-import entity.Entry;
-import entity.Household;
-import entity.HouseholdFactory;
-import entity.User;
+import entity.*;
+import use_case.add_household_entry.AddHouseholdEntryDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -18,6 +16,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +26,8 @@ import java.util.Map;
 public class FileUserDataAccessObject implements
         SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
-        LogoutUserDataAccessInterface {
+        LogoutUserDataAccessInterface,
+        AddHouseholdEntryDataAccessInterface {
 
     private final File jsonFile;
     // Map stores HouseholdID (String) -> Household object
@@ -155,6 +155,55 @@ public class FileUserDataAccessObject implements
         return entries;
     }
 
+    @Override
+    /**
+     *
+     * @param newEntry: new household entry to be added
+     */
+    public void addHouseholdEntry(SharedEntry newEntry) {
+        Household userHousehold = get(getCurrentUsername());
+        List<Entry> individualEntries = newEntry.getEntries();
+        List<User> selectedUsers = newEntry.getUsers();
+
+        try (FileReader reader = new FileReader(jsonFile)) {
+            // Read the entire file content as a single JSONObject
+            JSONObject data = new JSONObject(new JSONTokener(reader));
+
+            // Add the new household entry to the JSON
+            JSONObject householdData = data.getJSONObject(userHousehold.getHouseholdID());
+            JSONObject entryJson = new JSONObject();
+            entryJson.put("name", newEntry.getName());
+            entryJson.put("category", newEntry.getCategory());
+            entryJson.put("amount", newEntry.getAmount());
+            entryJson.put("date", newEntry.getDate().toString());
+            householdData.getJSONArray("householdEntries").put(entryJson);
+
+            // Add entry to each user
+            JSONArray users = data.getJSONArray("users");
+
+            int selectedUserIndex = 0;
+
+            for (int i = 0; i < users.length(); i++) {
+                JSONObject userInfo = users.getJSONObject(i);
+                String userName = userInfo.get("name").toString();
+                if (userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
+                    Entry userEntry = individualEntries.get(selectedUserIndex);
+                    entryJson = new JSONObject();
+                    entryJson.put("name", userEntry.getName());
+                    entryJson.put("category", userEntry.getCategory());
+                    entryJson.put("amount", userEntry.getAmount());
+                    entryJson.put("date", userEntry.getDate().toString());
+
+                    userInfo.getJSONArray("entries").put(entryJson);
+                    selectedUserIndex++;
+                }
+            }
+
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Error loading JSON data from file", e);
+        }
+    }
 
     @Override
     public void save(Household household) {
@@ -180,5 +229,10 @@ public class FileUserDataAccessObject implements
     @Override
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
+    }
+
+    @Override
+    public ArrayList<User> getUsers() {
+        return get(getCurrentUsername()).getUsers();
     }
 }
