@@ -184,17 +184,21 @@ public class FileUserDataAccessObject implements
             int selectedUserIndex = 0;
 
             for (int i = 0; i < users.length(); i++) {
+                // Get the list of users
                 JSONObject userInfo = users.getJSONObject(i);
                 String userName = userInfo.get("name").toString();
+
+                // Only if the user is on the household entry, add the object
                 if (userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
+                    // Create entry JSON object and put it in the array
                     Entry userEntry = individualEntries.get(selectedUserIndex);
                     entryJson = new JSONObject();
                     entryJson.put("name", userEntry.getName());
                     entryJson.put("category", userEntry.getCategory());
                     entryJson.put("amount", userEntry.getAmount());
                     entryJson.put("date", userEntry.getDate().toString());
-
                     userInfo.getJSONArray("entries").put(entryJson);
+
                     selectedUserIndex++;
                 }
             }

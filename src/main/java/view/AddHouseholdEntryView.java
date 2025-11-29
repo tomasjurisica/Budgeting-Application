@@ -13,6 +13,7 @@ import java.util.List;
 // CA imports
 import interface_adapter.add_household_entry.AddHouseholdEntryViewModel;
 import interface_adapter.add_household_entry.AddHouseholdEntryState;
+import interface_adapter.add_household_entry.AddHouseholdEntryController;
 
 // will be removed
 
@@ -37,6 +38,7 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
 
     // CA
     private final AddHouseholdEntryViewModel viewModel;
+    private AddHouseholdEntryController addHouseholdEntryController;
 
     public AddHouseholdEntryView(AddHouseholdEntryViewModel viewModel) {
         // CA
@@ -49,7 +51,6 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel main = new JPanel(new BorderLayout());
-        // need to add user list
 
         // Enter name
         JPanel namePanel = new JPanel();
@@ -82,10 +83,24 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         inputs.add(categoryPanel);
         inputs.add(datePanel);
         inputs.add(amountPanel);
-
         main.add(inputs, BorderLayout.NORTH);
 
+        /*
+
+        !!! Need to hook up list of usernames to file !!!
+
+         */
+
         // Pick users to split between
+        List<String> userNames = new ArrayList<>();
+
+        for (String userName : userNames) {
+            JCheckBox cb = new JCheckBox(userName);
+            cb.setFont(cb.getFont().deriveFont(18f));
+            userCheckBoxes.add(cb);
+            userSelectPanel.add(cb);
+        }
+
         userSelectPanel.setLayout(new BoxLayout(userSelectPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(userSelectPanel);
         main.add(scroll, BorderLayout.CENTER);
@@ -130,19 +145,11 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
             );
             return;
         }
-
-        String[] userNames = state.getAllUserNames();
-
-        for (String userName : userNames) {
-            JCheckBox cb = new JCheckBox(userName);
-            cb.setFont(cb.getFont().deriveFont(18f));
-            userCheckBoxes.add(cb);
-            userSelectPanel.add(cb);
-        }
     }
 
-
-
+    /**
+     * After hitting "select users", create new window with option to input percents
+     */
     private void percentageInputs() {
         selectedUserNames.clear();
         percentagePanel.removeAll();
@@ -198,12 +205,16 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
                 percents[i] = Float.parseFloat(percentageFields.get(i).getText());
             }
 
-            // Need to hook up to CA
-
+            // Push through to CA/Controller
+            addHouseholdEntryController.execute(name, category, entryDate, total, selectedUserNames, percents);
 
         }
         catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
+    }
+
+    public void setAddHouseholdEntryController(AddHouseholdEntryController addHouseholdEntryController) {
+        this.addHouseholdEntryController = addHouseholdEntryController;
     }
 }

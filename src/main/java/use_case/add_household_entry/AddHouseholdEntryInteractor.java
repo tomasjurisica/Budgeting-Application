@@ -1,6 +1,7 @@
 package use_case.add_household_entry;
 
 import entity.*;
+import use_case.login.LoginUserDataAccessInterface;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,19 +27,45 @@ public class AddHouseholdEntryInteractor implements AddHouseholdEntryInputBounda
         List<String> userNames = inputData.getUserNames();
         float[] percents = inputData.getPercents();
 
-        // Get users from file
-        List<User> users = new ArrayList<>();
-        for (String userName : userNames) {
-
+        // If list of users is empty, present fail
+        if (userNames.isEmpty()) {
+            presenter.prepareFailView("No users selected.");
+            return;
         }
 
-        // Create and add shared entry
-        Household household = users.getFirst().getHousehold();
+        // If percents is over 100, present fail
+        float totalPercents = 0;
+        for (float percent : percents) {
+            totalPercents += percent;
+        }
 
+        if (totalPercents > 100) {
+            presenter.prepareFailView("Percent total is over 100.");
+            return;
+        }
+
+        // Get users from file
+        List<User> allUsers = dataAcess.getUsers();
+        List<User> users = new ArrayList<>();
+
+        // Only keep list of users added to entry
+        for (String username : userNames) {
+            for (User user : allUsers) {
+                if (user.getName().equals(username)) {
+                    users.add(user);
+                    break;
+                }
+            }
+        }
+
+        // Create shared entry
         Entry headEntry = new Entry(name, category, total, date);
         SharedEntry addedEntry = new SharedEntry(headEntry, users, percents);
 
-        household.addHouseholdEntry(addedEntry);
+        // Write to JSON
+        dataAcess.addHouseholdEntry(addedEntry);
+
+        // Do prepare success view to reload home page
 
     }
 }
