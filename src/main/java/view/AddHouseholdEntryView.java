@@ -14,11 +14,14 @@ import java.util.List;
 import interface_adapter.add_household_entry.AddHouseholdEntryViewModel;
 import interface_adapter.add_household_entry.AddHouseholdEntryState;
 import interface_adapter.add_household_entry.AddHouseholdEntryController;
+import interface_adapter.ViewManagerModel;
+import entity.Household;
+import entity.User;
 
-// will be removed
 
+public class AddHouseholdEntryView extends JPanel implements PropertyChangeListener {
+    private final String viewName = "add entry";
 
-public class AddHouseholdEntryView extends JFrame implements PropertyChangeListener {
     // panels
     private final JTextField nameField = new JTextField(12);
     private final JTextField categoryField = new JTextField(12);
@@ -39,6 +42,7 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
     // CA
     private final AddHouseholdEntryViewModel viewModel;
     private AddHouseholdEntryController addHouseholdEntryController;
+    private ViewManagerModel viewManagerModel;
 
     public AddHouseholdEntryView(AddHouseholdEntryViewModel viewModel) {
         // CA
@@ -46,11 +50,22 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         this.viewModel.addPropertyChangeListener(this);
 
         // Init
-        setTitle("Add New Entry");
-        setSize(350, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(new BorderLayout());
+        this.setPreferredSize(new Dimension(350, 600));
 
-        JPanel main = new JPanel(new BorderLayout());
+        // Top bar with back button
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(new Color(42, 42, 42));
+        topBar.setPreferredSize(new Dimension(350, 50));
+        JButton backButton = new JButton("← Back");
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setFocusPainted(false);
+        backButton.setForeground(Color.white);
+        backButton.setContentAreaFilled(false);
+        backButton.setBorderPainted(false);
+        backButton.addActionListener(e -> navigateBack());
+        topBar.add(backButton, BorderLayout.WEST);
+        this.add(topBar, BorderLayout.NORTH);
 
         // Enter name
         JPanel namePanel = new JPanel();
@@ -64,13 +79,12 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
 
         // Enter date
         JPanel datePanel = new JPanel();
-        datePanel.add(new JLabel("Date of Entry (DD/MM/YYYY)"));
+        datePanel.add(new JLabel("Date of Entry (DD/MM/YYYY):"));
         datePanel.add(dayField);
         datePanel.add(new JLabel("/"));
         datePanel.add(monthField);
         datePanel.add(new JLabel("/"));
         datePanel.add(yearField);
-        datePanel.add(amountField);
 
         // Enter the total amount
         JPanel amountPanel = new JPanel();
@@ -83,28 +97,11 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         inputs.add(categoryPanel);
         inputs.add(datePanel);
         inputs.add(amountPanel);
-        main.add(inputs, BorderLayout.NORTH);
-
-        /*
-
-        !!! Need to hook up list of usernames to file !!!
-
-         */
+        this.add(inputs, BorderLayout.NORTH);
 
         // Pick users to split between
-        List<String> userNames = new ArrayList<>();
-
-        for (String userName : userNames) {
-            JCheckBox cb = new JCheckBox(userName);
-            cb.setFont(cb.getFont().deriveFont(18f));
-            userCheckBoxes.add(cb);
-            userSelectPanel.add(cb);
-        }
-
         userSelectPanel.setLayout(new BoxLayout(userSelectPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(userSelectPanel);
-        main.add(scroll, BorderLayout.CENTER);
-
 
         // Lock in selected users
         JButton selectButton = new JButton("Select User(s)");
@@ -113,23 +110,19 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         JPanel center = new JPanel(new BorderLayout());
         center.add(scroll, BorderLayout.CENTER);
         center.add(selectButton, BorderLayout.SOUTH);
-        main.add(center, BorderLayout.CENTER);
-
+        this.add(center, BorderLayout.CENTER);
 
         // Enter percent for each user
         JPanel southWrapper = new JPanel(new BorderLayout());
         southWrapper.add(new JLabel("For each user, enter percent owed"), BorderLayout.NORTH);
         southWrapper.add(percentagePanel, BorderLayout.CENTER);
 
-
         // Finalize and add entry
         JButton addButton = new JButton("Add Entry");
         southWrapper.add(addButton, BorderLayout.SOUTH);
         addButton.addActionListener(e -> onAdd());
 
-        main.add(southWrapper, BorderLayout.SOUTH);
-
-        add(main);
+        this.add(southWrapper, BorderLayout.SOUTH);
     }
 
     @Override
@@ -145,6 +138,41 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
             );
             return;
         }
+
+        // If entry was added successfully (no error and has user names), show success message
+        // and optionally navigate back (user can use back button)
+        if (!state.isHasError() && state.getAllUserNames() != null && state.getAllUserNames().length > 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Entry added successfully!",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            // Clear fields
+            nameField.setText("");
+            categoryField.setText("");
+            dayField.setText("");
+            monthField.setText("");
+            yearField.setText("");
+            amountField.setText("");
+            selectedUserNames.clear();
+            percentagePanel.removeAll();
+            percentageFields.clear();
+            for (JCheckBox cb : userCheckBoxes) {
+                cb.setSelected(false);
+            }
+        }
+    }
+
+    private void navigateBack() {
+        if (viewManagerModel != null) {
+            viewManagerModel.setState("home page");
+            viewManagerModel.firePropertyChange();
+        }
+    }
+
+    public void setViewManagerModel(ViewManagerModel viewManagerModel) {
+        this.viewManagerModel = viewManagerModel;
     }
 
     /**
@@ -158,7 +186,7 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
         for (int i = 0; i < userCheckBoxes.size(); i++) {
             JCheckBox cb = userCheckBoxes.get(i);
             if (cb.isSelected()) {
-                String userName = "Fill with proper input";
+                String userName = cb.getText();
 
                 percentagePanel.add(new JLabel(userName));
                 JTextField percent = new JTextField("0", 3);
@@ -172,6 +200,33 @@ public class AddHouseholdEntryView extends JFrame implements PropertyChangeListe
 
         percentagePanel.revalidate();
         percentagePanel.repaint();
+    }
+
+    /**
+     * Loads users from household and displays them as checkboxes
+     */
+    public void loadUsersFromHousehold(Household household) {
+        if (household == null) {
+            return;
+        }
+
+        userSelectPanel.removeAll();
+        userCheckBoxes.clear();
+
+        List<User> users = household.getUsers();
+        for (User user : users) {
+            JCheckBox cb = new JCheckBox(user.getName());
+            cb.setFont(cb.getFont().deriveFont(18f));
+            userCheckBoxes.add(cb);
+            userSelectPanel.add(cb);
+        }
+
+        userSelectPanel.revalidate();
+        userSelectPanel.repaint();
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 
     private void onAdd() {

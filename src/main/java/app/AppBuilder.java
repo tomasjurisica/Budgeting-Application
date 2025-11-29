@@ -20,6 +20,7 @@ import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import repositories.InMemoryEntryRepository;
 import view.HomePageView;
+import view.AddHouseholdEntryView;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -106,6 +107,23 @@ public class AppBuilder {
         }
         homePage = new HomePageView(homePageViewModel);
         cardPanel.add(homePage, homePage.getViewName());
+        // Wire navigation
+        homePage.setViewManagerModel(viewManagerModel);
+        // Wire AddHouseholdEntryView if it already exists
+        wireHomePageAndAddEntryView();
+        return this;
+    }
+
+    public AppBuilder addAddHouseholdEntryView() {
+        if (addHouseholdEntryViewModel == null) {
+            addHouseholdEntryViewModel = new AddHouseholdEntryViewModel();
+        }
+        if (addHouseholdEntryView == null) {
+            addHouseholdEntryView = new AddHouseholdEntryView(addHouseholdEntryViewModel);
+            cardPanel.add(addHouseholdEntryView, addHouseholdEntryView.getViewName());
+        }
+        // Wire AddHouseholdEntryView to HomePageView if homePage already exists
+        wireHomePageAndAddEntryView();
         return this;
     }
 
@@ -160,6 +178,15 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addHouseholdEntryUseCase() {
+        // Ensure view model and view are initialized
+        if (addHouseholdEntryViewModel == null) {
+            addHouseholdEntryViewModel = new AddHouseholdEntryViewModel();
+        }
+        if (addHouseholdEntryView == null) {
+            addHouseholdEntryView = new AddHouseholdEntryView(addHouseholdEntryViewModel);
+            cardPanel.add(addHouseholdEntryView, addHouseholdEntryView.getViewName());
+        }
+
         final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
                 AddHouseholdEntryPresenter(addHouseholdEntryViewModel);
 
@@ -169,7 +196,22 @@ public class AppBuilder {
         final AddHouseholdEntryController addHouseholdEntryController =
                 new AddHouseholdEntryController(addHouseholdInteractor);
         addHouseholdEntryView.setAddHouseholdEntryController(addHouseholdEntryController);
+
+        // Wire ViewManagerModel to AddHouseholdEntryView for navigation
+        addHouseholdEntryView.setViewManagerModel(viewManagerModel);
+
+        // Wire AddHouseholdEntryView to HomePageView for navigation
+        if (homePage != null) {
+            homePage.setAddHouseholdEntryView(addHouseholdEntryView);
+        }
         return this;
+    }
+
+    // Helper method to ensure homePage and addHouseholdEntryView are wired
+    private void wireHomePageAndAddEntryView() {
+        if (homePage != null && addHouseholdEntryView != null) {
+            homePage.setAddHouseholdEntryView(addHouseholdEntryView);
+        }
     }
 
     /**

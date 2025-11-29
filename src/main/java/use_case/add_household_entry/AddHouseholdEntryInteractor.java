@@ -65,7 +65,13 @@ public class AddHouseholdEntryInteractor implements AddHouseholdEntryInputBounda
         // Write to JSON
         dataAcess.addHouseholdEntry(addedEntry);
 
-        // Do prepare success view to reload home page
+        // Prepare success view
+        String[] userNamesArray = new String[users.size()];
+        for (int i = 0; i < users.size(); i++) {
+            userNamesArray[i] = users.get(i).getName();
+        }
+        AddHouseholdEntryOutputData outputData = new AddHouseholdEntryOutputData(userNamesArray);
+        presenter.prepareSuccessView(outputData);
 
     }
 }
