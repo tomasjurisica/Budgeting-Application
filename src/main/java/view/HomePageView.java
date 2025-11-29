@@ -1,5 +1,7 @@
 package view;
 
+import data_access.ExchangeRateDataAccess;
+import data_access.FileUserDataAccessObject;
 import entity.Entry;
 import entity.Household;
 import entity.User;
@@ -16,13 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.ViewManagerModel;
@@ -43,11 +39,11 @@ public class HomePageView extends JPanel {
     private JLabel categoryLabel;
     private JPanel pieWrapper;
     private JScrollPane scrollPane;
-    private ViewManagerModel viewManagerModel;
-    private AddHouseholdEntryView addHouseholdEntryView;
+    private final FileUserDataAccessObject userDao;
 
-    public HomePageView(HomePageViewModel viewModel) {
+    public HomePageView(HomePageViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
+        this.userDao = userDao;
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(350, 600));
 
@@ -99,7 +95,8 @@ public class HomePageView extends JPanel {
         navButtonsPanel.setBackground(new Color(42, 42, 42));
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
-        for(int i = 1; i <= 6; ++i) {
+        for(int i = 1; i <= 3; ++i) {
+
             JButton iconButton = new JButton("★");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
@@ -107,6 +104,10 @@ public class HomePageView extends JPanel {
             iconButton.setContentAreaFilled(false);
             iconButton.setForeground(Color.white);
             navButtonsPanel.add(iconButton);
+
+            if (i == 1) { // For example, first star opens currency converter
+                iconButton.addActionListener(e -> openCurrencyConverterPopup());
+            }
         }
 
         JPanel rightNavWrapper = new JPanel(new BorderLayout());
@@ -147,7 +148,11 @@ public class HomePageView extends JPanel {
 
         for(int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); --i) {
             JMenuItem item = new JMenuItem(months[i]);
-            item.addActionListener((e) -> monthButton.setText(item.getText() + "▼"));
+            int monthIndex = i + 1;
+            item.addActionListener((e) -> {
+                monthButton.setText(item.getText() + " ▼");
+                updatePieChartForMonth(monthIndex);
+            });
             monthMenu.add(item);
         }
 
@@ -190,9 +195,90 @@ public class HomePageView extends JPanel {
         });
     }
 
-    public void setHousehold(Household household) {
-        this.household = household;
-        refreshData();
+    public void setHousehold() {
+        String householdID = userDao.getCurrentUsername();
+        if(householdID == null) {
+            this.household = userDao.get(householdID);
+            refreshHome();
+        }
+        else {
+            System.out.println("No current user in DAO");
+        }
+    }
+
+    private List<Entry> filterEntriesByMonth(List<Entry> allEntries, int month) {
+        List<Entry> filtered = new ArrayList<>();
+        for (Entry e : allEntries) {
+            if (e.getDate().getMonthValue() == month) {
+                filtered.add(e);
+            }
+        }
+        return filtered;
+    }
+
+    private void openCurrencyConverterPopup() {
+        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(HomePageView.this), "Currency Converter", true);
+        dialog.setSize(400,250);
+        dialog.setLayout(new GridLayout(5, 2, 10, 10));
+
+        JComboBox<String> fromCurrency = new JComboBox<>(getCurrencyCodes());
+        JTextField amountField = new JTextField();
+        JComboBox<String> toCurrency = new JComboBox<>(getCurrencyCodes());
+
+        JLabel resultLabel = new JLabel("Converted amount: ");
+
+        JButton convertButton = new JButton("Convert");
+
+        ExchangeRateDataAccess exchangeRateDao = new ExchangeRateDataAccess();
+
+        convertButton.addActionListener((e) -> {
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                String from = (String) fromCurrency.getSelectedItem();
+                String to = (String) toCurrency.getSelectedItem();
+                double converted = exchangeRateDao.convertCurrency(from, to, amount);
+                resultLabel.setText(String.format("Converted amount: %.2f", converted));
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Enter a valid number");
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, ex.getMessage());
+            }
+        });
+
+        dialog.add(new JLabel("From:"));
+        dialog.add(fromCurrency);
+        dialog.add(new JLabel("Amount:"));
+        dialog.add(amountField);
+        dialog.add(new JLabel("To:"));
+        dialog.add(toCurrency);
+        dialog.add(new JLabel());
+        dialog.add(convertButton);
+        dialog.add(new JLabel());
+        dialog.add(resultLabel);
+
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private void updatePieChartForMonth(int month) {
+        List<Entry> allEntries = viewModel.getEntries();
+        List<Entry> monthEntries = filterEntriesByMonth(allEntries, month);
+
+        Map<String, Float> newTotals = computeCategoryTotals(monthEntries);
+        float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
+
+        this.pieWrapper.removeAll();
+        this.piePanel = new PieChartPanel(newTotals, newTotal);
+        this.piePanel.setPreferredSize(new Dimension(300, 300));
+        this.pieWrapper.add(this.piePanel);
+        this.pieWrapper.revalidate();
+        this.pieWrapper.repaint();
+
+        this.categoryList.removeAll();
+        populateCategoryList(this.categoryList, newTotals);
+        this.categoryList.revalidate();
+        this.categoryList.repaint();
     }
 
     private void refreshData() {
@@ -209,17 +295,21 @@ public class HomePageView extends JPanel {
         interactor.execute(request);
     }
 
+    private String[] getCurrencyCodes() {
+        return new String[]{"USD", "EUR", "GBP", "CAD", "JPY", "AUD"};
+    }
+
     private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
-        Map<String, Float> categoryTotals = new LinkedHashMap();
+        Map<String, Float> categoryTotals = new LinkedHashMap<>();
         float totalSpent = 0.0F;
 
         for(Entry e : entries) {
-            if (e.getAmount() < 0.0F) {
-                float amt = -e.getAmount();
-                totalSpent += amt;
-                categoryTotals.merge(e.getCategory(), amt, Float::sum);
+            float amt = Math.abs(e.getAmount());
+            totalSpent += amt;
+            categoryTotals.merge(e.getCategory(), amt, Float::sum);
+
             }
-        }
+
 
         return categoryTotals;
     }

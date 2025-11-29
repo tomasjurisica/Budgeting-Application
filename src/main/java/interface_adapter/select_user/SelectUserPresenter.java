@@ -57,7 +57,7 @@ public class SelectUserPresenter implements SelectUserOutputBoundary {
         homePageViewModel.setCurrentUser(selectedUser);
 
         // Update the HomePageView with the household
-        homePageView.setHousehold(household);
+        homePageView.setHousehold();
 
         // Switch to the home page view
         viewManagerModel.setState(homePageView.getViewName());

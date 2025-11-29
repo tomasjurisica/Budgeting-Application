@@ -1,6 +1,11 @@
 package use_case.login;
 
+import entity.Entry;
 import entity.Household;
+import entity.User;
+import interface_adapter.home_page.HomePageViewModel;
+
+import java.util.ArrayList;
 
 /**
  * The Login Interactor.
@@ -8,11 +13,13 @@ import entity.Household;
 public class LoginInteractor implements LoginInputBoundary {
     private final LoginUserDataAccessInterface userDataAccessObject;
     private final LoginOutputBoundary loginPresenter;
+    private final HomePageViewModel homePageViewModel;
 
     public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
-                           LoginOutputBoundary loginOutputBoundary) {
+                           LoginOutputBoundary loginOutputBoundary, HomePageViewModel homePageViewModel) {
         this.userDataAccessObject = userDataAccessInterface;
         this.loginPresenter = loginOutputBoundary;
+        this.homePageViewModel = homePageViewModel;
     }
 
     @Override
@@ -29,6 +36,12 @@ public class LoginInteractor implements LoginInputBoundary {
 
                 final Household household = userDataAccessObject.get(loginInputData.getUsername());
                 userDataAccessObject.setCurrentUsername(username);
+
+                ArrayList<Entry> allEntries = new ArrayList<>();
+                for (User user : household.getUsers()) {
+                    allEntries.addAll(user.getEntries());
+                }
+                homePageViewModel.setEntries(allEntries);
 
                 final LoginOutputData loginOutputData = new LoginOutputData(username, household);
                 loginPresenter.prepareSuccessView(loginOutputData);

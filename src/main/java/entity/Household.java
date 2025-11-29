@@ -178,4 +178,12 @@ public class Household {
 
         return result;
     }
+
+    public List<Entry> getAllEntries() {
+        List<Entry> allEntries = new ArrayList<>();
+        for (User u : users) {
+            allEntries.addAll(u.getEntries());
+        }
+        return allEntries;
+    }
 }

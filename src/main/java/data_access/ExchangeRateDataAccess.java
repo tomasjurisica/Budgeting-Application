@@ -15,7 +15,7 @@ import java.util.Map;
 public class ExchangeRateDataAccess {
 
     private static final String BASE_URL = "https://v6.exchangerate-api.com/v6";
-    private static final String API_KEY = "YOUR_API_KEY"; // Replace with your API key
+    private static final String API_KEY = "e6fd7504b02debf1b106cf08"; // Replace with your API key
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private final OkHttpClient client;
