@@ -185,13 +185,15 @@ public class User {
     public void addEntry(ArrayList<Entry> listOfEntries) {
         if (entries.isEmpty()) {
             entries.addAll(listOfEntries);
-        }
-        else {
+        } else {
             int i = 0;
             int j = 0;
 
             while (j < listOfEntries.size()) {
-                if (entries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
+                if (i >= entries.size()) {
+                    entries.add(listOfEntries.get(j));
+                    j++;
+                } else if (entries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
                     entries.add(i, listOfEntries.get(j));
                     j++;
                 }
