@@ -1,8 +1,12 @@
 package app;
 
 import data_access.FileUserDataAccessObject;
+import entity.Entry;
+import entity.Household;
 import entity.HouseholdFactory;
+import entity.User;
 import interface_adapter.ViewManagerModel;
+import viewmodels.HomePageViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -12,6 +16,8 @@ import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import repositories.InMemoryEntryRepository;
+import ui.HomePage;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -29,6 +35,7 @@ import view.ViewManager;
 import javax.swing.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -53,6 +60,10 @@ public class AppBuilder {
     private HouseholdDashboardViewModel householdDashboardViewModel;
     private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
+    private Household household;
+    private InMemoryEntryRepository repo;
+    private HomePageViewModel homePageViewModel;
+    private HomePage homePage;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -122,6 +133,31 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);
+        return this;
+    }
+
+    public AppBuilder initBudgetingObjects() {
+        User u = new User("Name");
+        ArrayList<Entry> foodEntry = new ArrayList<>();
+        foodEntry.add(new Entry("Food", "Groceries", -120, java.time.LocalDate.now()));
+        u.addEntry(foodEntry);
+
+        ArrayList<Entry> healthEntry = new ArrayList<>();
+        healthEntry.add(new Entry("Health", "Health", -80, java.time.LocalDate.now()));
+        u.addEntry(healthEntry);
+
+        household = new Household("defaultPassword", "defaultID");
+        household.addUser(u);
+
+        repo = new InMemoryEntryRepository();
+        for (User user : household.getUsers()) {
+            for (Entry e : user.getEntries()) {
+                repo.addEntry(e);  // pass each Entry individually
+            }
+
+            homePageViewModel = new HomePageViewModel();
+            homePageViewModel.setEntries(repo.GetAllEntries());
+        }
         return this;
     }
 

@@ -3,6 +3,8 @@ package interface_adapter.home_page;
 import interface_adapter.ViewModel;
 import use_case.select_user.*;
 
+import java.util.List;
+
 public class HomePageViewModel extends ViewModel<HomePageState>
     implements SelectUserOutputBoundary {
 
