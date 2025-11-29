@@ -33,5 +33,26 @@
             "entries": [],
             "name": "ale2"
         }]
+    },
+    "defaultPassword": {
+        "password": "defaultID",
+        "householdEntries": [],
+        "users": [{
+            "entries": [
+                {
+                    "date": "2025-11-29",
+                    "amount": -120,
+                    "name": "Food",
+                    "category": "Groceries"
+                },
+                {
+                    "date": "2025-11-29",
+                    "amount": -80,
+                    "name": "Health",
+                    "category": "Health"
+                }
+            ],
+            "name": "Name"
+        }]
     }
 }

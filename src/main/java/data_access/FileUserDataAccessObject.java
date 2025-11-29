@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -161,6 +162,47 @@ public class FileUserDataAccessObject implements
     public void save(Household household) {
         accounts.put(household.getHouseholdID(), household);
         save(); // Save all accounts to file
+    }
+
+    public synchronized void addEntry(Entry entry) {
+        String username = getCurrentUsername();
+        if (username == null) return;
+
+        Household household = accounts.get(username);
+        if (household == null) return;
+
+        if (!household.getUsers().isEmpty()) {
+            household.getUsers().get(0).addEntry(entry);
+        }
+
+        save();
+    }
+
+    public synchronized List<Entry> getAllEntries() {
+        String username = getCurrentUsername();
+        if (username == null) return new ArrayList<>();
+
+        Household household = accounts.get(username);
+        if (household == null) return new ArrayList<>();
+
+        ArrayList<Entry> allEntries = new ArrayList<>();
+        for (User user : household.getUsers()) {
+            allEntries.addAll(user.getEntries());
+        }
+        return allEntries;
+    }
+
+    public synchronized void clearEntries() {
+        String username = getCurrentUsername();
+        if (username == null) return;
+
+        Household household = accounts.get(username);
+        if (household == null) return;
+
+        for (User user : household.getUsers()) {
+            user.getEntries().clear();
+        }
+        save();
     }
 
     @Override

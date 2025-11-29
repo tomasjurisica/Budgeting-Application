@@ -18,7 +18,6 @@ import interface_adapter.select_user.SelectUserPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
-import repositories.InMemoryEntryRepository;
 import view.HomePageView;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
@@ -66,7 +65,6 @@ public class AppBuilder {
     private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
     private Household household;
-    private InMemoryEntryRepository repo;
     private interface_adapter.home_page.HomePageViewModel homePageViewModel;
     private HomePageView homePage;
 
@@ -195,15 +193,13 @@ public class AppBuilder {
         household = new Household("defaultPassword", "defaultID");
         household.addUser(u);
 
-        repo = new InMemoryEntryRepository();
-        for (User user : household.getUsers()) {
-            for (Entry e : user.getEntries()) {
-                repo.addEntry(e);  // pass each Entry individually
-            }
+        userDataAccessObject.save(household);
 
-            homePageViewModel = new HomePageViewModel();
-            homePageViewModel.setEntries(repo.GetAllEntries());
-        }
+        userDataAccessObject.setCurrentUsername(household.getHouseholdID());
+
+        homePageViewModel = new HomePageViewModel();
+        homePageViewModel.setEntries(userDataAccessObject.get(household.getHouseholdID()).getAllEntries());
+
         return this;
     }
 
