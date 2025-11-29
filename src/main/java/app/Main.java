@@ -12,10 +12,12 @@ public class Main {
                 .addSignupView()
                 .addLoginView()
                 .addLoggedInView()
+                .addHomePageView()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addLogoutUseCase()
                 .initBudgetingObjects()
+                .addSelectUserUseCase()
                 .build();
 
         application.pack();

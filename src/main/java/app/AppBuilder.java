@@ -13,6 +13,8 @@ import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.select_user.SelectUserController;
+import interface_adapter.select_user.SelectUserPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -24,6 +26,9 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
+import use_case.select_user.SelectUserInputBoundary;
+import use_case.select_user.SelectUserInteractor;
+import use_case.select_user.SelectUserOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
@@ -49,7 +54,7 @@ public class AppBuilder {
 
     // DAO version using local file storage
     final FileUserDataAccessObject userDataAccessObject =
-        new FileUserDataAccessObject("src/main/java/data_access/users.json", householdFactory);
+            new FileUserDataAccessObject("src/main/java/data_access/users.json", householdFactory);
 
     // DAO version using a shared external database
     // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
@@ -90,12 +95,22 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addHomePageView() {
+        // Ensure homePageViewModel is initialized
+        if (homePageViewModel == null) {
+            homePageViewModel = new HomePageViewModel();
+        }
+        homePage = new HomePageView(homePageViewModel);
+        cardPanel.add(homePage, homePage.getViewName());
+        return this;
+    }
+
 
     public AppBuilder addSignupUseCase() {
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
-            signupViewModel, loginViewModel);
+                signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
-            userDataAccessObject, signupOutputBoundary, householdFactory);
+                userDataAccessObject, signupOutputBoundary, householdFactory);
 
         SignupController controller = new SignupController(userSignupInteractor);
         signupView.setSignupController(controller);
@@ -104,14 +119,14 @@ public class AppBuilder {
 
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(
-            viewManagerModel,
-            householdDashboardViewModel,
-            loginViewModel,
-            signupViewModel,
-            userDataAccessObject
+                viewManagerModel,
+                householdDashboardViewModel,
+                loginViewModel,
+                signupViewModel,
+                userDataAccessObject
         );
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-            userDataAccessObject, loginOutputBoundary);
+                userDataAccessObject, loginOutputBoundary);
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
@@ -126,13 +141,42 @@ public class AppBuilder {
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-            householdDashboardViewModel, loginViewModel);
+                householdDashboardViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
-            new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
+                new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);
+        return this;
+    }
+
+    /**
+     * Adds the SelectUser Use Case to the application.
+     *
+     * @return this builder
+     */
+    public AppBuilder addSelectUserUseCase() {
+        // Ensure homePageViewModel and homePageView are initialized
+        if (homePageViewModel == null) {
+            homePageViewModel = new HomePageViewModel();
+        }
+        if (homePage == null) {
+            homePage = new HomePageView(homePageViewModel);
+            cardPanel.add(homePage, homePage.getViewName());
+        }
+
+        final SelectUserOutputBoundary selectUserPresenter = new SelectUserPresenter(
+                homePageViewModel,
+                viewManagerModel,
+                householdDashboardViewModel,
+                homePage
+        );
+
+        final SelectUserInputBoundary selectUserInteractor = new SelectUserInteractor(selectUserPresenter);
+
+        final SelectUserController selectUserController = new SelectUserController(selectUserInteractor);
+        householdDashboardView.setSelectUserController(selectUserController);
         return this;
     }
 

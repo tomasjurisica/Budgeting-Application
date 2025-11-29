@@ -1,6 +1,6 @@
 package use_case.select_user;
 
-public class SelectUserInteractor implements SelectUserOutputBoundary {
+public class SelectUserInteractor implements SelectUserInputBoundary {
 
     private final SelectUserOutputBoundary presenter;
 
@@ -12,13 +12,8 @@ public class SelectUserInteractor implements SelectUserOutputBoundary {
     public void execute(SelectUserInputData inputData) {
         // Create output data with roommate selected
         SelectUserOutputData outputData =
-            new SelectUserOutputData(inputData.roommateName());
+                new SelectUserOutputData(inputData.roommateName());
 
         presenter.present(outputData);
-    }
-
-    @Override
-    public void present(SelectUserOutputData outputData) {
-
     }
 }
