@@ -45,7 +45,7 @@ public class ExchangeRateDataAccess {
             JSONObject jsonResponse = new JSONObject(response.body().string());
 
             if (!"success".equalsIgnoreCase(jsonResponse.getString("result"))) {
-                throw new RuntimeException("API error: " + jsonResponse.toString());
+                throw new RuntimeException("API error: " + jsonResponse);
             }
 
             JSONObject rates = jsonResponse.getJSONObject("conversion_rates");

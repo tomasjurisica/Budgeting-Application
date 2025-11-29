@@ -35,7 +35,7 @@ public class HomePageViewModel extends ViewModel<HomePageState>
     // Called by the interactor to update the UI/state
     @Override
     public void present(SelectUserOutputData outputData) {
-        getState().setSelectedUser(outputData.getRoommateName());
+        getState().setSelectedUser(outputData.roommateName());
         firePropertyChange();
     }
 }

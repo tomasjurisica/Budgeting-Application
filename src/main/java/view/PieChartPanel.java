@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class PieChartPanel extends JPanel {
 
-    private Map<String, Float>data;
-    private float total;
+    private final Map<String, Float>data;
+    private final float total;
 
     private static final Color[] PRESET_COLORS = {
             new Color(220, 53, 69),

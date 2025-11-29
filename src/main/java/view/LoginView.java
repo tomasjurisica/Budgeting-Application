@@ -48,7 +48,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         final LabelTextPanel usernameInfo = new LabelTextPanel(
                 new JLabel(LoginViewModel.HOUSEHOLDID_LABEL), householdIDInputField);
         final LabelTextPanel passwordInfo = new LabelTextPanel(
-                new JLabel(loginViewModel.PASSWORD_LABEL), passwordInputField);
+                new JLabel(LoginViewModel.PASSWORD_LABEL), passwordInputField);
 
         final JPanel buttons = new JPanel();
         toSignUp = new JButton(LoginViewModel.TO_SIGNUP_BUTTON_LABEL);

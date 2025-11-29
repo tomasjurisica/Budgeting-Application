@@ -3,9 +3,9 @@ package entity;
 import java.time.LocalDate;
 
 public class Entry {
-    private String name;
+    private final String name;
     private String category = "N/A";
-    private float amount;
+    private final float amount;
     private LocalDate date = LocalDate.now();
 
     /**

@@ -34,11 +34,11 @@ public class LoginPresenter implements LoginOutputBoundary {
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         // Set household in the dashboard state
-        householdDashboardViewModel.getState().setHousehold(response.getHousehold());
+        householdDashboardViewModel.getState().setHousehold(response.household());
 
         // Create AddUserInteractor with DAO
         AddUserInteractor interactor = new AddUserInteractor(
-                response.getHousehold(),
+                response.household(),
                 householdDashboardViewModel,
                 userDAO // now this works
         );

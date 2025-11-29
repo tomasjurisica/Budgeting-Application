@@ -33,7 +33,7 @@ class AddUserInteractorTest {
         AddUserOutputBoundary successPresenter = new AddUserOutputBoundary() {
             @Override
             public void present(AddUserOutputData outputData) {
-                assertEquals("Alice", outputData.getUser().getName());
+                assertEquals("Alice", outputData.user().getName());
                 assertEquals(1, household.getUsers().size());
                 assertEquals("Alice", household.getUsers().get(0).getName());
             }

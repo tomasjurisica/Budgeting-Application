@@ -1,7 +1,6 @@
 package interface_adapter.household_dashboard;
 
 import interface_adapter.ViewModel;
-import entity.User;
 import use_case.add_user.*;
 
 public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardState>
@@ -28,7 +27,7 @@ public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardSta
     @Override
     public void present(AddUserOutputData outputData) {
         getState().setAddUserError(null); // Clear any previous errors
-        getState().getUsers().add(outputData.getUser());
+        getState().getUsers().add(outputData.user());
         firePropertyChange();
     }
 

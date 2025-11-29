@@ -23,7 +23,7 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
     private SelectUserController SelectUserController;
 
     private final JLabel householdID;
-    private JPanel roommatesPanel;
+    private final JPanel roommatesPanel;
 
     public HouseholdDashboardView(HouseholdDashboardViewModel householdDashboardViewModel) {
         this.householdDashboardViewModel = householdDashboardViewModel;

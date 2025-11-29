@@ -8,9 +8,9 @@ import entity.Entry;
 import entity.User;
 
 public class HomePageView extends JFrame {
-    private Household household;
-    private JPanel homeTopBar;
-    private JPanel navTopBar;
+    private final Household household;
+    private final JPanel homeTopBar;
+    private final JPanel navTopBar;
     private JPanel currentTopBar;
 
     public HomePageView(Household household) {
