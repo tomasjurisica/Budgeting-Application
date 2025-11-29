@@ -36,6 +36,8 @@ import view.HouseholdDashboardView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import interface_adapter.add_household_entry.*;
+import use_case.add_household_entry.*;
 
 import javax.swing.*;
 
@@ -69,6 +71,8 @@ public class AppBuilder {
     private InMemoryEntryRepository repo;
     private interface_adapter.home_page.HomePageViewModel homePageViewModel;
     private HomePageView homePage;
+    private AddHouseholdEntryView addHouseholdEntryView;
+    private AddHouseholdEntryViewModel addHouseholdEntryViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -133,7 +137,6 @@ public class AppBuilder {
         return this;
     }
 
-
     /**
      * Adds the Logout Use Case to the application.
      *
@@ -148,6 +151,24 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);
+        return this;
+    }
+
+    /**
+     * Adds the Add Household Entry Use Case to the application
+     *
+     * @return this builder
+     */
+    public AppBuilder addHouseholdEntryUseCase() {
+        final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
+                AddHouseholdEntryPresenter(addHouseholdEntryViewModel);
+
+        final AddHouseholdEntryInputBoundary addHouseholdInteractor =
+                new AddHouseholdEntryInteractor(userDataAccessObject, addHouseholdEntryOutputBoundary);
+
+        final AddHouseholdEntryController addHouseholdEntryController =
+                new AddHouseholdEntryController(addHouseholdInteractor);
+        addHouseholdEntryView.setAddHouseholdEntryController(addHouseholdEntryController);
         return this;
     }
 
