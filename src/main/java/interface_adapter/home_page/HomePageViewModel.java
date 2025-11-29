@@ -7,9 +7,12 @@ import entity.User;
 import interface_adapter.ViewModel;
 import use_case.select_user.*;
 
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class HomePageViewModel {
     private final List<Entry> entries = new ArrayList();
@@ -88,4 +91,10 @@ public class HomePageViewModel {
 
     public void present(SelectUserOutputData outputData) {
     }
+
+    public Map<Month, List<Entry>> getEntriesByMonth() {
+        return entries.stream()
+                .collect(Collectors.groupingBy(e -> e.getDate().getMonth()));
+    }
+
 }

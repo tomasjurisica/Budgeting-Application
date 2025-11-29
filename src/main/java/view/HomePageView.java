@@ -17,13 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import interface_adapter.home_page.HomePageViewModel;
 import view.PieChartPanel;
@@ -139,7 +133,11 @@ public class HomePageView extends JPanel {
 
         for(int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); --i) {
             JMenuItem item = new JMenuItem(months[i]);
-            item.addActionListener((e) -> monthButton.setText(item.getText() + "▼"));
+            int monthIndex = i + 1;
+            item.addActionListener((e) -> {
+                monthButton.setText(item.getText() + " ▼");
+                updatePieChartForMonth(monthIndex);
+            });
             monthMenu.add(item);
         }
 
@@ -190,6 +188,36 @@ public class HomePageView extends JPanel {
         else {
             System.out.println("No current user in DAO");
         }
+    }
+
+    private List<Entry> filterEntriesByMonth(List<Entry> allEntries, int month) {
+        List<Entry> filtered = new ArrayList<>();
+        for (Entry e : allEntries) {
+            if (e.getDate().getMonthValue() == month) {
+                filtered.add(e);
+            }
+        }
+        return filtered;
+    }
+
+    private void updatePieChartForMonth(int month) {
+        List<Entry> allEntries = viewModel.getEntries();
+        List<Entry> monthEntries = filterEntriesByMonth(allEntries, month);
+
+        Map<String, Float> newTotals = computeCategoryTotals(monthEntries);
+        float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
+
+        this.pieWrapper.removeAll();
+        this.piePanel = new PieChartPanel(newTotals, newTotal);
+        this.piePanel.setPreferredSize(new Dimension(300, 300));
+        this.pieWrapper.add(this.piePanel);
+        this.pieWrapper.revalidate();
+        this.pieWrapper.repaint();
+
+        this.categoryList.removeAll();
+        populateCategoryList(this.categoryList, newTotals);
+        this.categoryList.revalidate();
+        this.categoryList.repaint();
     }
 
     private void refreshData() {
