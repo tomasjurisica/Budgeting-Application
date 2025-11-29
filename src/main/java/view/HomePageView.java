@@ -21,7 +21,8 @@ import java.util.Map;
 import javax.swing.*;
 
 import interface_adapter.home_page.HomePageViewModel;
-import view.PieChartPanel;
+import interface_adapter.ViewManagerModel;
+import view.AddHouseholdEntryView;
 import use_case.home_display.*;
 
 
@@ -47,6 +48,14 @@ public class HomePageView extends JPanel {
         this.setPreferredSize(new Dimension(350, 600));
 
         initializeUI();
+    }
+
+    public void setViewManagerModel(ViewManagerModel viewManagerModel) {
+        this.viewManagerModel = viewManagerModel;
+    }
+
+    public void setAddHouseholdEntryView(AddHouseholdEntryView addHouseholdEntryView) {
+        this.addHouseholdEntryView = addHouseholdEntryView;
     }
 
     private void initializeUI() {
@@ -163,6 +172,7 @@ public class HomePageView extends JPanel {
         this.addButton = new JButton("+");
         this.addButton.setFont(new Font("Arial", Font.BOLD, 30));
         this.addButton.setPreferredSize(new Dimension(70, 70));
+        this.addButton.addActionListener(e -> navigateToAddEntry());
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(this.addButton);
         this.add(bottomPanel, BorderLayout.SOUTH);
@@ -327,6 +337,17 @@ public class HomePageView extends JPanel {
         this.revalidate();
         this.repaint();
         System.out.println("Home Refreshed");
+    }
+
+    private void navigateToAddEntry() {
+        if (viewManagerModel != null && addHouseholdEntryView != null && household != null) {
+            // Load users from household into AddHouseholdEntryView
+            addHouseholdEntryView.loadUsersFromHousehold(household);
+
+            // Navigate to Add Household Entry view
+            viewManagerModel.setState("add entry");
+            viewManagerModel.firePropertyChange();
+        }
     }
 
     public String getViewName() {

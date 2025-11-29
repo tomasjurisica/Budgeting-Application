@@ -13,9 +13,11 @@ public class Main {
                 .addLoginView()
                 .addLoggedInView()
                 .addHomePageView()
+                .addAddHouseholdEntryView()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addLogoutUseCase()
+                .addHouseholdEntryUseCase()
                 .initBudgetingObjects()
                 .addSelectUserUseCase()
                 .build();

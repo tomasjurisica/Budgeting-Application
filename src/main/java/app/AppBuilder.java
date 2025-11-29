@@ -19,6 +19,7 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import view.HomePageView;
+import view.AddHouseholdEntryView;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -35,6 +36,8 @@ import view.HouseholdDashboardView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import interface_adapter.add_household_entry.*;
+import use_case.add_household_entry.*;
 
 import javax.swing.*;
 
@@ -67,6 +70,8 @@ public class AppBuilder {
     private Household household;
     private interface_adapter.home_page.HomePageViewModel homePageViewModel;
     private HomePageView homePage;
+    private AddHouseholdEntryView addHouseholdEntryView;
+    private AddHouseholdEntryViewModel addHouseholdEntryViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -101,6 +106,23 @@ public class AppBuilder {
         homePageViewModel.setDao(userDataAccessObject);
         homePage = new HomePageView(homePageViewModel, userDataAccessObject);
         cardPanel.add(homePage, homePage.getViewName());
+        // Wire navigation
+        homePage.setViewManagerModel(viewManagerModel);
+        // Wire AddHouseholdEntryView if it already exists
+        wireHomePageAndAddEntryView();
+        return this;
+    }
+
+    public AppBuilder addAddHouseholdEntryView() {
+        if (addHouseholdEntryViewModel == null) {
+            addHouseholdEntryViewModel = new AddHouseholdEntryViewModel();
+        }
+        if (addHouseholdEntryView == null) {
+            addHouseholdEntryView = new AddHouseholdEntryView(addHouseholdEntryViewModel);
+            cardPanel.add(addHouseholdEntryView, addHouseholdEntryView.getViewName());
+        }
+        // Wire AddHouseholdEntryView to HomePageView if homePage already exists
+        wireHomePageAndAddEntryView();
         return this;
     }
 
@@ -132,7 +154,6 @@ public class AppBuilder {
         return this;
     }
 
-
     /**
      * Adds the Logout Use Case to the application.
      *
@@ -148,6 +169,48 @@ public class AppBuilder {
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);
         return this;
+    }
+
+    /**
+     * Adds the Add Household Entry Use Case to the application
+     *
+     * @return this builder
+     */
+    public AppBuilder addHouseholdEntryUseCase() {
+        // Ensure view model and view are initialized
+        if (addHouseholdEntryViewModel == null) {
+            addHouseholdEntryViewModel = new AddHouseholdEntryViewModel();
+        }
+        if (addHouseholdEntryView == null) {
+            addHouseholdEntryView = new AddHouseholdEntryView(addHouseholdEntryViewModel);
+            cardPanel.add(addHouseholdEntryView, addHouseholdEntryView.getViewName());
+        }
+
+        final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
+                AddHouseholdEntryPresenter(addHouseholdEntryViewModel);
+
+        final AddHouseholdEntryInputBoundary addHouseholdInteractor =
+                new AddHouseholdEntryInteractor(userDataAccessObject, addHouseholdEntryOutputBoundary);
+
+        final AddHouseholdEntryController addHouseholdEntryController =
+                new AddHouseholdEntryController(addHouseholdInteractor);
+        addHouseholdEntryView.setAddHouseholdEntryController(addHouseholdEntryController);
+
+        // Wire ViewManagerModel to AddHouseholdEntryView for navigation
+        addHouseholdEntryView.setViewManagerModel(viewManagerModel);
+
+        // Wire AddHouseholdEntryView to HomePageView for navigation
+        if (homePage != null) {
+            homePage.setAddHouseholdEntryView(addHouseholdEntryView);
+        }
+        return this;
+    }
+
+    // Helper method to ensure homePage and addHouseholdEntryView are wired
+    private void wireHomePageAndAddEntryView() {
+        if (homePage != null && addHouseholdEntryView != null) {
+            homePage.setAddHouseholdEntryView(addHouseholdEntryView);
+        }
     }
 
     /**
