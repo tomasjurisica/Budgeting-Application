@@ -33,6 +33,7 @@ import view.SignupView;
 import view.ViewManager;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -48,7 +49,7 @@ public class AppBuilder {
 
     // DAO version using local file storage
     final FileUserDataAccessObject userDataAccessObject =
-            new FileUserDataAccessObject("data/users.json", householdFactory);
+        new FileUserDataAccessObject("src/main/java/data_access/users.json", householdFactory);
 
     // DAO version using a shared external database
     // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
@@ -92,9 +93,9 @@ public class AppBuilder {
 
     public AppBuilder addSignupUseCase() {
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
-                signupViewModel, loginViewModel);
+            signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
-                userDataAccessObject, signupOutputBoundary, householdFactory);
+            userDataAccessObject, signupOutputBoundary, householdFactory);
 
         SignupController controller = new SignupController(userSignupInteractor);
         signupView.setSignupController(controller);
@@ -103,14 +104,14 @@ public class AppBuilder {
 
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(
-                viewManagerModel,
-                householdDashboardViewModel,
-                loginViewModel,
-                signupViewModel,
-                userDataAccessObject
+            viewManagerModel,
+            householdDashboardViewModel,
+            loginViewModel,
+            signupViewModel,
+            userDataAccessObject
         );
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-                userDataAccessObject, loginOutputBoundary);
+            userDataAccessObject, loginOutputBoundary);
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
@@ -120,14 +121,15 @@ public class AppBuilder {
 
     /**
      * Adds the Logout Use Case to the application.
+     *
      * @return this builder
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-                householdDashboardViewModel, loginViewModel);
+            householdDashboardViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
-                new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
+            new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         householdDashboardView.setLogoutController(logoutController);

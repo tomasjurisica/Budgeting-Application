@@ -3,15 +3,6 @@ package use_case.logout;
 /**
  * Output Data for the Logout Use Case.
  */
-public class LogoutOutputData {
+public record LogoutOutputData(String username) {
 
-    private final String username;
-
-    public LogoutOutputData(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 }

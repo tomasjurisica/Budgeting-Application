@@ -7,6 +7,7 @@ public interface SignupInputBoundary {
 
     /**
      * Executes the signup use case.
+     *
      * @param signupInputData the input data
      */
     void execute(SignupInputData signupInputData);

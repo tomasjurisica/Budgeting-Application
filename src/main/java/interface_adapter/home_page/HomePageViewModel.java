@@ -6,7 +6,7 @@ import use_case.select_user.*;
 import java.util.List;
 
 public class HomePageViewModel extends ViewModel<HomePageState>
-        implements SelectUserOutputBoundary {
+    implements SelectUserOutputBoundary {
 
     private SelectUserInputBoundary selectUserInteractor;
 
@@ -22,10 +22,12 @@ public class HomePageViewModel extends ViewModel<HomePageState>
     // Called by the controller
     public void selectUser(String roommateName) {
         if (roommateName == null || roommateName.trim().isEmpty() ||
-                selectUserInteractor == null) return;
+            selectUserInteractor == null) {
+            return;
+        }
 
         selectUserInteractor.execute(
-                new SelectUserInputData(roommateName)
+            new SelectUserInputData(roommateName)
         );
     }
 
@@ -37,7 +39,7 @@ public class HomePageViewModel extends ViewModel<HomePageState>
     // Called by the interactor to update the UI/state
     @Override
     public void present(SelectUserOutputData outputData) {
-        getState().setSelectedUser(outputData.getRoommateName());
+        getState().setSelectedUser(outputData.roommateName());
         firePropertyChange();
     }
 }
