@@ -1,5 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PieChartPanel extends JPanel {
@@ -19,6 +23,47 @@ public class PieChartPanel extends JPanel {
         this.data = data;
         this.total = total;
         setPreferredSize(new Dimension(350, 600));
+
+        //MouseListener for Clicking on Each Category. Triggers opening a new page
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String category = handleClick(e.getX(), e.getY());
+                if (!category.isEmpty()){
+                    JFrame jf=new JFrame("Expenses Breakdown: "+ category);
+                    jf.setBackground(Color.BLACK);
+                    JPanel expensePanel = new JPanel();
+                    JLabel expenseLabel = new JLabel("Expenses:");
+                    expensePanel.add(expenseLabel);
+                    expensePanel.setLayout(new BoxLayout(expensePanel, BoxLayout.Y_AXIS));
+                    expensePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                    for (String category1: data.keySet()){
+                        if (category1.equals(category)){
+                            float amount = data.get(category1);
+
+                            String floatAsString = Float.toString(amount);
+                            JLabel amountLabel = new JLabel(floatAsString);
+                            expensePanel.add(amountLabel);
+                        }
+                    }
+
+                    JPanel datePanel = new JPanel();
+                    JLabel dateLabel = new JLabel("Date:");
+                    datePanel.add(dateLabel);
+
+                    Container content = jf.getContentPane();
+                    content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
+                    content.add(expensePanel);
+                    content.add(datePanel);
+
+
+                    jf.setSize(new Dimension(300, 400));
+                    jf.setVisible(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -74,4 +119,70 @@ public class PieChartPanel extends JPanel {
     private Color randomColor(int seed) {
         return new Color((seed >> 16)  & 0xFF, (seed >> 8)  & 0xFF, seed & 0xFF).brighter();
     }
+
+   // HANDLE CLICK ON PIECHART
+   class AngleRange {
+       int start;
+       int end;
+
+       AngleRange(int start, int end) {
+           this.start = start;
+           this.end = end;
+       }
+   }
+
+
+    String handleClick(int mouseX, int mouseY) {
+        int diameter = Math.min(getWidth(), getHeight() - 200);
+        int drawX = (getWidth() - diameter) / 2;
+        int drawY = 40;
+
+        double centerX = drawX + diameter / 2.0;
+        double centerY = drawY + diameter / 2.0;
+        double radius = (double) diameter / 2;
+
+        double dx = mouseX - centerX;
+        double dy = mouseY - centerY;
+
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        //Case 1: Outside bounds
+        if (distance > radius){
+            return "";
+        }
+        // Case 2: Inside the donut
+        else if (distance<radius*0.60){
+            return "";
+        }
+        // Case 3: In the category section
+        else {
+            // Do you round the angle?
+            double angle = Math.toDegrees(Math.atan2(-dy, dx));
+            if (angle < 0) {
+                angle += 360;
+            }
+            // Map<String, AngleRange> CategorytoAngleRange = new HashMap<>();
+            int currentStart = 0;
+            for (String category: data.keySet()){
+
+                float amount = data.get(category);
+                float sliceAngle = (amount/total) * 360f;
+                int start = currentStart; // Get the start of the angle
+                int end = start + (int) sliceAngle; // Get the end of the angle
+
+                // CategorytoAngleRange.put(category, new AngleRange(currentStart, end));
+
+                // See if the angle falls in the range
+                if (angle >= start && angle < end) {
+                    System.out.println("User clicked on:"+ category);
+                    return category;
+                }
+                currentStart = end;
+            }
+
+
+        }
+
+    return "";}
+
 }
+
