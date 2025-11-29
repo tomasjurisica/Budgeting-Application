@@ -1,7 +1,10 @@
 package interface_adapter.household_dashboard;
 
 import interface_adapter.ViewModel;
-import use_case.add_user.*;
+import use_case.add_user.AddUserInputBoundary;
+import use_case.add_user.AddUserInputData;
+import use_case.add_user.AddUserOutputBoundary;
+import use_case.add_user.AddUserOutputData;
 
 public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardState>
     implements AddUserOutputBoundary {
