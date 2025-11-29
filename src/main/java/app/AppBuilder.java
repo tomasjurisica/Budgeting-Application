@@ -84,7 +84,7 @@ public class AppBuilder {
     public AppBuilder addDetailedSpendingView() {
         detailedSpendingViewModel = new DetailedSpendingViewModel();
         detailedSpendingView = new DetailedSpendingView(detailedSpendingViewModel);
-        cardPanel.add(detailedSpendingView, detailedSpendingView.getViewName());
+        // cardPanel.add(detailedSpendingView, detailedSpendingView.getViewName());
         return this;
     }
 
