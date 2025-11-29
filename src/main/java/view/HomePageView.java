@@ -159,7 +159,6 @@ public class HomePageView extends JPanel {
             monthMenu.add(item);
         }
 
-        monthMenu.add("Full Year");
         monthButton.addActionListener((e) -> monthMenu.show(monthButton, 0, monthButton.getHeight()));
         JPanel topCenterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topCenterPanel.add(monthButton);
