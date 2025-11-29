@@ -22,6 +22,7 @@ import javax.swing.*;
 
 import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.ViewManagerModel;
+import view.*;
 import view.AddHouseholdEntryView;
 import use_case.home_display.*;
 
@@ -40,6 +41,8 @@ public class HomePageView extends JPanel {
     private JPanel pieWrapper;
     private JScrollPane scrollPane;
     private final FileUserDataAccessObject userDao;
+    private ViewManagerModel viewManagerModel;
+    private AddHouseholdEntryView addHouseholdEntryView;
 
     public HomePageView(HomePageViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
