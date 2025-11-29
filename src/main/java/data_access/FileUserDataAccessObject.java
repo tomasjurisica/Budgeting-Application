@@ -188,9 +188,11 @@ public class FileUserDataAccessObject implements
                 // Get the list of users
                 JSONObject userInfo = users.getJSONObject(i);
                 String userName = userInfo.get("name").toString();
+                System.out.println(selectedUserIndex);
 
                 // Only if the user is on the household entry, add the object
-                if (userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
+                if (selectedUserIndex < selectedUsers.size() &&
+                        userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
                     // Create entry JSON object and put it in the array
                     Entry userEntry = individualEntries.get(selectedUserIndex);
                     entryJson = new JSONObject();
@@ -204,6 +206,11 @@ public class FileUserDataAccessObject implements
                 }
             }
 
+            try (FileWriter writer = new FileWriter(jsonFile)) {
+                writer.write(data.toString(4)); // Pretty print with 4-space indent
+            } catch (IOException e) {
+                throw new RuntimeException("Error writing JSON data to file", e);
+            }
         }
         catch (IOException e) {
             throw new RuntimeException("Error loading JSON data from file", e);
