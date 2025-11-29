@@ -1,5 +1,6 @@
 package view;
 
+import data_access.ExchangeRateDataAccess;
 import data_access.FileUserDataAccessObject;
 import entity.Entry;
 import entity.Household;
@@ -85,7 +86,7 @@ public class HomePageView extends JPanel {
         navButtonsPanel.setBackground(new Color(42, 42, 42));
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
-        for(int i = 1; i <= 6; ++i) {
+        for(int i = 1; i <= 3; ++i) {
             JButton iconButton = new JButton("★");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
@@ -93,6 +94,10 @@ public class HomePageView extends JPanel {
             iconButton.setContentAreaFilled(false);
             iconButton.setForeground(Color.white);
             navButtonsPanel.add(iconButton);
+
+            if (i == 1) { // For example, first star opens currency converter
+                iconButton.addActionListener(e -> openCurrencyConverterPopup());
+            }
         }
 
         JPanel rightNavWrapper = new JPanel(new BorderLayout());
@@ -200,6 +205,51 @@ public class HomePageView extends JPanel {
         return filtered;
     }
 
+    private void openCurrencyConverterPopup() {
+        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(HomePageView.this), "Currency Converter", true);
+        dialog.setSize(400,250);
+        dialog.setLayout(new GridLayout(5, 2, 10, 10));
+
+        JComboBox<String> fromCurrency = new JComboBox<>(getCurrencyCodes());
+        JTextField amountField = new JTextField();
+        JComboBox<String> toCurrency = new JComboBox<>(getCurrencyCodes());
+
+        JLabel resultLabel = new JLabel("Converted amount: ");
+
+        JButton convertButton = new JButton("Convert");
+
+        ExchangeRateDataAccess exchangeRateDao = new ExchangeRateDataAccess();
+
+        convertButton.addActionListener((e) -> {
+            try {
+                double amount = Double.parseDouble(amountField.getText());
+                String from = (String) fromCurrency.getSelectedItem();
+                String to = (String) toCurrency.getSelectedItem();
+                double converted = exchangeRateDao.convertCurrency(from, to, amount);
+                resultLabel.setText(String.format("Converted amount: %.2f", converted));
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Enter a valid number");
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, ex.getMessage());
+            }
+        });
+
+        dialog.add(new JLabel("From:"));
+        dialog.add(fromCurrency);
+        dialog.add(new JLabel("Amount:"));
+        dialog.add(amountField);
+        dialog.add(new JLabel("To:"));
+        dialog.add(toCurrency);
+        dialog.add(new JLabel());
+        dialog.add(convertButton);
+        dialog.add(new JLabel());
+        dialog.add(resultLabel);
+
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
     private void updatePieChartForMonth(int month) {
         List<Entry> allEntries = viewModel.getEntries();
         List<Entry> monthEntries = filterEntriesByMonth(allEntries, month);
@@ -232,6 +282,10 @@ public class HomePageView extends JPanel {
         }
         HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
         interactor.execute(request);
+    }
+
+    private String[] getCurrencyCodes() {
+        return new String[]{"USD", "EUR", "GBP", "CAD", "JPY", "AUD"};
     }
 
     private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
