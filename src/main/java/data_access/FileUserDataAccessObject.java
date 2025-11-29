@@ -25,9 +25,9 @@ import java.util.Map;
  * This implementation is robust against structural corruption and special characters.
  */
 public class FileUserDataAccessObject implements
-        SignupUserDataAccessInterface,
-        LoginUserDataAccessInterface,
-        LogoutUserDataAccessInterface {
+    SignupUserDataAccessInterface,
+    LoginUserDataAccessInterface,
+    LogoutUserDataAccessInterface {
 
     private final File jsonFile;
     // Map stores HouseholdID (String) -> Household object
@@ -125,7 +125,8 @@ public class FileUserDataAccessObject implements
 
                     // User Entries
                     JSONArray userEntriesJson = userJson.getJSONArray("entries");
-                    user.addEntry(jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
+                    user.addEntry(
+                        jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
 
                     household.addUser(user);
                 }

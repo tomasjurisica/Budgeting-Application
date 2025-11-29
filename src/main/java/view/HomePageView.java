@@ -1,6 +1,7 @@
 package view;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.*;
 import entity.Household;
@@ -87,15 +88,15 @@ public class HomePageView extends JFrame {
         closeNavButton.addActionListener(e -> switchTopBar(homeTopBar));
 
         ArrayList<Entry> entries = new ArrayList<>();
-        for(User user : household.getUsers()) {
+        for (User user : household.getUsers()) {
             entries.addAll(user.getEntries());
         }
 
         float totalSpent = 0f;
         Map<String, Float> categoryTotals = new HashMap<>();
 
-        for(Entry e: entries) {
-            if (e.getAmount() < 0){
+        for (Entry e : entries) {
+            if (e.getAmount() < 0) {
                 float amt = -e.getAmount();
                 totalSpent += amt;
                 categoryTotals.merge(e.getCategory(), amt, Float::sum);
@@ -130,7 +131,7 @@ public class HomePageView extends JFrame {
 
         JPopupMenu monthMenu = new JPopupMenu();
         String[] months = {"January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"};
+            "July", "August", "September", "October", "November", "December"};
         int currentMonth = java.time.LocalDate.now().getMonthValue();
 
         for (int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); i--) {

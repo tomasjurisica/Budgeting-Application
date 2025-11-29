@@ -10,7 +10,8 @@ public class AddUserInteractor implements AddUserInputBoundary {
     private final AddUserOutputBoundary outputBoundary;
     private final FileUserDataAccessObject userDAO;
 
-    public AddUserInteractor(Household household, AddUserOutputBoundary outputBoundary, FileUserDataAccessObject userDAO) {
+    public AddUserInteractor(Household household, AddUserOutputBoundary outputBoundary,
+                             FileUserDataAccessObject userDAO) {
         this.household = household;
         this.outputBoundary = outputBoundary;
         this.userDAO = userDAO;

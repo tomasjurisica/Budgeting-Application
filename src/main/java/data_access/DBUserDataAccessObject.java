@@ -3,8 +3,10 @@ package data_access;
 import entity.Household;
 import entity.HouseholdFactory;
 import okhttp3.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -15,8 +17,8 @@ import java.io.IOException;
  * The DAO for user data.
  */
 public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
-                                               LoginUserDataAccessInterface,
-                                               LogoutUserDataAccessInterface {
+    LoginUserDataAccessInterface,
+    LogoutUserDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
@@ -37,9 +39,9 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         // Make an API call to get the user object.
         final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final Request request = new Request.Builder()
-                .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
-                .addHeader("Content-Type", CONTENT_TYPE_JSON)
-                .build();
+            .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
+            .addHeader("Content-Type", CONTENT_TYPE_JSON)
+            .build();
         try {
             final Response response = client.newCall(request).execute();
 
@@ -72,11 +74,11 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     @Override
     public boolean existsByName(String username) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
+            .build();
         final Request request = new Request.Builder()
-                .url(String.format("http://vm003.teach.cs.toronto.edu:20112/checkIfUserExists?username=%s", username))
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
+            .url(String.format("http://vm003.teach.cs.toronto.edu:20112/checkIfUserExists?username=%s", username))
+            .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
+            .build();
         try {
             final Response response = client.newCall(request).execute();
 
@@ -92,7 +94,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     @Override
     public void save(Household household) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
+            .build();
 
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
@@ -101,10 +103,10 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
         requestBody.put(PASSWORD, household.getPassword());
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
         final Request request = new Request.Builder()
-                .url("http://vm003.teach.cs.toronto.edu:20112/user")
-                .method("POST", body)
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
+            .url("http://vm003.teach.cs.toronto.edu:20112/user")
+            .method("POST", body)
+            .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
+            .build();
         try {
             final Response response = client.newCall(request).execute();
 

@@ -4,7 +4,7 @@ import interface_adapter.ViewModel;
 import use_case.add_user.*;
 
 public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardState>
-        implements AddUserOutputBoundary {
+    implements AddUserOutputBoundary {
 
     private AddUserInputBoundary addUserInteractor;
 

@@ -1,6 +1,7 @@
 package data_access;
 
 import okhttp3.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +34,9 @@ public class ExchangeRateDataAccess {
         String url = String.format("%s/%s/latest/%s", BASE_URL, API_KEY, baseCurrency);
 
         Request request = new Request.Builder()
-                .url(url)
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
+            .url(url)
+            .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
+            .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {

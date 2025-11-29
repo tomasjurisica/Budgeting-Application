@@ -38,9 +38,9 @@ public class LoginPresenter implements LoginOutputBoundary {
 
         // Create AddUserInteractor with DAO
         AddUserInteractor interactor = new AddUserInteractor(
-                response.household(),
-                householdDashboardViewModel,
-                userDAO // now this works
+            response.household(),
+            householdDashboardViewModel,
+            userDAO // now this works
         );
         householdDashboardViewModel.setAddUserInteractor(interactor);
 

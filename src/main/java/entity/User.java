@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User{
+public class User {
     private final String name;
 
     private Household householdPointer;
@@ -19,7 +19,7 @@ public class User{
      *
      * @param h: household to be linked to
      */
-    public void setHousehold (Household h) {
+    public void setHousehold(Household h) {
         householdPointer = h;
     }
 
@@ -27,7 +27,7 @@ public class User{
      *
      * @return The household this user is linked to. THIS IS NOT A COPY. Returns null if not linked to a household
      */
-    public Household getHousehold () {
+    public Household getHousehold() {
         return householdPointer;
     }
 
@@ -43,7 +43,7 @@ public class User{
     }
 
     /**
-     * @param year: The year of entries to be returned.
+     * @param year:  The year of entries to be returned.
      * @param month: The month of entries to be returned.
      * @return Returns an arraylist of entries from the given year and month, in chronological order. Returns an empty list if no entries that month.
      */
@@ -55,11 +55,9 @@ public class User{
         // Calculate last day of month
         if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
             lastDay = 31;
-        }
-        else if (month == 4 || month == 6 || month == 9 || month == 11) {
+        } else if (month == 4 || month == 6 || month == 9 || month == 11) {
             lastDay = 30;
-        }
-        else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
+        } else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
             lastDay = 29;
         }
 
@@ -70,8 +68,8 @@ public class User{
         int endIndex = getEndIndex(firstDate, lastDate);
 
         // If indexes are valid, add all values in range to return list
-        if (startIndex != -1 && endIndex != -1){
-            for(int i=0; i+startIndex<=endIndex;i++){
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = 0; i + startIndex <= endIndex; i++) {
                 returnList.add(entries.get(i + startIndex));
             }
         }
@@ -94,8 +92,8 @@ public class User{
 
         int endIndex = getEndIndex(dateOf, dateOf);
 
-        if (startIndex != -1 && endIndex != -1){
-            for(int i=0; i+startIndex<=endIndex;i++){
+        if (startIndex != -1 && endIndex != -1) {
+            for (int i = 0; i + startIndex <= endIndex; i++) {
                 returnList.add(entries.get(i));
             }
         }
@@ -105,8 +103,9 @@ public class User{
 
     /**
      * Helper method for returning entries from a date range
+     *
      * @param firstDate the first date in range to be considered.
-     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @param lastDate  the last date in range to be considered. lastDate is after firstDate
      * @return the starting index of entries from specific date(s). Returns -1 if date does not exist
      */
     private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
@@ -116,7 +115,7 @@ public class User{
             if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
                 return i;
             }
-            i ++;
+            i++;
         }
 
         return -1;
@@ -124,8 +123,9 @@ public class User{
 
     /**
      * Helper method for returning entries from a date range
+     *
      * @param firstDate the first date in range to be considered.
-     * @param lastDate the last date in range to be considered. lastDate is after firstDate
+     * @param lastDate  the last date in range to be considered. lastDate is after firstDate
      * @return the ending index of entries from specific date(s). Returns -1 if date does not exist
      */
     private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
@@ -136,7 +136,7 @@ public class User{
             if (!entries.get(i).getDate().isBefore(firstDate) && !entries.get(i).getDate().isAfter(lastDate)) {
                 result = i;
             }
-            i ++;
+            i++;
         }
 
         return result;
@@ -153,8 +153,7 @@ public class User{
         // adds to end if entries is empty or if the new entry is the most recent item chronologically
         if (entries.isEmpty() || !entries.getLast().getDate().isAfter(checkedDate)) {
             entries.add(newEntry);
-        }
-        else {
+        } else {
             int i = 0;
 
             while (i < entries.size() && !entries.get(i).getDate().isAfter(checkedDate)) {
@@ -174,8 +173,7 @@ public class User{
     public void addEntry(ArrayList<Entry> listOfEntries) {
         if (entries.isEmpty()) {
             entries.addAll(listOfEntries);
-        }
-        else {
+        } else {
             int i = 0;
             int j = 0;
 

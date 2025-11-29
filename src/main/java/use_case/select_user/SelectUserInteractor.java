@@ -12,7 +12,7 @@ public class SelectUserInteractor implements SelectUserOutputBoundary {
     public void execute(SelectUserInputData inputData) {
         // Create output data with roommate selected
         SelectUserOutputData outputData =
-                new SelectUserOutputData(inputData.roommateName());
+            new SelectUserOutputData(inputData.roommateName());
 
         presenter.present(outputData);
     }

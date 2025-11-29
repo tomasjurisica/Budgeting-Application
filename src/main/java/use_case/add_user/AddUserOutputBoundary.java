@@ -5,6 +5,7 @@ public interface AddUserOutputBoundary {
 
     /**
      * Prepares the failure view for the Add User Use Case.
+     *
      * @param errorMessage the explanation of the failure
      */
     void prepareFailView(String errorMessage);

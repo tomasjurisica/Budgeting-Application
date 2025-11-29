@@ -4,7 +4,7 @@ import interface_adapter.ViewModel;
 import use_case.select_user.*;
 
 public class HomePageViewModel extends ViewModel<HomePageState>
-        implements SelectUserOutputBoundary {
+    implements SelectUserOutputBoundary {
 
     private SelectUserInputBoundary selectUserInteractor;
 
@@ -20,10 +20,12 @@ public class HomePageViewModel extends ViewModel<HomePageState>
     // Called by the controller
     public void selectUser(String roommateName) {
         if (roommateName == null || roommateName.trim().isEmpty() ||
-                selectUserInteractor == null) return;
+            selectUserInteractor == null) {
+            return;
+        }
 
         selectUserInteractor.execute(
-                new SelectUserInputData(roommateName)
+            new SelectUserInputData(roommateName)
         );
     }
 

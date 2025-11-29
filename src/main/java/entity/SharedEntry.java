@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SharedEntry extends Entry{
+public class SharedEntry extends Entry {
     private final List<User> users;
 
     private final float[] contributed;
@@ -15,35 +15,36 @@ public class SharedEntry extends Entry{
 
     /**
      * Creates a SharedEntry.
+     *
      * @param headEntry the shared entry for the whole household
-     * @param users the list of users for this entry
-     * @param percents the percent contributed by each user.
+     * @param users     the list of users for this entry
+     * @param percents  the percent contributed by each user.
      */
     public SharedEntry(Entry headEntry, List<User> users, float[] percents) {
-       super(headEntry.getName(), headEntry.getCategory(), headEntry.getAmount(), headEntry.getDate());
-       this.users = users;
-       this.contributed = new float[percents.length];
+        super(headEntry.getName(), headEntry.getCategory(), headEntry.getAmount(), headEntry.getDate());
+        this.users = users;
+        this.contributed = new float[percents.length];
 
-       int i = 0;
+        int i = 0;
 
-       for (float percent : percents) {
-           BigDecimal contribution = BigDecimal.valueOf(headEntry.getAmount() * percent);
-           contribution = contribution.setScale(2, RoundingMode.HALF_UP);
-           this.contributed[i] = contribution.floatValue();
+        for (float percent : percents) {
+            BigDecimal contribution = BigDecimal.valueOf(headEntry.getAmount() * percent);
+            contribution = contribution.setScale(2, RoundingMode.HALF_UP);
+            this.contributed[i] = contribution.floatValue();
 
-           i++;
-       }
+            i++;
+        }
 
         i = 0;
 
-       for (User user : users) {
-           Entry addedEntry = new Entry(headEntry.getName(),
-                   headEntry.getCategory(), this.contributed[i], headEntry.getDate());
-           user.addEntry(addedEntry);
-           this.entries.add(addedEntry);
+        for (User user : users) {
+            Entry addedEntry = new Entry(headEntry.getName(),
+                headEntry.getCategory(), this.contributed[i], headEntry.getDate());
+            user.addEntry(addedEntry);
+            this.entries.add(addedEntry);
 
-           i++;
-       }
+            i++;
+        }
     }
 
     /**
@@ -101,7 +102,7 @@ public class SharedEntry extends Entry{
      * @param user The user whose contribution you want to get
      * @return A float for how much the user is contributing to the household
      */
-    public float getContribution (User user) {
+    public float getContribution(User user) {
         return contributed[users.indexOf(user)];
     }
 

@@ -9,10 +9,10 @@ public class Entry {
     private LocalDate date = LocalDate.now();
 
     /**
-     * @param name Name of the entry.
+     * @param name     Name of the entry.
      * @param category Category of the entry.
-     * @param amount Amount of the entry. Negative for expenses, positive for income.
-     * @param date The date of the entry.
+     * @param amount   Amount of the entry. Negative for expenses, positive for income.
+     * @param date     The date of the entry.
      */
     public Entry(String name, String category, float amount, LocalDate date) {
         this.name = name;
@@ -23,7 +23,8 @@ public class Entry {
 
     /**
      * Create an entry without category or date. Category defaults to N/A, date defaults to current day's date.
-     * @param name Name of the entry
+     *
+     * @param name   Name of the entry
      * @param amount Amount of the entry. Negative for expenses, positive for income
      */
     public Entry(String name, float amount) {
