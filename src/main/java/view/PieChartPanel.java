@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package ui;
+package view;
 
 import java.awt.Color;
 import java.awt.Dimension;

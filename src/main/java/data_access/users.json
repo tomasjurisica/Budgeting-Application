@@ -1,22 +1,37 @@
-{"hello": {
-    "password": "hello",
-    "householdEntries": [],
-    "users": [
-        {
+{
+    "hello": {
+        "password": "hello",
+        "householdEntries": [],
+        "users": [
+            {
+                "entries": [{
+                    "date": "2025-11-29",
+                    "amount": 100,
+                    "name": "Name",
+                    "category": "Category"
+                }],
+                "name": "Hello"
+            },
+            {
+                "entries": [],
+                "name": "Test"
+            },
+            {
+                "entries": [],
+                "name": "Hello"
+            },
+            {
+                "entries": [],
+                "name": "Hey"
+            }
+        ]
+    },
+    "ale": {
+        "password": "1234",
+        "householdEntries": [],
+        "users": [{
             "entries": [],
-            "name": "Hello"
-        },
-        {
-            "entries": [],
-            "name": "Test"
-        },
-        {
-            "entries": [],
-            "name": "Hello"
-        },
-        {
-            "entries": [],
-            "name": "Hey"
-        }
-    ]
-}}
+            "name": "ale2"
+        }]
+    }
+}

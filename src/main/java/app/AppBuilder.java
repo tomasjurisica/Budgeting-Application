@@ -100,7 +100,8 @@ public class AppBuilder {
         if (homePageViewModel == null) {
             homePageViewModel = new HomePageViewModel();
         }
-        homePage = new HomePageView(homePageViewModel);
+        homePageViewModel.setDao(userDataAccessObject);
+        homePage = new HomePageView(homePageViewModel, userDataAccessObject);
         cardPanel.add(homePage, homePage.getViewName());
         return this;
     }
@@ -126,7 +127,7 @@ public class AppBuilder {
                 userDataAccessObject
         );
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-                userDataAccessObject, loginOutputBoundary);
+                userDataAccessObject, loginOutputBoundary, homePageViewModel);
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
@@ -158,11 +159,12 @@ public class AppBuilder {
      */
     public AppBuilder addSelectUserUseCase() {
         // Ensure homePageViewModel and homePageView are initialized
+        FileUserDataAccessObject dao = new FileUserDataAccessObject("src/main/java/data_access/users.json", new HouseholdFactory());
         if (homePageViewModel == null) {
             homePageViewModel = new HomePageViewModel();
         }
         if (homePage == null) {
-            homePage = new HomePageView(homePageViewModel);
+            homePage = new HomePageView(homePageViewModel, dao);
             cardPanel.add(homePage, homePage.getViewName());
         }
 

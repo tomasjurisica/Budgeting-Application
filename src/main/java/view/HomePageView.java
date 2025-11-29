@@ -1,5 +1,6 @@
 package view;
 
+import data_access.FileUserDataAccessObject;
 import entity.Entry;
 import entity.Household;
 import entity.User;
@@ -25,7 +26,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import interface_adapter.home_page.HomePageViewModel;
-import ui.PieChartPanel;
+import view.PieChartPanel;
 import use_case.home_display.*;
 
 
@@ -42,9 +43,11 @@ public class HomePageView extends JPanel {
     private JLabel categoryLabel;
     private JPanel pieWrapper;
     private JScrollPane scrollPane;
+    private final FileUserDataAccessObject userDao;
 
-    public HomePageView(HomePageViewModel viewModel) {
+    public HomePageView(HomePageViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
+        this.userDao = userDao;
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(350, 600));
 
@@ -178,9 +181,15 @@ public class HomePageView extends JPanel {
         });
     }
 
-    public void setHousehold(Household household) {
-        this.household = household;
-        refreshData();
+    public void setHousehold() {
+        String householdID = userDao.getCurrentUsername();
+        if(householdID == null) {
+            this.household = userDao.get(householdID);
+            refreshHome();
+        }
+        else {
+            System.out.println("No current user in DAO");
+        }
     }
 
     private void refreshData() {
@@ -198,16 +207,16 @@ public class HomePageView extends JPanel {
     }
 
     private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
-        Map<String, Float> categoryTotals = new LinkedHashMap();
+        Map<String, Float> categoryTotals = new LinkedHashMap<>();
         float totalSpent = 0.0F;
 
         for(Entry e : entries) {
-            if (e.getAmount() < 0.0F) {
-                float amt = -e.getAmount();
-                totalSpent += amt;
-                categoryTotals.merge(e.getCategory(), amt, Float::sum);
+            float amt = Math.abs(e.getAmount());
+            totalSpent += amt;
+            categoryTotals.merge(e.getCategory(), amt, Float::sum);
+
             }
-        }
+
 
         return categoryTotals;
     }

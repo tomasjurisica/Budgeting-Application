@@ -1,6 +1,8 @@
 package interface_adapter.home_page;
 
+import data_access.FileUserDataAccessObject;
 import entity.Entry;
+import entity.Household;
 import entity.User;
 import interface_adapter.ViewModel;
 import use_case.select_user.*;
@@ -14,6 +16,7 @@ public class HomePageViewModel {
     private final List<Consumer<List<Entry>>> listeners = new ArrayList();
     private String lastMessage = "";
     private User currentUser;
+    private FileUserDataAccessObject dao;
 
     public synchronized void setEntries(List<Entry> newEntries) {
         this.entries.clear();
@@ -23,6 +26,27 @@ public class HomePageViewModel {
 
         this.notifyListeners();
     }
+
+    public void setDao(FileUserDataAccessObject dao) {
+        this.dao = dao;
+    }
+
+    public void loadCurrentUser() {
+        if (dao != null) {
+            String username = dao.getCurrentUsername();
+            if (username != null) {
+                Household household = dao.get(username);
+                if (household != null) {
+                    List<Entry> allEntries = new ArrayList<>();
+                    for (User u : household.getUsers()) {
+                        allEntries.addAll(u.getEntries());
+                    }
+                    setEntries(allEntries);
+                }
+            }
+        }
+    }
+
 
     public synchronized void addEntry(Entry e) {
         this.entries.add(e);
