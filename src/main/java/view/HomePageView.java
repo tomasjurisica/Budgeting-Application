@@ -25,7 +25,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import interface_adapter.home_page.HomePageViewModel;
-import ui.PieChartPanel;
 import use_case.home_display.*;
 
 
