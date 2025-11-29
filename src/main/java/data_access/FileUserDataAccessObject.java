@@ -180,7 +180,7 @@ public class FileUserDataAccessObject implements
             householdData.getJSONArray("householdEntries").put(entryJson);
 
             // Add entry to each user
-            JSONArray users = data.getJSONArray("users");
+            JSONArray users = householdData.getJSONArray("users");
 
             int selectedUserIndex = 0;
 
