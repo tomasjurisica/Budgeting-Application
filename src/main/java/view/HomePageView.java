@@ -143,7 +143,7 @@ public class HomePageView extends JPanel {
         navButtonsPanel.setBackground(new Color(42, 42, 42));
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
-        for(int i = 1; i <= 3; ++i) {
+        for(int i = 1; i <= 2; ++i) {
             if (i == 1){
                 JButton iconButton = new JButton("$");
                 iconButton.setFont(new Font("Arial", Font.BOLD, 20));
