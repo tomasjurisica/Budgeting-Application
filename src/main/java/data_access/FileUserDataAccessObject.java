@@ -298,23 +298,38 @@ public class FileUserDataAccessObject implements
         return accounts.containsKey(identifier);
     }
 
-    // Entries don't depend on each user, depends on household so changed the for loop
     @Override
-    public List<Entry> getEntries(String username, int year, int month) {
+    public List<Entry> getEntries(String householdID, int year, int month) {
         List<Entry> result = new ArrayList<>();
 
-        Household household = accounts.get(username);
-        if (household == null) {
-            return result;
-        }
-            for (Entry entry : household.getHouseholdEntries()) {
-                LocalDate date = entry.getDate();
+        try (FileReader reader = new FileReader(jsonFile)) {
+            JSONObject data = new JSONObject(new JSONTokener(reader));
+
+            if (!data.has(householdID)) {
+                return result;
+            }
+            JSONObject householdJson = data.getJSONObject(householdID);
+            JSONArray entriesArray = householdJson.getJSONArray("householdEntries");
+            for (int i = 0; i < entriesArray.length(); i++) {
+                JSONObject entryJson = entriesArray.getJSONObject(i);
+
+                LocalDate date = LocalDate.parse(entryJson.getString("date"));
+
                 if (date.getYear() == year && date.getMonthValue() == month) {
-                    result.add(entry);
+                    String name = entryJson.getString("name");
+                    String category = entryJson.getString("category");
+                    float amount = (float) entryJson.getDouble("amount");
+
+                    result.add(new Entry(name, category, amount, date));
                 }
             }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading householdEntries from JSON", e);
+        }
+
         return result;
-}
+    }
 
     @Override
     public ArrayList<User> getUsers() {

@@ -97,9 +97,10 @@ public class DetailedSpendingView extends JFrame implements PropertyChangeListen
 
         list.setFont(new Font("Monospaced", Font.PLAIN, 14));
         for (DetailedSpendingOutputData.Purchase p : purchases) {
+            String displayAmount = String.format("$%.2f", p.getAmount());
             String line = String.format("%-15s %-10s %s",
                     p.getPurchaseName(),
-                    "$" + p.getAmount(),
+                    displayAmount,
                     fmt.format(p.getDate()));
             listModel.addElement(line);
         }
