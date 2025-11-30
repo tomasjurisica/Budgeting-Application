@@ -126,7 +126,7 @@ public class FileUserDataAccessObject implements
                     // User Entries
                     JSONArray userEntriesJson = userJson.getJSONArray("entries");
                     user.addEntry(
-                        jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
+                            jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
 
                     household.addUser(user);
                 }
@@ -163,6 +163,13 @@ public class FileUserDataAccessObject implements
      */
     public void addHouseholdEntry(SharedEntry newEntry) {
         Household userHousehold = get(getCurrentUsername());
+        if (userHousehold == null) {
+            throw new RuntimeException("No household found for current user");
+        }
+
+        // Update in-memory household object first
+        userHousehold.addHouseholdEntry(newEntry);
+
         List<Entry> individualEntries = newEntry.getEntries();
         List<User> selectedUsers = newEntry.getUsers();
 
@@ -188,7 +195,6 @@ public class FileUserDataAccessObject implements
                 // Get the list of users
                 JSONObject userInfo = users.getJSONObject(i);
                 String userName = userInfo.get("name").toString();
-                System.out.println(selectedUserIndex);
 
                 // Only if the user is on the household entry, add the object
                 if (selectedUserIndex < selectedUsers.size() &&
