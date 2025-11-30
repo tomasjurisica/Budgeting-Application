@@ -1,0 +1,94 @@
+{"ale": {
+    "password": "1234",
+    "householdEntries": [
+        {
+            "date": "2025-11-30",
+            "amount": 100,
+            "name": "Pizza",
+            "category": "Food"
+        },
+        {
+            "date": "+20225-11-29",
+            "amount": 50,
+            "name": "Gym",
+            "category": "Health"
+        },
+        {
+            "date": "2025-11-30",
+            "amount": 50,
+            "name": "Sport",
+            "category": "Health"
+        },
+        {
+            "date": "2025-10-30",
+            "amount": 100,
+            "name": "aaa",
+            "category": "aaa"
+        },
+        {
+            "date": "2025-10-20",
+            "amount": 100,
+            "name": "aaw",
+            "category": "affd"
+        },
+        {
+            "date": "2025-10-30",
+            "amount": 100,
+            "name": "test",
+            "category": "test"
+        },
+        {
+            "date": "2025-01-10",
+            "amount": 100,
+            "name": "test",
+            "category": "test"
+        }
+    ],
+    "users": [{
+        "entries": [
+            {
+                "date": "2025-11-30",
+                "amount": 5000,
+                "name": "Pizza",
+                "category": "Food"
+            },
+            {
+                "date": "2025-11-29",
+                "amount": 15,
+                "name": "Gym",
+                "category": "Health"
+            },
+            {
+                "date": "2025-11-30",
+                "amount": 2500,
+                "name": "Sport",
+                "category": "Health"
+            },
+            {
+                "date": "2025-10-30",
+                "amount": 50,
+                "name": "aaa",
+                "category": "aaa"
+            },
+            {
+                "date": "2025-10-20",
+                "amount": 500,
+                "name": "aaw",
+                "category": "affd"
+            },
+            {
+                "date": "2025-10-30",
+                "amount": 3000,
+                "name": "test",
+                "category": "test"
+            },
+            {
+                "date": "2025-01-10",
+                "amount": 5000,
+                "name": "test",
+                "category": "test"
+            }
+        ],
+        "name": "john"
+    }]
+}}
