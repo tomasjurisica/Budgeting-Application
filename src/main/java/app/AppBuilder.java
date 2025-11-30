@@ -3,6 +3,7 @@ package app;
 import data_access.FileUserDataAccessObject;
 import entity.Entry;
 import entity.Household;
+import entity.HouseholdEntryHistory;
 import entity.HouseholdFactory;
 import entity.User;
 import interface_adapter.ViewManagerModel;
@@ -65,6 +66,9 @@ public class AppBuilder {
 
     // DAO version using a shared external database
     // final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject(userFactory);
+
+    // Memento Pattern: Shared history instance for undo/redo functionality
+    private final HouseholdEntryHistory householdEntryHistory = new HouseholdEntryHistory();
 
     private SignupView signupView;
     private SignupViewModel signupViewModel;
@@ -203,12 +207,20 @@ public class AppBuilder {
         final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
                 AddHouseholdEntryPresenter(addHouseholdEntryViewModel, homePageViewModel, viewManagerModel);
 
+        // Memento Pattern: Pass history to interactor to enable undo/redo
         final AddHouseholdEntryInputBoundary addHouseholdInteractor =
-                new AddHouseholdEntryInteractor(userDataAccessObject, addHouseholdEntryOutputBoundary);
+                new AddHouseholdEntryInteractor(userDataAccessObject, addHouseholdEntryOutputBoundary, householdEntryHistory);
 
         final AddHouseholdEntryController addHouseholdEntryController =
                 new AddHouseholdEntryController(addHouseholdInteractor);
         addHouseholdEntryView.setAddHouseholdEntryController(addHouseholdEntryController);
+
+        // Memento Pattern: Create undo/redo controller and wire it to the view
+        final UndoHouseholdEntryInteractor undoInteractor =
+                new UndoHouseholdEntryInteractor(userDataAccessObject, householdEntryHistory);
+        final UndoHouseholdEntryController undoController =
+                new UndoHouseholdEntryController(undoInteractor);
+        addHouseholdEntryView.setUndoController(undoController);
 
         // Wire ViewManagerModel to AddHouseholdEntryView for navigation
         addHouseholdEntryView.setViewManagerModel(viewManagerModel);
