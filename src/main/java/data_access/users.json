@@ -1,0 +1,142 @@
+{"hello": {
+    "password": "hello",
+    "householdEntries": [
+        {
+            "date": "2025-11-11",
+            "amount": 1500,
+            "name": "2",
+            "category": "2"
+        },
+        {
+            "date": "2025-11-11",
+            "amount": 1263,
+            "name": "2",
+            "category": "2"
+        },
+        {
+            "date": "2025-11-11",
+            "amount": 1264,
+            "name": "2",
+            "category": "2"
+        },
+        {
+            "date": "2025-11-11",
+            "amount": 1500,
+            "name": "2",
+            "category": "2"
+        },
+        {
+            "date": "2025-11-12",
+            "amount": 1500,
+            "name": "2",
+            "category": "2"
+        }
+    ],
+    "users": [
+        {
+            "entries": [
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421.34,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-12",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                }
+            ],
+            "name": "e"
+        },
+        {
+            "entries": [
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421.33,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-12",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                }
+            ],
+            "name": "2"
+        },
+        {
+            "entries": [
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 421.33,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-11",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                },
+                {
+                    "date": "2025-11-12",
+                    "amount": 500,
+                    "name": "2",
+                    "category": "2"
+                }
+            ],
+            "name": "3"
+        }
+    ]
+}}

@@ -54,6 +54,7 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
         this.setPreferredSize(new Dimension(350, 600));
 
         // Top bar with back button
+        /*
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(new Color(42, 42, 42));
         topBar.setPreferredSize(new Dimension(350, 50));
@@ -66,6 +67,7 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
         backButton.addActionListener(e -> navigateBack());
         topBar.add(backButton, BorderLayout.WEST);
         this.add(topBar, BorderLayout.NORTH);
+         */
 
         // Enter name
         JPanel namePanel = new JPanel();
@@ -114,13 +116,26 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
 
         // Enter percent for each user
         JPanel southWrapper = new JPanel(new BorderLayout());
-        southWrapper.add(new JLabel("For each user, enter percent owed"), BorderLayout.NORTH);
+        JLabel infoLabel = new JLabel("<html>"
+                + "For each user, enter percent owed. (Eg: XX.XX).<br>"
+                + "Leave empty to split evenly."
+                + "</html>");
+        southWrapper.add(infoLabel, BorderLayout.NORTH);
         southWrapper.add(percentagePanel, BorderLayout.CENTER);
 
         // Finalize and add entry
+        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+
         JButton addButton = new JButton("Add Entry");
-        southWrapper.add(addButton, BorderLayout.SOUTH);
         addButton.addActionListener(e -> onAdd());
+
+        JButton backButton = new JButton("Cancel");
+        backButton.addActionListener(e -> navigateBack());
+
+        buttonPanel.add(backButton);
+        buttonPanel.add(addButton);
+        southWrapper.add(buttonPanel, BorderLayout.SOUTH);
+
 
         this.add(southWrapper, BorderLayout.SOUTH);
     }
@@ -166,6 +181,20 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
 
     private void navigateBack() {
         if (viewManagerModel != null) {
+            // Clear fields
+            nameField.setText("");
+            categoryField.setText("");
+            dayField.setText("");
+            monthField.setText("");
+            yearField.setText("");
+            amountField.setText("");
+            selectedUserNames.clear();
+            percentagePanel.removeAll();
+            percentageFields.clear();
+            for (JCheckBox cb : userCheckBoxes) {
+                cb.setSelected(false);
+            }
+
             viewManagerModel.setState("home page");
             viewManagerModel.firePropertyChange();
         }

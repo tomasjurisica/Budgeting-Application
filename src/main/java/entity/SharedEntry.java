@@ -18,25 +18,78 @@ public class SharedEntry extends Entry {
      *
      * @param headEntry the shared entry for the whole household
      * @param users     the list of users for this entry
-     * @param percents  the percent contributed by each user.
+     * @param percents  the percent contributed by each user. (Sum of percents needs to be <= 100)
      */
     public SharedEntry(Entry headEntry, List<User> users, float[] percents) {
+        // init
         super(headEntry.getName(), headEntry.getCategory(), headEntry.getAmount(), headEntry.getDate());
         this.users = users;
         this.contributed = new float[percents.length];
 
-        int i = 0;
+        // bigdecimal inits
+        BigDecimal hundred = new BigDecimal("100");
+        BigDecimal amount = BigDecimal.valueOf(headEntry.getAmount());
+        BigDecimal numberOfUsers = BigDecimal.valueOf(percents.length);
+        BigDecimal bDPercent;
 
+        // calculate how much is "missing" from 100%.
+        BigDecimal totalPercent = BigDecimal.ZERO;
         for (float percent : percents) {
-            BigDecimal contribution = BigDecimal.valueOf(headEntry.getAmount() * percent);
-            contribution = contribution.setScale(2, RoundingMode.HALF_UP);
-            this.contributed[i] = contribution.floatValue();
+            bDPercent = new BigDecimal(String.valueOf(percent));
+            totalPercent = totalPercent.add(bDPercent);
+        }
+        BigDecimal percentError = hundred.subtract(totalPercent);
+
+
+        BigDecimal totalError = amount.multiply(percentError).divide(hundred, 10, RoundingMode.HALF_UP);
+
+        // Calculate
+        BigDecimal[] bdContribution = new BigDecimal[percents.length];
+        int i = 0;
+        for (float percent : percents) {
+            bDPercent = new BigDecimal(String.valueOf(percent));
+
+            BigDecimal exactContribution = amount.multiply(bDPercent).divide(hundred, 10, RoundingMode.HALF_UP);
+            BigDecimal contribution = exactContribution.setScale(2, RoundingMode.HALF_UP);
+
+            totalError = totalError.add(exactContribution.subtract(contribution));
+
+            bdContribution[i] = contribution;
 
             i++;
         }
 
+        BigDecimal evenlyDivide = totalError.divide(numberOfUsers, 2, RoundingMode.HALF_UP);
+        totalError = totalError.subtract(evenlyDivide.multiply(numberOfUsers));
         i = 0;
+        for (BigDecimal db : bdContribution) {
+            bdContribution[i] = bdContribution[i].add(evenlyDivide);
+            i++;
+        }
 
+
+        BigDecimal cent = new BigDecimal("0.01");
+        // now we have the total error, will evenly split amongst remaining
+        i = 0;
+        while (totalError.compareTo(BigDecimal.ZERO) > 0) {
+            if (i == contributed.length) {
+                i = 0;
+            }
+            bdContribution[i] = bdContribution[i].add(cent);
+
+            totalError = totalError.subtract(cent);
+            i++;
+        }
+
+
+        for (int j = 0; j < percents.length; j++) {
+            contributed[j] = bdContribution[j].floatValue();
+        }
+
+
+
+        // I don't think this is needed?
+        i = 0;
         for (User user : users) {
             Entry addedEntry = new Entry(headEntry.getName(),
                 headEntry.getCategory(), this.contributed[i], headEntry.getDate());
