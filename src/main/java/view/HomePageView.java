@@ -198,7 +198,7 @@ public class HomePageView extends JPanel {
                 selectedMonth = monthIndex;
                 selectedYear = LocalDate.now().getYear();
                 monthButton.setText(item.getText() + " ▼");
-                updatePieChartForMonth(monthIndex);
+                updatePieChartForMonthAndYear(monthIndex, selectedYear);
             });
             monthMenu.add(item);
         }
@@ -254,10 +254,10 @@ public class HomePageView extends JPanel {
         }
     }
 
-    private List<Entry> filterEntriesByMonth(List<Entry> allEntries, int month) {
+    private List<Entry> filterEntriesByMonth(List<Entry> allEntries, int month, int year) {
         List<Entry> filtered = new ArrayList<>();
         for (Entry e : allEntries) {
-            if (e.getDate().getMonthValue() == month) {
+            if (e.getDate().getMonthValue() == month && e.getDate().getYear() == year) {
                 filtered.add(e);
             }
         }
@@ -309,9 +309,9 @@ public class HomePageView extends JPanel {
         dialog.setVisible(true);
     }
 
-    private void updatePieChartForMonth(int month) {
+    private void updatePieChartForMonthAndYear(int month, int year) {
         List<Entry> allEntries = viewModel.getEntries();
-        List<Entry> monthEntries = filterEntriesByMonth(allEntries, month);
+        List<Entry> monthEntries = filterEntriesByMonth(allEntries, month, year);
 
         Map<String, Float> newTotals = computeCategoryTotals(monthEntries);
         float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
