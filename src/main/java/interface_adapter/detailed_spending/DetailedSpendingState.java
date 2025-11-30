@@ -9,7 +9,7 @@ public class DetailedSpendingState {
     private String categoryName = "";
     private List<DetailedSpendingOutputData.Purchase> purchases = new ArrayList<>();
     private String errorMessage;
-    private String month;
+    private int month;
     private int year;
     private boolean hasError;
 
@@ -37,8 +37,8 @@ public class DetailedSpendingState {
         this.errorMessage = errorMessage;
     }
 
-    public String getMonth() {return month;}
-    public void setMonth(String month) {
+    public int getMonth() {return month;}
+    public void setMonth(int month) {
         this.month = month;
     }
 
