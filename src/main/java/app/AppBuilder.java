@@ -187,7 +187,7 @@ public class AppBuilder {
         }
 
         final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
-                AddHouseholdEntryPresenter(addHouseholdEntryViewModel, homePageViewModel);
+                AddHouseholdEntryPresenter(addHouseholdEntryViewModel, homePageViewModel, viewManagerModel);
 
         final AddHouseholdEntryInputBoundary addHouseholdInteractor =
                 new AddHouseholdEntryInteractor(userDataAccessObject, addHouseholdEntryOutputBoundary);
