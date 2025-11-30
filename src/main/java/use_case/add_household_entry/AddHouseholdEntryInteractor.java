@@ -36,6 +36,11 @@ public class AddHouseholdEntryInteractor implements AddHouseholdEntryInputBounda
         // If percents is over 100, present fail
         float totalPercents = 0;
         for (float percent : percents) {
+            // if an entered percent is negative, present error
+            if (percent < 0) {
+                presenter.prepareFailView("The percent " + percent + " is negative and invalid.");
+                return;
+            }
             totalPercents += percent;
         }
 
