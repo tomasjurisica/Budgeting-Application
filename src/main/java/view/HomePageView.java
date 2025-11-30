@@ -13,6 +13,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 
+import interface_adapter.detailed_spending.DetailedSpendingController;
 import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.ViewManagerModel;
 import view.*;
@@ -43,6 +46,17 @@ public class HomePageView extends JPanel {
     private final FileUserDataAccessObject userDao;
     private ViewManagerModel viewManagerModel;
     private AddHouseholdEntryView addHouseholdEntryView;
+    private DetailedSpendingController detailedSpendingController;
+    private int selectedMonth = LocalDate.now().getMonthValue();
+    private int selectedYear = LocalDate.now().getYear();
+
+    public void setDetailedSpendingController(DetailedSpendingController controller) {
+        this.detailedSpendingController = controller;
+    }
+
+    private String getCurrentUsername() {
+        return userDao.getCurrentUsername();
+    }
 
     public HomePageView(HomePageViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
@@ -59,6 +73,26 @@ public class HomePageView extends JPanel {
 
     public void setAddHouseholdEntryView(AddHouseholdEntryView addHouseholdEntryView) {
         this.addHouseholdEntryView = addHouseholdEntryView;
+    }
+
+    private void attachPieChartClickListener(PieChartPanel panel) {
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String category = panel.handleClick(e.getX(), e.getY());
+                System.out.println("Clicked on " + category);
+
+                if (!category.isEmpty()) {
+                    String username = getCurrentUsername();
+                    detailedSpendingController.execute(
+                            username,
+                            category,
+                            selectedMonth,
+                            selectedYear
+                    );
+                }
+            }
+        });
     }
 
     private void initializeUI() {
@@ -134,6 +168,7 @@ public class HomePageView extends JPanel {
         // Create empty pie chart initially
         Map<String, Float> emptyTotals = new LinkedHashMap<>();
         this.piePanel = new PieChartPanel(emptyTotals, 0.0F);
+        attachPieChartClickListener(this.piePanel);
         this.piePanel.setPreferredSize(new Dimension(300, 300));
 
         this.pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, -40));
@@ -153,6 +188,8 @@ public class HomePageView extends JPanel {
             JMenuItem item = new JMenuItem(months[i]);
             int monthIndex = i + 1;
             item.addActionListener((e) -> {
+                selectedMonth = monthIndex;
+                selectedYear = LocalDate.now().getYear();
                 monthButton.setText(item.getText() + " ▼");
                 updatePieChartForMonth(monthIndex);
             });
@@ -185,6 +222,7 @@ public class HomePageView extends JPanel {
             float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
             this.pieWrapper.remove(this.piePanel);
             this.piePanel = new PieChartPanel(newTotals, newTotal);
+            attachPieChartClickListener(this.piePanel);
             this.piePanel.setPreferredSize(new Dimension(300, 300));
             this.pieWrapper.removeAll();
             this.pieWrapper.add(this.piePanel);
@@ -273,6 +311,7 @@ public class HomePageView extends JPanel {
 
         this.pieWrapper.removeAll();
         this.piePanel = new PieChartPanel(newTotals, newTotal);
+        attachPieChartClickListener(this.piePanel);
         this.piePanel.setPreferredSize(new Dimension(300, 300));
         this.pieWrapper.add(this.piePanel);
         this.pieWrapper.revalidate();
@@ -291,9 +330,11 @@ public class HomePageView extends JPanel {
 
         HomeDisplayInteractor interactor = new HomeDisplayInteractor(viewModel);
         List<Entry> allEntries = new ArrayList<>();
-        for (User user : household.getUsers()) {
-            allEntries.addAll(user.getEntries());
-        }
+        allEntries.addAll(household.getHouseholdEntries());
+        // I HAD TO CHANGE THIS BECAUSE HOME DISPLAY LOOKS AT HOUSEHOLD ENTRIES NOT SPECIFIC ENTRIES
+        // for (User user : household.getUsers()) {
+            // allEntries.addAll(user.getEntries());
+        // }
         HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
         interactor.execute(request);
     }
