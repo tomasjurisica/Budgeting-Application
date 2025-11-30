@@ -33,6 +33,37 @@ public class PieChartPanel extends JPanel {
         int diameter = Math.min(this.getWidth(), this.getHeight() - 40);
         int x = (this.getWidth() - diameter) / 2;
         int y = 40;
+
+        int smallDiameter = (total <= 0) ? (int)(diameter * 0.85) : diameter;
+
+        if (total <= 0) {
+            g2.setColor(Color.darkGray);
+            g2.setStroke(new java.awt.BasicStroke(4));
+
+            int smallX = (getWidth() - smallDiameter) / 2;
+            int smallY = y + (diameter - smallDiameter) / 2;
+
+            g2.drawOval(smallX, smallY, smallDiameter, smallDiameter);
+
+
+            int holeSize = (int) (smallDiameter * 0.6);
+            int holeX = (getWidth() - holeSize) / 2;
+            int holeY = smallY + (smallDiameter - holeSize) / 2;
+
+            g2.setColor(getBackground());
+            g2.fillOval(holeX, holeY, holeSize, holeSize);
+
+            g2.setColor(Color.BLACK);
+            g2.setFont(new Font("SansSerif", Font.BOLD, 22));
+            String text = "$0.00";
+            FontMetrics fm = g2.getFontMetrics();
+            int textX = getWidth() / 2 - fm.stringWidth(text) / 2;
+            int textY = holeY + holeSize / 2 + fm.getAscent() / 2;
+            g2.drawString(text, textX, textY);
+
+            return;
+        }
+
         float startAngle = 0.0F;
         int index = 0;
 
@@ -50,7 +81,7 @@ public class PieChartPanel extends JPanel {
             ++index;
         }
 
-        int holeSize = (int)((double)diameter * 0.6);
+        int holeSize = (int)((double) diameter * 0.6);
         int holeX = (this.getWidth() - holeSize) / 2;
         int holeY = y + (diameter - holeSize) / 2;
         g2.setColor(this.getBackground());

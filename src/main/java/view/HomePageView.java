@@ -99,7 +99,17 @@ public class HomePageView extends JPanel {
         navButtonsPanel.setLayout(new GridLayout(1, 6, 5, 0));
 
         for(int i = 1; i <= 3; ++i) {
-
+            if (i == 1){
+                JButton iconButton = new JButton("$");
+                iconButton.setFont(new Font("Arial", Font.BOLD, 20));
+                iconButton.setFocusPainted(false);
+                iconButton.setBorderPainted(false);
+                iconButton.setContentAreaFilled(false);
+                iconButton.setForeground(Color.white);
+                navButtonsPanel.add(iconButton);
+                iconButton.addActionListener(e -> openCurrencyConverterPopup());
+                i ++;
+            }
             JButton iconButton = new JButton("★");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
@@ -108,9 +118,6 @@ public class HomePageView extends JPanel {
             iconButton.setForeground(Color.white);
             navButtonsPanel.add(iconButton);
 
-            if (i == 1) { // For example, first star opens currency converter
-                iconButton.addActionListener(e -> openCurrencyConverterPopup());
-            }
         }
 
         JPanel rightNavWrapper = new JPanel(new BorderLayout());
