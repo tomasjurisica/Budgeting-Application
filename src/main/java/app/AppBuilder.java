@@ -288,6 +288,7 @@ public class AppBuilder {
 
         final DetailedSpendingController detailedSpendingController = new DetailedSpendingController(detailedSpendingInteractor);
         detailedSpendingView.setDetailedSpendingController(detailedSpendingController);
+        homePage.setDetailedSpendingController(detailedSpendingController);
         return this;
     }
 
