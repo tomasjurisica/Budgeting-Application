@@ -254,7 +254,7 @@ public class HomePageView extends JPanel {
         }
     }
 
-    private List<Entry> filterEntriesByMonth(List<Entry> allEntries, int month, int year) {
+    private List<Entry> filterEntriesByMonthAndYear(List<Entry> allEntries, int month, int year) {
         List<Entry> filtered = new ArrayList<>();
         for (Entry e : allEntries) {
             if (e.getDate().getMonthValue() == month && e.getDate().getYear() == year) {
@@ -311,7 +311,7 @@ public class HomePageView extends JPanel {
 
     private void updatePieChartForMonthAndYear(int month, int year) {
         List<Entry> allEntries = viewModel.getEntries();
-        List<Entry> monthEntries = filterEntriesByMonth(allEntries, month, year);
+        List<Entry> monthEntries = filterEntriesByMonthAndYear(allEntries, month, year);
 
         Map<String, Float> newTotals = computeCategoryTotals(monthEntries);
         float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
