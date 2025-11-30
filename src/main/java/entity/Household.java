@@ -186,4 +186,34 @@ public class Household {
         }
         return allEntries;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Household {\n");
+        sb.append("  householdID='").append(householdID).append("',\n");
+
+        // Do NOT print real password for security
+        sb.append("  password='***',\n");
+
+        // Users list
+        sb.append("  users=[\n");
+        for (User u : users) {
+            sb.append("    ").append(u.toString()).append(",\n");
+        }
+        sb.append("  ],\n");
+
+        // Household shared entries
+        sb.append("  householdEntries=[\n");
+        for (SharedEntry e : householdEntries) {
+            sb.append("    ").append(e.toString()).append(",\n");
+        }
+        sb.append("  ]\n");
+
+        sb.append("}");
+
+        return sb.toString();
+    }
+
 }
