@@ -33,10 +33,9 @@ public class FileUserDataAccessObject implements
         SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         LogoutUserDataAccessInterface,
-        DetailedSpendingUserDataAccessInterface
+        DetailedSpendingUserDataAccessInterface,
+        AddHouseholdEntryDataAccessInterface
 {
-        LogoutUserDataAccessInterface,
-        AddHouseholdEntryDataAccessInterface {
 
     private final File jsonFile;
     // Map stores HouseholdID (String) -> Household object
