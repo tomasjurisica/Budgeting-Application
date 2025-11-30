@@ -13,8 +13,8 @@ import java.util.Map;
  * NOT persist data between runs of the program.
  */
 public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterface,
-                                                     LoginUserDataAccessInterface,
-                                                    LogoutUserDataAccessInterface {
+    LoginUserDataAccessInterface,
+    LogoutUserDataAccessInterface {
 
     private final Map<String, Household> users = new HashMap<>();
 

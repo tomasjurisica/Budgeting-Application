@@ -9,6 +9,7 @@ public interface LoginUserDataAccessInterface {
 
     /**
      * Checks if the given username exists.
+     *
      * @param username the username to look for
      * @return true if a user with the given username exists; false otherwise
      */
@@ -16,12 +17,14 @@ public interface LoginUserDataAccessInterface {
 
     /**
      * Saves the user.
+     *
      * @param household the user to save
      */
     void save(Household household);
 
     /**
      * Returns the user with the given username.
+     *
      * @param username the username to look up
      * @return the user with the given username
      */

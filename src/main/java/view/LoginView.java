@@ -8,6 +8,7 @@ import interface_adapter.signup.SignupViewModel;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,9 +47,9 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
-                new JLabel(LoginViewModel.HOUSEHOLDID_LABEL), householdIDInputField);
+            new JLabel(LoginViewModel.HOUSEHOLDID_LABEL), householdIDInputField);
         final LabelTextPanel passwordInfo = new LabelTextPanel(
-                new JLabel(loginViewModel.PASSWORD_LABEL), passwordInputField);
+            new JLabel(LoginViewModel.PASSWORD_LABEL), passwordInputField);
 
         final JPanel buttons = new JPanel();
         toSignUp = new JButton(LoginViewModel.TO_SIGNUP_BUTTON_LABEL);
@@ -61,20 +62,20 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         passwordInfo.setMaximumSize(fieldSize);
 
         logIn.addActionListener(
-                evt -> {
-                    if (evt.getSource().equals(logIn)) {
-                        final LoginState currentState = loginViewModel.getState();
+            evt -> {
+                if (evt.getSource().equals(logIn)) {
+                    final LoginState currentState = loginViewModel.getState();
 
-                        loginController.execute(
-                                currentState.getUsername(),
-                                currentState.getPassword()
-                        );
-                    }
+                    loginController.execute(
+                        currentState.getUsername(),
+                        currentState.getPassword()
+                    );
                 }
+            }
         );
 
         toSignUp.addActionListener(
-                evt -> loginController.switchToSignUpView()
+            evt -> loginController.switchToSignUpView()
         );
 
         householdIDInputField.getDocument().addDocumentListener(new DocumentListener() {
@@ -140,6 +141,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
     /**
      * React to a button click that results in evt.
+     *
      * @param evt the ActionEvent to react to
      */
     public void actionPerformed(ActionEvent evt) {
@@ -155,6 +157,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
     private void setFields(LoginState state) {
         householdIDInputField.setText(state.getUsername());
+        passwordInputField.setText(state.getPassword());
     }
 
     public String getViewName() {

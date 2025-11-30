@@ -1,0 +1,58 @@
+{
+    "hello": {
+        "password": "hello",
+        "householdEntries": [],
+        "users": [
+            {
+                "entries": [{
+                    "date": "2025-11-29",
+                    "amount": 100,
+                    "name": "Name",
+                    "category": "Category"
+                }],
+                "name": "Hello"
+            },
+            {
+                "entries": [],
+                "name": "Test"
+            },
+            {
+                "entries": [],
+                "name": "Hello"
+            },
+            {
+                "entries": [],
+                "name": "Hey"
+            }
+        ]
+    },
+    "ale": {
+        "password": "1234",
+        "householdEntries": [],
+        "users": [{
+            "entries": [],
+            "name": "ale2"
+        }]
+    },
+    "defaultPassword": {
+        "password": "defaultID",
+        "householdEntries": [],
+        "users": [{
+            "entries": [
+                {
+                    "date": "2025-11-29",
+                    "amount": -120,
+                    "name": "Food",
+                    "category": "Groceries"
+                },
+                {
+                    "date": "2025-11-29",
+                    "amount": -80,
+                    "name": "Health",
+                    "category": "Health"
+                }
+            ],
+            "name": "Name"
+        }]
+    }
+}

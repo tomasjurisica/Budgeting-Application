@@ -7,6 +7,7 @@ import interface_adapter.select_user.SelectUserController;
 import entity.User;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,7 +24,7 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
     private SelectUserController SelectUserController;
 
     private final JLabel householdID;
-    private JPanel roommatesPanel;
+    private final JPanel roommatesPanel;
 
     public HouseholdDashboardView(HouseholdDashboardViewModel householdDashboardViewModel) {
         this.householdDashboardViewModel = householdDashboardViewModel;
@@ -53,10 +54,10 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
         addRoommateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addRoommateButton.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(
-                    this,
-                    "Enter roommate name:",
-                    "Add Roommate",
-                    JOptionPane.PLAIN_MESSAGE
+                this,
+                "Enter roommate name:",
+                "Add Roommate",
+                JOptionPane.PLAIN_MESSAGE
             );
             if (name != null && !name.trim().isEmpty()) {
                 householdDashboardViewModel.addUser(name.trim());
@@ -88,7 +89,26 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
             HouseholdDashboardState state = (HouseholdDashboardState) evt.getNewValue();
-            householdID.setText(state.getHousehold().getHouseholdID());
+
+            // Check for error and show popup
+            String errorMessage = state.getAddUserError();
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    errorMessage,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                // Clear the error after showing it
+                state.setAddUserError(null);
+            }
+
+            // Set household ID, with null check
+            if (state.getHousehold() != null) {
+                householdID.setText(state.getHousehold().getHouseholdID());
+            } else {
+                householdID.setText("");
+            }
 
             // Clear old buttons
             roommatesPanel.removeAll();
