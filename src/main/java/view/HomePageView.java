@@ -58,6 +58,7 @@ public class HomePageView extends JPanel {
 
     // made monthButton a field so other methods can update its text
     private JButton monthButton;
+    private JButton yearButton;
 
     public void setDetailedSpendingController(DetailedSpendingController controller) {
         this.detailedSpendingController = controller;
@@ -93,6 +94,7 @@ public class HomePageView extends JPanel {
 
                 if (!category.isEmpty() && detailedSpendingController != null) {
                     String username = getCurrentUsername();
+
                     detailedSpendingController.execute(
                             username,
                             category,
@@ -200,13 +202,12 @@ public class HomePageView extends JPanel {
         monthButton.setForeground(Color.black);
         JPopupMenu monthMenu = new JPopupMenu();
 
-        // show last 4 months including current
-        for(int i = currentMonth - 1; i >= 0; --i) {
+        for (int offset = 0; offset < 12; offset++) {
+            int i = (currentMonth - 1 - offset + 12) % 12;
             JMenuItem item = new JMenuItem(MONTHS[i]);
             int monthIndex = i + 1;
             item.addActionListener((e) -> {
                 selectedMonth = monthIndex;
-                selectedYear = LocalDate.now().getYear();
                 monthButton.setText(item.getText() + " ▼");
                 updatePieChartForMonthAndYear(monthIndex, selectedYear);
             });
@@ -216,6 +217,38 @@ public class HomePageView extends JPanel {
         monthButton.addActionListener((e) -> monthMenu.show(monthButton, 0, monthButton.getHeight()));
         JPanel topCenterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topCenterPanel.add(monthButton);
+
+        int currentYear = LocalDate.now().getYear();
+        this.yearButton = new JButton(currentYear + " ▼");
+        yearButton.setFont(new Font("Arial", Font.BOLD, 16));
+        yearButton.setFocusPainted(false);
+        yearButton.setBorderPainted(false);
+        yearButton.setContentAreaFilled(false);
+        yearButton.setForeground(Color.black);
+
+        JPopupMenu yearMenu = new JPopupMenu();
+
+        for (int i = currentYear; i >= currentYear - 4; i--) {
+            String yearString = Integer.toString(i);
+            JMenuItem item = new JMenuItem(yearString);
+
+            final int selected = i;
+
+            item.addActionListener((e) -> {
+                selectedYear = selected;
+                yearButton.setText(yearString + " ▼");
+
+                updatePieChartForMonthAndYear(selectedMonth, selectedYear);
+            });
+
+            yearMenu.add(item);
+        }
+
+        yearButton.addActionListener((e) ->
+                yearMenu.show(yearButton, 0, yearButton.getHeight())
+        );
+
+        topCenterPanel.add(yearButton);
 
         this.scrollPane = new JScrollPane(this.categoryList);
         JPanel center = new JPanel(new BorderLayout());
@@ -360,14 +393,14 @@ public class HomePageView extends JPanel {
 
         // If preference is to use household entries when present, do so; otherwise fall back to users
 
-            if (household.getHouseholdEntries() != null && !household.getHouseholdEntries().isEmpty()) {
-                allEntries.addAll(household.getHouseholdEntries());
-                System.out.println("refreshData: using household-level entries (" + allEntries.size() + ")");
-            } else {
-                List<Entry> uEntries = collectAllUserEntries();
-                allEntries.addAll(uEntries);
-                System.out.println("refreshData: household entries empty; falling back to per-user entries (" + allEntries.size() + ")");
-            }
+        if (household.getHouseholdEntries() != null && !household.getHouseholdEntries().isEmpty()) {
+            allEntries.addAll(household.getHouseholdEntries());
+            System.out.println("refreshData: using household-level entries (" + allEntries.size() + ")");
+        } else {
+            List<Entry> uEntries = collectAllUserEntries();
+            allEntries.addAll(uEntries);
+            System.out.println("refreshData: household entries empty; falling back to per-user entries (" + allEntries.size() + ")");
+        }
 
         // Debug output: each entry
         for (Entry e : allEntries) {

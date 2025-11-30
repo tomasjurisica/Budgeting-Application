@@ -42,6 +42,12 @@
             "amount": 100,
             "name": "test",
             "category": "test"
+        },
+        {
+            "date": "2024-11-10",
+            "amount": 30,
+            "name": "test1",
+            "category": "test"
         }
     ],
     "users": [{
@@ -86,6 +92,12 @@
                 "date": "2025-01-10",
                 "amount": 5000,
                 "name": "test",
+                "category": "test"
+            },
+            {
+                "date": "2024-11-10",
+                "amount": 1500,
+                "name": "test1",
                 "category": "test"
             }
         ],
