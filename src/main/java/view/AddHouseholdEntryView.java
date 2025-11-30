@@ -14,6 +14,7 @@ import java.util.List;
 import interface_adapter.add_household_entry.AddHouseholdEntryViewModel;
 import interface_adapter.add_household_entry.AddHouseholdEntryState;
 import interface_adapter.add_household_entry.AddHouseholdEntryController;
+import interface_adapter.add_household_entry.UndoHouseholdEntryController;
 import interface_adapter.ViewManagerModel;
 import entity.Household;
 import entity.User;
@@ -42,6 +43,7 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
     // CA
     private final AddHouseholdEntryViewModel viewModel;
     private AddHouseholdEntryController addHouseholdEntryController;
+    private UndoHouseholdEntryController undoController;
     private ViewManagerModel viewManagerModel;
 
     public AddHouseholdEntryView(AddHouseholdEntryViewModel viewModel) {
@@ -119,8 +121,19 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
 
         // Finalize and add entry
         JButton addButton = new JButton("Add Entry");
-        southWrapper.add(addButton, BorderLayout.SOUTH);
         addButton.addActionListener(e -> onAdd());
+
+        // Memento Pattern: Undo/Redo buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton undoButton = new JButton("Undo");
+        JButton redoButton = new JButton("Redo");
+        undoButton.addActionListener(e -> onUndo());
+        redoButton.addActionListener(e -> onRedo());
+        buttonPanel.add(undoButton);
+        buttonPanel.add(redoButton);
+        buttonPanel.add(addButton);
+
+        southWrapper.add(buttonPanel, BorderLayout.SOUTH);
 
         this.add(southWrapper, BorderLayout.SOUTH);
     }
@@ -271,5 +284,65 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
 
     public void setAddHouseholdEntryController(AddHouseholdEntryController addHouseholdEntryController) {
         this.addHouseholdEntryController = addHouseholdEntryController;
+    }
+
+    public void setUndoController(UndoHouseholdEntryController undoController) {
+        this.undoController = undoController;
+    }
+
+    /**
+     * Handles undo action - part of Memento pattern implementation
+     */
+    private void onUndo() {
+        if (undoController != null) {
+            boolean success = undoController.execute();
+            if (success) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Entry undone successfully!",
+                        "Undo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                // Refresh the view if needed
+                if (viewManagerModel != null) {
+                    viewManagerModel.firePropertyChange();
+                }
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Nothing to undo.",
+                        "Undo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        }
+    }
+
+    /**
+     * Handles redo action - part of Memento pattern implementation
+     */
+    private void onRedo() {
+        if (undoController != null) {
+            boolean success = undoController.redo();
+            if (success) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Entry redone successfully!",
+                        "Redo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                // Refresh the view if needed
+                if (viewManagerModel != null) {
+                    viewManagerModel.firePropertyChange();
+                }
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Nothing to redo.",
+                        "Redo",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        }
     }
 }

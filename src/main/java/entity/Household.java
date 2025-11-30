@@ -148,7 +148,7 @@ public class Household {
 
         while (i < householdEntries.size()) {
             if (!householdEntries.get(i).getDate().isBefore(firstDate) &&
-                !householdEntries.get(i).getDate().isAfter(lastDate)) {
+                    !householdEntries.get(i).getDate().isAfter(lastDate)) {
                 return i;
             }
             i++;
@@ -170,7 +170,7 @@ public class Household {
 
         while (i < householdEntries.size()) {
             if (!householdEntries.get(i).getDate().isBefore(firstDate) &&
-                !householdEntries.get(i).getDate().isAfter(lastDate)) {
+                    !householdEntries.get(i).getDate().isAfter(lastDate)) {
                 result = i;
             }
             i++;
@@ -185,5 +185,58 @@ public class Household {
             allEntries.addAll(u.getEntries());
         }
         return allEntries;
+    }
+
+    // Memento Pattern Implementation
+
+    /**
+     * Memento class to store a snapshot of household entries state.
+     * This is a nested class following the Memento design pattern.
+     */
+    public static class HouseholdMemento {
+        private final ArrayList<SharedEntry> savedEntries;
+
+        /**
+         * Creates a memento with a snapshot of the household entries.
+         * @param entries The entries to save in this memento
+         */
+        private HouseholdMemento(ArrayList<SharedEntry> entries) {
+            // Deep copy to ensure immutability
+            this.savedEntries = new ArrayList<>();
+            for (SharedEntry entry : entries) {
+                this.savedEntries.add(entry);
+            }
+        }
+
+        /**
+         * Gets the saved entries. Only accessible by the Household class.
+         * @return A copy of the saved entries
+         */
+        private ArrayList<SharedEntry> getSavedEntries() {
+            return new ArrayList<>(savedEntries);
+        }
+    }
+
+    /**
+     * Creates a memento (snapshot) of the current household entries state.
+     * This is the Originator's method to create a memento.
+     *
+     * @return A memento containing the current state of household entries
+     */
+    public HouseholdMemento createMemento() {
+        return new HouseholdMemento(householdEntries);
+    }
+
+    /**
+     * Restores the household entries state from a memento.
+     * This is the Originator's method to restore state from a memento.
+     *
+     * @param memento The memento to restore from
+     */
+    public void restoreFromMemento(HouseholdMemento memento) {
+        if (memento != null) {
+            this.householdEntries.clear();
+            this.householdEntries.addAll(memento.getSavedEntries());
+        }
     }
 }
