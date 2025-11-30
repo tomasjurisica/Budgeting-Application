@@ -201,7 +201,7 @@ public class HomePageView extends JPanel {
         JPopupMenu monthMenu = new JPopupMenu();
 
         // show last 4 months including current
-        for(int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); --i) {
+        for(int i = currentMonth - 1; i >= 0; --i) {
             JMenuItem item = new JMenuItem(MONTHS[i]);
             int monthIndex = i + 1;
             item.addActionListener((e) -> {
