@@ -19,7 +19,6 @@ public class Main {
                 .addLoginUseCase()
                 .addLogoutUseCase()
                 .addHouseholdEntryUseCase()
-                .initBudgetingObjects()
                 .addSelectUserUseCase()
                 .addDetailedSpendingUseCase()
                 .build();

@@ -257,29 +257,6 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder initBudgetingObjects() {
-        User u = new User("Name");
-        ArrayList<Entry> foodEntry = new ArrayList<>();
-        foodEntry.add(new Entry("Food", "Groceries", -120, java.time.LocalDate.now()));
-        u.addEntry(foodEntry);
-
-        ArrayList<Entry> healthEntry = new ArrayList<>();
-        healthEntry.add(new Entry("Health", "Health", -80, java.time.LocalDate.now()));
-        u.addEntry(healthEntry);
-
-        household = new Household("defaultPassword", "defaultID");
-        household.addUser(u);
-
-        userDataAccessObject.save(household);
-
-        userDataAccessObject.setCurrentUsername(household.getHouseholdID());
-
-        homePageViewModel = new HomePageViewModel();
-        homePageViewModel.setEntries(userDataAccessObject.get(household.getHouseholdID()).getAllEntries());
-
-        return this;
-    }
-
     public AppBuilder addDetailedSpendingUseCase() {
         final DetailedSpendingOutputBoundary detailedSpendingOutputBoundary = new DetailedSpendingPresenter(detailedSpendingViewModel);
 
