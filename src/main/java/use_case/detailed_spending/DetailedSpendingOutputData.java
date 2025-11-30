@@ -21,7 +21,7 @@ public class DetailedSpendingOutputData {
         public LocalDate getDate() {
             return date;
         }
-        public double getAmount() {
+        public float getAmount() {
             return amount;
         }
 
