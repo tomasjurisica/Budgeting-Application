@@ -8,27 +8,27 @@ import entity.User;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.*;
 
 import interface_adapter.detailed_spending.DetailedSpendingController;
 import interface_adapter.home_page.HomePageViewModel;
 import interface_adapter.ViewManagerModel;
-import view.*;
 import view.AddHouseholdEntryView;
-import use_case.home_display.*;
-
+import use_case.home_display.HomeDisplayInteractor;
+import use_case.home_display.HomeDisplayRequestModel;
 
 public class HomePageView extends JPanel {
     private final String viewName = "home page";
@@ -49,6 +49,15 @@ public class HomePageView extends JPanel {
     private DetailedSpendingController detailedSpendingController;
     private int selectedMonth = LocalDate.now().getMonthValue();
     private int selectedYear = LocalDate.now().getYear();
+
+
+    private static final String[] MONTHS = new String[]{
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+    };
+
+    // made monthButton a field so other methods can update its text
+    private JButton monthButton;
 
     public void setDetailedSpendingController(DetailedSpendingController controller) {
         this.detailedSpendingController = controller;
@@ -82,7 +91,7 @@ public class HomePageView extends JPanel {
                 String category = panel.handleClick(e.getX(), e.getY());
                 System.out.println("Clicked on " + category);
 
-                if (!category.isEmpty()) {
+                if (!category.isEmpty() && detailedSpendingController != null) {
                     String username = getCurrentUsername();
                     detailedSpendingController.execute(
                             username,
@@ -167,7 +176,7 @@ public class HomePageView extends JPanel {
         closeNavButton.addActionListener((e) -> this.switchTopBar(this.homeTopBar));
 
         // Initialize center content (will be populated when household is set)
-        this.categoryLabel = new JLabel("Category Spending: ");
+        this.categoryLabel = new JLabel("Category Spending:");
         this.categoryLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         this.categoryList = new JPanel();
         this.categoryList.setLayout(new BoxLayout(this.categoryList, BoxLayout.Y_AXIS));
@@ -181,18 +190,19 @@ public class HomePageView extends JPanel {
         this.pieWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, -40));
         this.pieWrapper.add(this.piePanel);
 
-        JButton monthButton = new JButton("This Month ▼");
+        int currentMonth = LocalDate.now().getMonthValue();
+        // Show actual month name instead of "This Month"
+        this.monthButton = new JButton(MONTHS[currentMonth - 1] + " ▼");
         monthButton.setFont(new Font("Arial", Font.BOLD, 16));
         monthButton.setFocusPainted(false);
         monthButton.setBorderPainted(false);
         monthButton.setContentAreaFilled(false);
         monthButton.setForeground(Color.black);
         JPopupMenu monthMenu = new JPopupMenu();
-        String[] months = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        int currentMonth = LocalDate.now().getMonthValue();
 
+        // show last 4 months including current
         for(int i = currentMonth - 1; i >= Math.max(0, currentMonth - 4); --i) {
-            JMenuItem item = new JMenuItem(months[i]);
+            JMenuItem item = new JMenuItem(MONTHS[i]);
             int monthIndex = i + 1;
             item.addActionListener((e) -> {
                 selectedMonth = monthIndex;
@@ -225,7 +235,9 @@ public class HomePageView extends JPanel {
 
         // Listen to viewModel changes
         viewModel.addListener((entries) -> {
-            Map<String, Float> newTotals = this.computeCategoryTotals(entries);
+            // Respect currently selected month/year when updating viewModel-driven updates
+            List<Entry> monthEntries = filterEntriesByMonthAndYear(entries, selectedMonth, selectedYear);
+            Map<String, Float> newTotals = this.computeCategoryTotals(monthEntries);
             float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
             this.pieWrapper.remove(this.piePanel);
             this.piePanel = new PieChartPanel(newTotals, newTotal);
@@ -235,22 +247,39 @@ public class HomePageView extends JPanel {
             this.pieWrapper.add(this.piePanel);
             this.pieWrapper.revalidate();
             this.pieWrapper.repaint();
-            this.categoryList.removeAll();
+
+            // Replace category list contents with category totals only
             this.populateCategoryList(this.categoryList, newTotals);
             this.categoryList.revalidate();
             this.categoryList.repaint();
         });
     }
 
+    /**
+     * Set household based on current username in DAO, and refresh UI.
+     * Call this after login so the view shows correct data for the logged-in household.
+     */
     public void setHousehold() {
         String householdID = userDao.getCurrentUsername();
-        if(householdID != null) {
+        if (householdID != null) {
+            // Load latest household from DAO
             this.household = userDao.get(householdID);
+            // Update viewModel/UI with entries from the loaded household
             refreshData();
             refreshHome();
         }
         else {
             System.out.println("No current user in DAO");
+        }
+    }
+
+    public void reloadFromDao() {
+        String householdID = userDao.getCurrentUsername();
+        if (householdID != null) {
+            Household fresh = userDao.get(householdID);
+            if (fresh != null) {
+                this.household = fresh;
+            }
         }
     }
 
@@ -309,6 +338,119 @@ public class HomePageView extends JPanel {
         dialog.setVisible(true);
     }
 
+    /**
+     * Build entries for the view according to the display policy, then feed the viewModel.
+     */
+    private void refreshData() {
+        if (household == null) {
+            System.out.println("refreshData: household is null, skipping");
+            return;
+        }
+
+        // Always reload from DAO to reflect persisted JSON changes
+        String householdID = userDao.getCurrentUsername();
+        if (householdID != null) {
+            Household fresh = userDao.get(householdID);
+            if (fresh != null) {
+                this.household = fresh;
+            }
+        }
+
+        List<Entry> allEntries = new ArrayList<>();
+
+        // If preference is to use household entries when present, do so; otherwise fall back to users
+
+            if (household.getHouseholdEntries() != null && !household.getHouseholdEntries().isEmpty()) {
+                allEntries.addAll(household.getHouseholdEntries());
+                System.out.println("refreshData: using household-level entries (" + allEntries.size() + ")");
+            } else {
+                List<Entry> uEntries = collectAllUserEntries();
+                allEntries.addAll(uEntries);
+                System.out.println("refreshData: household entries empty; falling back to per-user entries (" + allEntries.size() + ")");
+            }
+
+        // Debug output: each entry
+        for (Entry e : allEntries) {
+            System.out.println("DEBUG Entry: name=" + e.getName()
+                    + " amount=" + e.getAmount()
+                    + " date=" + e.getDate()
+                    + " category=" + e.getCategory());
+        }
+
+        // Provide entries to the interactor/viewModel
+        HomeDisplayInteractor interactor = new HomeDisplayInteractor(viewModel);
+        HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
+        interactor.execute(request);
+    }
+
+    /**
+     * Helper to gather entries from all users in the household.
+     */
+    private List<Entry> collectAllUserEntries() {
+        List<Entry> userEntries = new ArrayList<>();
+        if (household.getUsers() != null) {
+            for (User u : household.getUsers()) {
+                if (u.getEntries() != null) {
+                    userEntries.addAll(u.getEntries());
+                }
+            }
+        }
+        return userEntries;
+    }
+
+    private String[] getCurrencyCodes() {
+        return new String[]{"USD", "EUR", "GBP", "CAD", "JPY", "AUD"};
+    }
+
+    private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
+        Map<String, Float> categoryTotals = new LinkedHashMap<>();
+        float totalSpent = 0.0F;
+
+        for(Entry e : entries) {
+            float amt = Math.abs(e.getAmount());
+            totalSpent += amt;
+            String cat = e.getCategory() == null ? "Uncategorized" : e.getCategory();
+            categoryTotals.merge(cat, amt, Float::sum);
+        }
+
+        return categoryTotals;
+    }
+
+    private void populateCategoryList(JPanel categoryListPanel, Map<String, Float> categoryTotals) {
+        // Ensure the panel only contains category totals (no individual entries)
+        categoryListPanel.removeAll();
+
+        // Header
+        this.categoryLabel.setText("Category Spending:");
+        categoryListPanel.add(this.categoryLabel);
+
+        NumberFormat currencyFmt = NumberFormat.getCurrencyInstance(Locale.getDefault());
+
+        if (categoryTotals == null || categoryTotals.isEmpty()) {
+            JLabel empty = new JLabel("No spending for this month");
+            empty.setFont(new Font("Arial", Font.ITALIC, 14));
+            categoryListPanel.add(empty);
+            return;
+        }
+
+        for (Map.Entry<String, Float> entry : categoryTotals.entrySet()) {
+            String category = entry.getKey();
+            float amt = entry.getValue();
+            String formatted = currencyFmt.format(amt);
+            JLabel label = new JLabel(category + ": " + formatted);
+            label.setFont(new Font("Arial", Font.PLAIN, 18));
+            categoryListPanel.add(label);
+        }
+    }
+
+    private void switchTopBar(JPanel newTopBar) {
+        this.remove(this.currentTopBar);
+        this.currentTopBar = newTopBar;
+        this.add(this.currentTopBar, BorderLayout.NORTH);
+        this.revalidate();
+        this.repaint();
+    }
+
     private void updatePieChartForMonthAndYear(int month, int year) {
         List<Entry> allEntries = viewModel.getEntries();
         List<Entry> monthEntries = filterEntriesByMonthAndYear(allEntries, month, year);
@@ -324,67 +466,27 @@ public class HomePageView extends JPanel {
         this.pieWrapper.revalidate();
         this.pieWrapper.repaint();
 
-        this.categoryList.removeAll();
+        // Update category list to show only aggregated categories
         populateCategoryList(this.categoryList, newTotals);
         this.categoryList.revalidate();
         this.categoryList.repaint();
     }
 
-    private void refreshData() {
-        if (household == null) {
-            return;
-        }
-
-        HomeDisplayInteractor interactor = new HomeDisplayInteractor(viewModel);
-        List<Entry> allEntries = new ArrayList<>();
-        allEntries.addAll(household.getHouseholdEntries());
-        // I HAD TO CHANGE THIS BECAUSE HOME DISPLAY LOOKS AT HOUSEHOLD ENTRIES NOT SPECIFIC ENTRIES
-        // for (User user : household.getUsers()) {
-            // allEntries.addAll(user.getEntries());
-        // }
-        HomeDisplayRequestModel request = new HomeDisplayRequestModel(allEntries);
-        interactor.execute(request);
-    }
-
-    private String[] getCurrencyCodes() {
-        return new String[]{"USD", "EUR", "GBP", "CAD", "JPY", "AUD"};
-    }
-
-    private Map<String, Float> computeCategoryTotals(List<Entry> entries) {
-        Map<String, Float> categoryTotals = new LinkedHashMap<>();
-        float totalSpent = 0.0F;
-
-        for(Entry e : entries) {
-            float amt = Math.abs(e.getAmount());
-            totalSpent += amt;
-            categoryTotals.merge(e.getCategory(), amt, Float::sum);
-
-        }
-
-
-        return categoryTotals;
-    }
-
-    private void populateCategoryList(JPanel categoryListPanel, Map<String, Float> categoryTotals) {
-        categoryListPanel.add(this.categoryLabel);
-
-        for(String category : categoryTotals.keySet()) {
-            float amt = (Float)categoryTotals.get(category);
-            JLabel label = new JLabel(category + ": $" + amt);
-            label.setFont(new Font("Arial", Font.PLAIN, 18));
-            categoryListPanel.add(label);
-        }
-    }
-
-    private void switchTopBar(JPanel newTopBar) {
-        this.remove(this.currentTopBar);
-        this.currentTopBar = newTopBar;
-        this.add(this.currentTopBar, BorderLayout.NORTH);
-        this.revalidate();
-        this.repaint();
-    }
-
     private void refreshHome() {
+        // Always reset to the real current month/time when returning to Home
+        selectedMonth = LocalDate.now().getMonthValue();
+        selectedYear = LocalDate.now().getYear();
+        // update the month button label
+        if (this.monthButton != null) {
+            this.monthButton.setText(MONTHS[selectedMonth - 1] + " ▼");
+        }
+        // refresh data and UI for the current month
+        // make sure we reload latest persisted household before updating
+        reloadFromDao();
+        // refreshData will push updated entries to viewModel
+        refreshData();
+        updatePieChartForMonthAndYear(selectedMonth, selectedYear);
+
         this.revalidate();
         this.repaint();
         System.out.println("Home Refreshed");
