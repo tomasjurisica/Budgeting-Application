@@ -269,7 +269,7 @@ public class HomePageView extends JPanel {
         // Listen to viewModel changes
         viewModel.addListener((entries) -> {
             // Respect currently selected month/year when updating viewModel-driven updates
-            List<Entry> monthEntries = filterEntriesByMonthAndYear(entries, selectedMonth, selectedYear);
+            List<Entry> monthEntries = userDao.getEntries(userDao.getCurrentUsername(), selectedYear, selectedMonth);
             Map<String, Float> newTotals = this.computeCategoryTotals(monthEntries);
             float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
             this.pieWrapper.remove(this.piePanel);
@@ -389,10 +389,11 @@ public class HomePageView extends JPanel {
             }
         }
 
-        List<Entry> allEntries = new ArrayList<>();
+        List<Entry> allEntries;
 
         // If preference is to use household entries when present, do so; otherwise fall back to users
 
+        /*
         if (household.getHouseholdEntries() != null && !household.getHouseholdEntries().isEmpty()) {
             allEntries.addAll(household.getHouseholdEntries());
             System.out.println("refreshData: using household-level entries (" + allEntries.size() + ")");
@@ -401,6 +402,9 @@ public class HomePageView extends JPanel {
             allEntries.addAll(uEntries);
             System.out.println("refreshData: household entries empty; falling back to per-user entries (" + allEntries.size() + ")");
         }
+         */
+
+        allEntries = userDao.getEntries(householdID, selectedYear, selectedMonth);
 
         // Debug output: each entry
         for (Entry e : allEntries) {
@@ -486,7 +490,7 @@ public class HomePageView extends JPanel {
 
     private void updatePieChartForMonthAndYear(int month, int year) {
         List<Entry> allEntries = viewModel.getEntries();
-        List<Entry> monthEntries = filterEntriesByMonthAndYear(allEntries, month, year);
+        List<Entry> monthEntries = userDao.getEntries(userDao.getCurrentUsername(), selectedYear, selectedMonth);
 
         Map<String, Float> newTotals = computeCategoryTotals(monthEntries);
         float newTotal = (Float)newTotals.values().stream().reduce(0.0F, Float::sum);
