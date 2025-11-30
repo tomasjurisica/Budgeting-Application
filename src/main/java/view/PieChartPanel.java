@@ -5,6 +5,9 @@
 
 package view;
 
+import interface_adapter.detailed_spending.DetailedSpendingController;
+import use_case.detailed_spending.DetailedSpendingInputData;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -18,6 +21,10 @@ import javax.swing.JPanel;
 public class PieChartPanel extends JPanel {
     private Map<String, Float> data;
     private float total;
+    private String currentUserName;
+    private int selectedMonth;
+    private int selectedYear;
+    private DetailedSpendingController detailedSpendingController;
     private static final Color[] PRESET_COLORS = new Color[]{new Color(220, 53, 69), new Color(0, 123, 255), new Color(40, 167, 69), new Color(111, 66, 193), new Color(255, 193, 7)};
 
     public PieChartPanel(Map<String, Float> data, float total) {
@@ -70,6 +77,8 @@ public class PieChartPanel extends JPanel {
         for(String category : this.data.keySet()) {
             float amount = (Float)this.data.get(category);
             float angle = amount / this.total * 360.0F;
+
+
             if (index < PRESET_COLORS.length) {
                 g2.setColor(PRESET_COLORS[index]);
             } else {
