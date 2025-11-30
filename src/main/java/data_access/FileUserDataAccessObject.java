@@ -1,10 +1,16 @@
 package data_access;
 
+import entity.Entry;
+import entity.Household;
+import entity.HouseholdFactory;
+import entity.User;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
 import entity.*;
 import use_case.add_household_entry.AddHouseholdEntryDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
+import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +33,9 @@ public class FileUserDataAccessObject implements
         SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         LogoutUserDataAccessInterface,
-        AddHouseholdEntryDataAccessInterface {
+        DetailedSpendingUserDataAccessInterface,
+        AddHouseholdEntryDataAccessInterface
+{
 
     private final File jsonFile;
     // Map stores HouseholdID (String) -> Household object
@@ -289,6 +297,24 @@ public class FileUserDataAccessObject implements
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
     }
+
+    // Entries don't depend on each user, depends on household so changed the for loop
+    @Override
+    public List<Entry> getEntries(String username, int year, int month) {
+        List<Entry> result = new ArrayList<>();
+
+        Household household = accounts.get(username);
+        if (household == null) {
+            return result;
+        }
+            for (Entry entry : household.getHouseholdEntries()) {
+                LocalDate date = entry.getDate();
+                if (date.getYear() == year && date.getMonthValue() == month) {
+                    result.add(entry);
+                }
+            }
+        return result;
+}
 
     @Override
     public ArrayList<User> getUsers() {

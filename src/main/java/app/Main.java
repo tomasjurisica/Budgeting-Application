@@ -14,12 +14,14 @@ public class Main {
                 .addLoggedInView()
                 .addHomePageView()
                 .addAddHouseholdEntryView()
+                .addDetailedSpendingView()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addLogoutUseCase()
                 .addHouseholdEntryUseCase()
                 .initBudgetingObjects()
                 .addSelectUserUseCase()
+                .addDetailedSpendingUseCase()
                 .build();
 
         application.pack();

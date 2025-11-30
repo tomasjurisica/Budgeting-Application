@@ -95,6 +95,53 @@ public class PieChartPanel extends JPanel {
         int textY = holeY + holeSize / 2 + fm.getAscent() / 2;
         g2.drawString(text, textX, textY);
     }
+    String handleClick(int mouseX, int mouseY) {
+        int diameter = Math.min(getWidth(), getHeight() - 40);
+        int drawX = (getWidth() - diameter) / 2;
+        int drawY = 40;
+
+        double centerX = drawX + diameter / 2.0;
+        double centerY = drawY + diameter / 2.0;
+        double radius = (double) diameter / 2;
+
+        double dx = mouseX - centerX;
+        double dy = mouseY - centerY;
+
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        //Case 1: Outside bounds
+        if (distance > radius){
+            return "";
+        }
+        // Case 2: Inside the donut
+        else if (distance<radius*0.60){
+            return "";
+        }
+        // Case 3: In the category section
+        else {
+            double angle = Math.toDegrees(Math.atan2(-dy, dx));
+            if (angle < 0) {
+                angle += 360;
+            }
+            int currentStart = 0;
+            for (String category: data.keySet()){
+
+                float amount = data.get(category);
+                float sliceAngle = (amount/total) * 360f;
+                int start = currentStart; // Get the start of the angle
+                int end = start + (int) sliceAngle; // Get the end of the angle
+
+                // See if the angle falls in the range
+                if (angle >= start && angle < end) {
+                    System.out.println("User clicked on:"+ category);
+                    return category;
+                }
+                currentStart = end;
+            }
+
+
+        }
+
+        return "";}
 
     private Color randomColor(int seed) {
         return (new Color(seed >> 16 & 255, seed >> 8 & 255, seed & 255)).brighter();
