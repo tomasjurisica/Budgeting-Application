@@ -126,7 +126,7 @@ public class FileUserDataAccessObject implements
                     // User Entries
                     JSONArray userEntriesJson = userJson.getJSONArray("entries");
                     user.addEntry(
-                        jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
+                            jsonToEntries(userEntriesJson)); // Assuming addEntry handles List<Entry> or ArrayList<Entry>
 
                     household.addUser(user);
                 }
@@ -163,6 +163,13 @@ public class FileUserDataAccessObject implements
      */
     public void addHouseholdEntry(SharedEntry newEntry) {
         Household userHousehold = get(getCurrentUsername());
+        if (userHousehold == null) {
+            throw new RuntimeException("No household found for current user");
+        }
+
+        // Update in-memory household object first
+        userHousehold.addHouseholdEntry(newEntry);
+
         List<Entry> individualEntries = newEntry.getEntries();
         List<User> selectedUsers = newEntry.getUsers();
 
@@ -190,7 +197,8 @@ public class FileUserDataAccessObject implements
                 String userName = userInfo.get("name").toString();
 
                 // Only if the user is on the household entry, add the object
-                if (userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
+                if (selectedUserIndex < selectedUsers.size() &&
+                        userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
                     // Create entry JSON object and put it in the array
                     Entry userEntry = individualEntries.get(selectedUserIndex);
                     entryJson = new JSONObject();
@@ -204,6 +212,11 @@ public class FileUserDataAccessObject implements
                 }
             }
 
+            try (FileWriter writer = new FileWriter(jsonFile)) {
+                writer.write(data.toString(4)); // Pretty print with 4-space indent
+            } catch (IOException e) {
+                throw new RuntimeException("Error writing JSON data to file", e);
+            }
         }
         catch (IOException e) {
             throw new RuntimeException("Error loading JSON data from file", e);

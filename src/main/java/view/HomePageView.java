@@ -206,8 +206,9 @@ public class HomePageView extends JPanel {
 
     public void setHousehold() {
         String householdID = userDao.getCurrentUsername();
-        if(householdID == null) {
+        if(householdID != null) {
             this.household = userDao.get(householdID);
+            refreshData();
             refreshHome();
         }
         else {
@@ -317,7 +318,7 @@ public class HomePageView extends JPanel {
             totalSpent += amt;
             categoryTotals.merge(e.getCategory(), amt, Float::sum);
 
-            }
+        }
 
 
         return categoryTotals;
