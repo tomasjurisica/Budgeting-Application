@@ -235,6 +235,47 @@ public class FileUserDataAccessObject implements
         }
     }
 
+    public void removeSharedEntry(List<User> selectedUsers) {
+        Household userHousehold = get(getCurrentUsername());
+        if (userHousehold == null) {
+            throw new RuntimeException("No household found for current user");
+        }
+
+        try (FileReader reader = new FileReader(jsonFile)) {
+            // Read the entire file content as a single JSONObject
+            JSONObject data = new JSONObject(new JSONTokener(reader));
+
+            // Add the new household entry to the JSON
+            JSONObject householdData = data.getJSONObject(userHousehold.getHouseholdID());
+
+            // Add entry to each user
+            JSONArray users = householdData.getJSONArray("users");
+            int selectedUserIndex = 0;
+
+            for (int i = 0; i < users.length(); i++) {
+                // Get list of users
+                JSONObject userInfo = users.getJSONObject(i);
+                String userName = userInfo.get("name").toString();
+
+                if (selectedUserIndex < selectedUsers.size() &&
+                        userName.equals(selectedUsers.get(selectedUserIndex).getName())) {
+                    JSONArray entries = userInfo.getJSONArray("entries");
+                    entries.remove(entries.length() - 1);
+                }
+
+            }
+
+            try (FileWriter writer = new FileWriter(jsonFile)) {
+                writer.write(data.toString(4)); // Pretty print with 4-space indent
+            } catch (IOException e) {
+                throw new RuntimeException("Error writing JSON data to file", e);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Error loading JSON data from file", e);
+        }
+    }
+        
     @Override
     public void save(Household household) {
         accounts.put(household.getHouseholdID(), household);
