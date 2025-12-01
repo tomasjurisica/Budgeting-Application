@@ -29,7 +29,7 @@ import interface_adapter.ViewManagerModel;
 import use_case.home_display.HomeDisplayInteractor;
 import use_case.home_display.HomeDisplayRequestModel;
 
-public class HomePageView extends JPanel {
+public class HomeDisplayView extends JPanel {
     private final String viewName = "home page";
     private Household household;
     private JPanel homeTopBar;
@@ -67,7 +67,7 @@ public class HomePageView extends JPanel {
         return userDao.getCurrentUsername();
     }
 
-    public HomePageView(HomeDisplayViewModel viewModel, FileUserDataAccessObject userDao) {
+    public HomeDisplayView(HomeDisplayViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
         this.userDao = userDao;
         this.setLayout(new BorderLayout());
@@ -327,7 +327,7 @@ public class HomePageView extends JPanel {
     }
 
     private void openCurrencyConverterPopup() {
-        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(HomePageView.this), "Currency Converter", true);
+        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(HomeDisplayView.this), "Currency Converter", true);
         dialog.setSize(400,250);
         dialog.setLayout(new GridLayout(5, 2, 10, 10));
 

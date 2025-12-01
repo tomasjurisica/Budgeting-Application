@@ -7,23 +7,23 @@ import interface_adapter.home_display.HomeDisplayViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import use_case.select_user.*;
 import use_case.select_user.SelectUserOutputData;
-import view.HomePageView;
+import view.HomeDisplayView;
 
 public class SelectUserPresenter implements SelectUserOutputBoundary {
 
     private final HomeDisplayViewModel homeDisplayViewModel;
     private final ViewManagerModel viewManagerModel;
     private final HouseholdDashboardViewModel householdDashboardViewModel;
-    private final HomePageView homePageView;
+    private final HomeDisplayView homeDisplayView;
 
     public SelectUserPresenter(HomeDisplayViewModel homeDisplayViewModel,
                                ViewManagerModel viewManagerModel,
                                HouseholdDashboardViewModel householdDashboardViewModel,
-                               HomePageView homePageView) {
+                               HomeDisplayView homeDisplayView) {
         this.homeDisplayViewModel = homeDisplayViewModel;
         this.viewManagerModel = viewManagerModel;
         this.householdDashboardViewModel = householdDashboardViewModel;
-        this.homePageView = homePageView;
+        this.homeDisplayView = homeDisplayView;
     }
 
     @Override
@@ -57,10 +57,10 @@ public class SelectUserPresenter implements SelectUserOutputBoundary {
         homeDisplayViewModel.setCurrentUser(selectedUser);
 
         // Update the HomePageView with the household
-        homePageView.setHousehold();
+        homeDisplayView.setHousehold();
 
         // Switch to the home page view
-        viewManagerModel.setState(homePageView.getViewName());
+        viewManagerModel.setState(homeDisplayView.getViewName());
         viewManagerModel.firePropertyChange();
     }
 }
