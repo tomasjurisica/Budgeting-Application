@@ -20,7 +20,7 @@ import interface_adapter.select_user.SelectUserPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
-import view.HomePageView;
+import view.HomeDisplayView;
 import view.AddHouseholdEntryView;
 import use_case.detailed_spending.*;
 import use_case.login.LoginInputBoundary;
@@ -75,7 +75,7 @@ public class AppBuilder {
     private LoginView loginView;
     private Household household;
     private HomeDisplayViewModel homeDisplayViewModel;
-    private HomePageView homePage;
+    private HomeDisplayView homePage;
     private AddHouseholdEntryView addHouseholdEntryView;
     private AddHouseholdEntryViewModel addHouseholdEntryViewModel;
     private DetailedSpendingView detailedSpendingView;
@@ -119,7 +119,7 @@ public class AppBuilder {
             homeDisplayViewModel = new HomeDisplayViewModel();
         }
         homeDisplayViewModel.setDao(userDataAccessObject);
-        homePage = new HomePageView(homeDisplayViewModel, userDataAccessObject);
+        homePage = new HomeDisplayView(homeDisplayViewModel, userDataAccessObject);
         cardPanel.add(homePage, homePage.getViewName());
         // Wire navigation
         homePage.setViewManagerModel(viewManagerModel);
@@ -248,7 +248,7 @@ public class AppBuilder {
             homeDisplayViewModel = new HomeDisplayViewModel();
         }
         if (homePage == null) {
-            homePage = new HomePageView(homeDisplayViewModel, dao);
+            homePage = new HomeDisplayView(homeDisplayViewModel, dao);
             cardPanel.add(homePage, homePage.getViewName());
         }
 
