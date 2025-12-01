@@ -154,12 +154,13 @@ public class HomePageView extends JPanel {
                 iconButton.addActionListener(e -> openCurrencyConverterPopup());
                 i ++;
             }
-            JButton iconButton = new JButton("★");
+            JButton iconButton = new JButton("*");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
             iconButton.setBorderPainted(false);
             iconButton.setContentAreaFilled(false);
             iconButton.setForeground(Color.white);
+            iconButton.addActionListener(e -> openIndividualDisplay());
             navButtonsPanel.add(iconButton);
 
         }
@@ -368,6 +369,48 @@ public class HomePageView extends JPanel {
 
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+    }
+
+    private void openIndividualDisplay() {
+        // 1. Household ID is what you logged in with, e.g. "ale" or "Amelia's House"
+        String householdId = userDao.getCurrentUsername();
+        if (householdId == null) {
+            JOptionPane.showMessageDialog(this,
+                    "No household is currently logged in.");
+            return;
+        }
+
+        // 2. Get the Household and its users
+        Household h = userDao.get(householdId);
+        if (h == null || h.getUsers() == null || h.getUsers().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Current household has no users.");
+            return;
+        }
+
+        // 3. Try to find a user whose name matches the login (ale → user "ale")
+        String username = null;
+        for (User u : h.getUsers()) {
+            if (householdId.equals(u.getName())) {
+                username = u.getName();
+                break;
+            }
+        }
+        // If no exact match, fall back to first user
+        if (username == null) {
+            username = h.getUsers().get(0).getName();
+        }
+
+        // 4. Build and show your IndividualDisplayView (uses FileUserDataAccessObject + users.json)
+        IndividualDisplayView individualView =
+                new IndividualDisplayView(userDao, householdId, username);
+
+        JFrame frame = new JFrame("Individual – " + username);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setContentPane(individualView);
+        frame.pack();
+        frame.setLocationRelativeTo(this);
+        frame.setVisible(true);
     }
 
     /**
