@@ -154,7 +154,7 @@ public class HomePageView extends JPanel {
                 iconButton.addActionListener(e -> openCurrencyConverterPopup());
                 i ++;
             }
-            JButton iconButton = new JButton("*");
+            JButton iconButton = new JButton("♦");
             iconButton.setFont(new Font("SansSerif", Font.BOLD, 18));
             iconButton.setFocusPainted(false);
             iconButton.setBorderPainted(false);
