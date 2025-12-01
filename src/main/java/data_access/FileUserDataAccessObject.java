@@ -172,6 +172,7 @@ public class FileUserDataAccessObject implements
      */
     public void addHouseholdEntry(SharedEntry newEntry) {
         accounts.get(getCurrentUsername()).addNormalHouseholdEntry(newEntry.getHeadEntry());
+        accounts.get(getCurrentUsername()).addHouseholdEntry(newEntry);
 
         Household userHousehold = get(getCurrentUsername());
         if (userHousehold == null) {
