@@ -9,7 +9,11 @@ import java.util.List;
 public interface DetailedSpendingUserDataAccessInterface {
 
     /**
-     * Returns all entries for the given user in the given year and month.
+     * Returns all household entries for the given household in the given year and month.
+     * @param householdID the household ID.
+     * @param year year of the entries wanted.
+     * @param month of the entries wanted.
+     * @return all the household entries for the given household in the given year and month.
      */
-    List<Entry> getEntries(String username, int year, int month);
+    List<Entry> getEntries(String householdID, int year, int month);
 }
