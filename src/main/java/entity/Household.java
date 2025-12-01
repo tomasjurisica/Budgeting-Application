@@ -8,6 +8,8 @@ public class Household {
     private final ArrayList<User> users = new ArrayList<>();
 
     private final ArrayList<SharedEntry> householdEntries = new ArrayList<>();
+    private final ArrayList<Entry> normalHouseholdEntries = new ArrayList<>();
+
     private final String householdID;
     private final String password;
 
@@ -27,6 +29,14 @@ public class Household {
         }
         this.householdID = householdID;
         this.password = password;
+    }
+
+    public void addNormalHouseholdEntry(Entry newEntry) {
+        normalHouseholdEntries.add(newEntry);
+    }
+
+    public ArrayList<Entry> getNormalHouseholdEntries() {
+        return this.normalHouseholdEntries;
     }
 
     /**
@@ -61,36 +71,6 @@ public class Household {
         return new ArrayList<>(householdEntries);
     }
 
-    public ArrayList<Entry> getHouseholdEntries(int year, int month) {
-        ArrayList<Entry> returnList = new ArrayList<>();
-
-        int lastDay = 28;
-
-        // Calculate last day of month
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-            lastDay = 31;
-        } else if (month == 4 || month == 6 || month == 9 || month == 11) {
-            lastDay = 30;
-        } else if ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) {
-            lastDay = 29;
-        }
-
-        LocalDate firstDate = LocalDate.of(year, month, 1);
-        LocalDate lastDate = LocalDate.of(year, month, lastDay);
-
-        int startIndex = getStartIndex(firstDate, lastDate);
-        int endIndex = getEndIndex(firstDate, lastDate);
-
-        // If indexes are valid, add all values in range to return list
-        if (startIndex != -1 && endIndex != -1) {
-            for (int i = 0; i + startIndex <= endIndex; i++) {
-                returnList.add(householdEntries.get(i + startIndex));
-            }
-        }
-
-        return returnList;
-    }
-
     /**
      * Adds a new shared entry to the household. In chronological order
      *
@@ -114,75 +94,10 @@ public class Household {
         }
     }
 
-    /**
-     * Adds the given list of entries to the user's entries.
-     *
-     * @param listOfEntries: List of entries SORTED in chronological order.
-     */
-    public void addHouseholdEntry(List<SharedEntry> listOfEntries) {
-        if (householdEntries.isEmpty()) {
-            householdEntries.addAll(listOfEntries);
-        } else {
-            int i = 0;
-            int j = 0;
-
-            while (j < listOfEntries.size()) {
-                if (householdEntries.get(i).getDate().isAfter(listOfEntries.get(j).getDate())) {
-                    householdEntries.add(i, listOfEntries.get(j));
-                    j++;
-                }
-                i++;
-            }
-        }
-    }
-
-    /**
-     * Helper method for returning entries from a date range
-     *
-     * @param firstDate the first date in range to be considered.
-     * @param lastDate  the last date in range to be considered. lastDate is after firstDate
-     * @return the starting index of entries from specific date(s). Returns -1 if date does not exist
-     */
-    private int getStartIndex(LocalDate firstDate, LocalDate lastDate) {
-        int i = 0;
-
-        while (i < householdEntries.size()) {
-            if (!householdEntries.get(i).getDate().isBefore(firstDate) &&
-                    !householdEntries.get(i).getDate().isAfter(lastDate)) {
-                return i;
-            }
-            i++;
-        }
-
-        return -1;
-    }
-
-    /**
-     * Helper method for returning entries from a date range
-     *
-     * @param firstDate the first date in range to be considered.
-     * @param lastDate  the last date in range to be considered. lastDate is after firstDate
-     * @return the ending index of entries from specific date(s). Returns -1 if date does not exist
-     */
-    private int getEndIndex(LocalDate firstDate, LocalDate lastDate) {
-        int result = -1;
-        int i = 0;
-
-        while (i < householdEntries.size()) {
-            if (!householdEntries.get(i).getDate().isBefore(firstDate) &&
-                    !householdEntries.get(i).getDate().isAfter(lastDate)) {
-                result = i;
-            }
-            i++;
-        }
-
-        return result;
-    }
-
-    public List<Entry> getAllEntries() {
-        List<Entry> allEntries = new ArrayList<>();
-        for (User u : users) {
-            allEntries.addAll(u.getEntries());
+    public ArrayList<Entry> getAllEntries() {
+        ArrayList<Entry> allEntries = new ArrayList<>();
+        for (SharedEntry entry : householdEntries) {
+            allEntries.add(entry);
         }
         return allEntries;
     }
