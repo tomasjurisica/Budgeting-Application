@@ -22,7 +22,9 @@ import javax.swing.SwingConstants;
 import interface_adapter.detailed_spending.DetailedSpendingController;
 import interface_adapter.detailed_spending.DetailedSpendingState;
 import interface_adapter.detailed_spending.DetailedSpendingViewModel;
-import use_case.detailed_spending.DetailedSpendingOutputData;
+// import interface_adapter.detailed_spending.PurchaseUIModel;
+
+// import use_case.detailed_spending.DetailedSpendingOutputData;
 
 public class DetailedSpendingView extends JFrame implements PropertyChangeListener {
 
@@ -123,20 +125,21 @@ public class DetailedSpendingView extends JFrame implements PropertyChangeListen
         titleLabel.setText("Category: " + categoryName);
     }
 
-    private void updateList(List<DetailedSpendingOutputData.Purchase> purchases) {
-        listModel.clear();
+    private void updateList(List<DetailedSpendingState.PurchaseUIModel> purchases) {
+        listModel.clear();  // reset UI list
         final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
-        for (DetailedSpendingOutputData.Purchase p : purchases) {
-            final String displayAmount = String.format("$%.2f", p.amount());
+        for (DetailedSpendingState.PurchaseUIModel p : purchases) {
+            final String displayAmount = String.format("$%.2f", p.getAmount());
             final String line = String.format("%-15s %-10s %s",
-                    p.purchaseName(),
+                    p.getName(),
                     displayAmount,
-                    fmt.format(p.date()));
+                    fmt.format(p.getDate()));
 
             listModel.addElement(line);
         }
     }
+
 
     private void bringToFrontIfHidden() {
         if (!isVisible()) {
