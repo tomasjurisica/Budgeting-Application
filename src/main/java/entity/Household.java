@@ -77,21 +77,7 @@ public class Household {
      * @param newEntry sharedEntry to be added to the household
      */
     public void addHouseholdEntry(SharedEntry newEntry) {
-        LocalDate checkedDate = newEntry.getDate();
-
-        // adds to end if entries is empty or if the new entry is the most recent item chronologically
-        if (householdEntries.isEmpty() || !householdEntries.getLast().getDate().isAfter(checkedDate)) {
-            householdEntries.add(newEntry);
-        } else {
-            int i = 0;
-
-            while (i < householdEntries.size() && !householdEntries.get(i).getDate().isAfter(checkedDate)) {
-                i++;
-            }
-
-            householdEntries.add(i, newEntry);
-
-        }
+        householdEntries.add(newEntry);
     }
 
     public ArrayList<Entry> getAllEntries() {
@@ -184,3 +170,4 @@ public class Household {
     }
 
 }
+
