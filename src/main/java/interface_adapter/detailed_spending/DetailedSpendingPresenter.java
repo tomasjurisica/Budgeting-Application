@@ -3,6 +3,9 @@ package interface_adapter.detailed_spending;
 import use_case.detailed_spending.DetailedSpendingOutputBoundary;
 import use_case.detailed_spending.DetailedSpendingOutputData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DetailedSpendingPresenter implements DetailedSpendingOutputBoundary {
     private final DetailedSpendingViewModel detailedSpendingViewModel;
 
@@ -15,7 +18,17 @@ public class DetailedSpendingPresenter implements DetailedSpendingOutputBoundary
         final DetailedSpendingState detailedSpendingState = detailedSpendingViewModel.getState();
         // detailedSpendingState.getPurchases(response.getPurchases());
         detailedSpendingState.setCategoryName(response.getCategoryName());
-        detailedSpendingState.setPurchases(response.getPurchases());
+        List<DetailedSpendingState.PurchaseUIModel> uiPurchases = new ArrayList<>();
+        for (var p : response.getPurchases()) {
+            uiPurchases.add(new DetailedSpendingState.PurchaseUIModel(
+                    p.purchaseName(),
+                    p.date(),
+                    p.amount()
+            ));
+        }
+
+        detailedSpendingState.setPurchases(uiPurchases);
+
         detailedSpendingState.setHasError(false);
         detailedSpendingState.setErrorMessage(null);
         detailedSpendingViewModel.firePropertyChange();
