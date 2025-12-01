@@ -8,6 +8,8 @@ import java.util.List;
 public class SharedEntry extends Entry {
     private final List<User> users;
 
+    private final Entry headEntry;
+
     private final float[] contributed;
 
     private final List<Entry> entries = new ArrayList<Entry>() {
@@ -25,6 +27,7 @@ public class SharedEntry extends Entry {
         super(headEntry.getName(), headEntry.getCategory(), headEntry.getAmount(), headEntry.getDate());
         this.users = users;
         this.contributed = new float[percents.length];
+        this.headEntry = headEntry;
 
         // bigdecimal inits
         BigDecimal hundred = new BigDecimal("100");
@@ -141,6 +144,10 @@ public class SharedEntry extends Entry {
      */
     public String string(User user) {
         return getEntry(user).getName() + " | " + getEntry(user).getAmount() + " | " + getEntry(user).getCategory();
+    }
+
+    public Entry getHeadEntry() {
+        return headEntry;
     }
 
     /**

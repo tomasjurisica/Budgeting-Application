@@ -1,11 +1,11 @@
 package use_case.home_display;
 
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 
 public class HomeDisplayInteractor {
-    private final interface_adapter.home_page.HomePageViewModel viewModel;
+    private final HomeDisplayViewModel viewModel;
 
-    public HomeDisplayInteractor(HomePageViewModel viewModel) {
+    public HomeDisplayInteractor(HomeDisplayViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

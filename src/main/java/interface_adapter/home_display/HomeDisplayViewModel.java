@@ -1,10 +1,9 @@
-package interface_adapter.home_page;
+package interface_adapter.home_display;
 
 import data_access.FileUserDataAccessObject;
 import entity.Entry;
 import entity.Household;
 import entity.User;
-import interface_adapter.ViewModel;
 import use_case.select_user.*;
 
 import java.time.Month;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class HomePageViewModel {
+public class HomeDisplayViewModel {
     private final List<Entry> entries = new ArrayList();
     private final List<Consumer<List<Entry>>> listeners = new ArrayList();
     private String lastMessage = "";

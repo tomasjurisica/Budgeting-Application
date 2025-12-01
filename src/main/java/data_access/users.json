@@ -1,106 +1,228 @@
-{"ale": {
-    "password": "1234",
-    "householdEntries": [
-        {
-            "date": "2025-11-30",
-            "amount": 100,
-            "name": "Pizza",
-            "category": "Food"
-        },
-        {
-            "date": "+20225-11-29",
-            "amount": 50,
-            "name": "Gym",
-            "category": "Health"
-        },
-        {
-            "date": "2025-11-30",
-            "amount": 50,
-            "name": "Sport",
-            "category": "Health"
-        },
-        {
-            "date": "2025-10-30",
-            "amount": 100,
-            "name": "aaa",
-            "category": "aaa"
-        },
-        {
-            "date": "2025-10-20",
-            "amount": 100,
-            "name": "aaw",
-            "category": "affd"
-        },
-        {
-            "date": "2025-10-30",
-            "amount": 100,
-            "name": "test",
-            "category": "test"
-        },
-        {
-            "date": "2025-01-10",
-            "amount": 100,
-            "name": "test",
-            "category": "test"
-        },
-        {
-            "date": "2024-11-10",
-            "amount": 30,
-            "name": "test1",
-            "category": "test"
-        }
-    ],
-    "users": [{
-        "entries": [
+{
+    "tester": {
+        "password": "ahhh",
+        "householdEntries": [],
+        "users": [{
+            "entries": [],
+            "name": "aaa"
+        }]
+    },
+    "ale": {
+        "password": "1234",
+        "householdEntries": [],
+        "users": [
             {
-                "date": "2025-11-30",
-                "amount": 5000,
-                "name": "Pizza",
-                "category": "Food"
+                "entries": [
+                    {
+                        "date": "2025-11-30",
+                        "amount": 5000,
+                        "name": "Pizza",
+                        "category": "Food"
+                    },
+                    {
+                        "date": "2025-11-29",
+                        "amount": 15,
+                        "name": "Gym",
+                        "category": "Health"
+                    },
+                    {
+                        "date": "2025-11-30",
+                        "amount": 2500,
+                        "name": "Sport",
+                        "category": "Health"
+                    },
+                    {
+                        "date": "2025-10-30",
+                        "amount": 50,
+                        "name": "aaa",
+                        "category": "aaa"
+                    },
+                    {
+                        "date": "2025-10-20",
+                        "amount": 500,
+                        "name": "aaw",
+                        "category": "affd"
+                    },
+                    {
+                        "date": "2025-10-30",
+                        "amount": 3000,
+                        "name": "test",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-01-10",
+                        "amount": 5000,
+                        "name": "test",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2024-11-10",
+                        "amount": 1500,
+                        "name": "test1",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "ahhhte",
+                        "category": "te"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "ahh",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "miao",
+                        "category": "miao"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "ale",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "gym",
+                        "category": "ahh"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "ale",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "aaah",
+                        "category": "ahhh"
+                    }
+                ],
+                "name": "john"
             },
             {
-                "date": "2025-11-29",
-                "amount": 15,
-                "name": "Gym",
-                "category": "Health"
-            },
-            {
-                "date": "2025-11-30",
-                "amount": 2500,
-                "name": "Sport",
-                "category": "Health"
-            },
-            {
-                "date": "2025-10-30",
-                "amount": 50,
-                "name": "aaa",
-                "category": "aaa"
-            },
-            {
-                "date": "2025-10-20",
-                "amount": 500,
-                "name": "aaw",
-                "category": "affd"
-            },
-            {
-                "date": "2025-10-30",
-                "amount": 3000,
-                "name": "test",
-                "category": "test"
-            },
-            {
-                "date": "2025-01-10",
-                "amount": 5000,
-                "name": "test",
-                "category": "test"
-            },
-            {
-                "date": "2024-11-10",
-                "amount": 1500,
-                "name": "test1",
-                "category": "test"
+                "entries": [
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "gym",
+                        "category": "ahh"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "ale",
+                        "category": "test"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 50,
+                        "name": "aaah",
+                        "category": "ahhh"
+                    },
+                    {
+                        "date": "2025-11-10",
+                        "amount": 10,
+                        "name": "Gym",
+                        "category": "Health"
+                    },
+                    {
+                        "date": "2025-11-20",
+                        "amount": 30,
+                        "name": "Dinner",
+                        "category": "Food"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "aaa",
+                        "category": "aaa"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "bbb",
+                        "category": "bbb"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "ccc",
+                        "category": "ccc"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "ddd",
+                        "category": "ddd"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "eee",
+                        "category": "eee"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 100,
+                        "name": "gggg",
+                        "category": "ggg"
+                    }
+                ],
+                "name": "ale"
             }
-        ],
-        "name": "john"
-    }]
-}}
+        ]
+    },
+    "Amelia's House": {
+        "password": "1234",
+        "householdEntries": [],
+        "users": [
+            {
+                "entries": [
+                    {
+                        "date": "2025-11-30",
+                        "amount": 5,
+                        "name": "Cookies",
+                        "category": "Food"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 15,
+                        "name": "Gym",
+                        "category": "Health"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 10,
+                        "name": "Groceries",
+                        "category": "Food"
+                    }
+                ],
+                "name": "Amelia"
+            },
+            {
+                "entries": [
+                    {
+                        "date": "2025-11-30",
+                        "amount": 5,
+                        "name": "Cookies",
+                        "category": "Food"
+                    },
+                    {
+                        "date": "2025-11-11",
+                        "amount": 10,
+                        "name": "Groceries",
+                        "category": "Food"
+                    }
+                ],
+                "name": "Ale"
+            }
+        ]
+    }
+}

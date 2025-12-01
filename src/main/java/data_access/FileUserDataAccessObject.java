@@ -69,7 +69,7 @@ public class FileUserDataAccessObject implements
             householdJson.put("password", h.getPassword());
 
             // 2. Household Entries
-            householdJson.put("householdEntries", entriesToJson(h.getHouseholdEntries()));
+            householdJson.put("householdEntries", entriesToJson(h.getNormalHouseholdEntries()));
 
             // 3. Users
             JSONArray usersArray = new JSONArray();
@@ -123,7 +123,7 @@ public class FileUserDataAccessObject implements
 
                 // 2. Household Entries
                 JSONArray householdEntriesJson = householdJson.getJSONArray("householdEntries");
-                household.getHouseholdEntries().addAll(jsonToEntries(householdEntriesJson));
+                household.getNormalHouseholdEntries().addAll(jsonToEntries(householdEntriesJson));
 
                 // 3. Users
                 JSONArray usersJson = householdJson.getJSONArray("users");
@@ -171,6 +171,8 @@ public class FileUserDataAccessObject implements
      * @param newEntry: new household entry to be added
      */
     public void addHouseholdEntry(SharedEntry newEntry) {
+        accounts.get(getCurrentUsername()).addNormalHouseholdEntry(newEntry.getHeadEntry());
+
         Household userHousehold = get(getCurrentUsername());
         if (userHousehold == null) {
             throw new RuntimeException("No household found for current user");

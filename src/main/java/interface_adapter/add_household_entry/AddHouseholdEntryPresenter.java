@@ -1,20 +1,20 @@
 package interface_adapter.add_household_entry;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 import use_case.add_household_entry.AddHouseholdEntryOutputBoundary;
 import use_case.add_household_entry.AddHouseholdEntryOutputData;
 
 public class AddHouseholdEntryPresenter implements AddHouseholdEntryOutputBoundary {
     private final AddHouseholdEntryViewModel addEntryViewModel;
-    private final HomePageViewModel homePageViewModel;
+    private final HomeDisplayViewModel homeDisplayViewModel;
     private final ViewManagerModel viewManagerModel;
 
     public AddHouseholdEntryPresenter(AddHouseholdEntryViewModel addEntryViewModel,
-                                      HomePageViewModel homePageViewModel,
+                                      HomeDisplayViewModel homeDisplayViewModel,
                                       ViewManagerModel viewManagerModel) {
         this.addEntryViewModel = addEntryViewModel;
-        this.homePageViewModel = homePageViewModel;
+        this.homeDisplayViewModel = homeDisplayViewModel;
         this.viewManagerModel = viewManagerModel;
     }
 
@@ -29,8 +29,8 @@ public class AddHouseholdEntryPresenter implements AddHouseholdEntryOutputBounda
         addEntryViewModel.firePropertyChange();
 
         // Refresh home page data to show the new entry
-        if (homePageViewModel != null) {
-            homePageViewModel.loadCurrentUser();
+        if (homeDisplayViewModel != null) {
+            homeDisplayViewModel.loadCurrentUser();
         }
 
         // Navigate back to home page

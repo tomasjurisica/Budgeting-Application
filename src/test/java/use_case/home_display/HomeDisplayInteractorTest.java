@@ -1,7 +1,7 @@
 package use_case.home_display;
 
 import entity.Entry;
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HomeDisplayInteractorTest {
 
-    private HomePageViewModel viewModel;
+    private HomeDisplayViewModel viewModel;
     private HomeDisplayInteractor interactor;
 
     @BeforeEach
     void setUp() {
-        viewModel = new HomePageViewModel();
+        viewModel = new HomeDisplayViewModel();
         interactor = new HomeDisplayInteractor(viewModel);
     }
 
