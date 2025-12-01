@@ -2,16 +2,19 @@ package use_case.add_user;
 
 import entity.Household;
 import entity.User;
-import data_access.FileUserDataAccessObject;
+// FIX: Import the Interface, NOT the FileUserDataAccessObject class
+import use_case.add_user.AddUserDataAccessInterface;
 
 public class AddUserInteractor implements AddUserInputBoundary {
 
     private final Household household;
     private final AddUserOutputBoundary outputBoundary;
-    private final FileUserDataAccessObject userDAO;
+    // FIX: Depend on the Interface
+    private final AddUserDataAccessInterface userDAO;
 
+    // FIX: Constructor takes the Interface
     public AddUserInteractor(Household household, AddUserOutputBoundary outputBoundary,
-                             FileUserDataAccessObject userDAO) {
+                             AddUserDataAccessInterface userDAO) {
         this.household = household;
         this.outputBoundary = outputBoundary;
         this.userDAO = userDAO;

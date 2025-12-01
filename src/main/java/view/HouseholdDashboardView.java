@@ -4,10 +4,9 @@ import interface_adapter.household_dashboard.HouseholdDashboardState;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.select_user.SelectUserController;
-import entity.User;
+// Removed: import entity.User; -> Views should not touch Entities.
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -54,10 +53,10 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
         addRoommateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addRoommateButton.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(
-                this,
-                "Enter roommate name:",
-                "Add Roommate",
-                JOptionPane.PLAIN_MESSAGE
+                    this,
+                    "Enter roommate name:",
+                    "Add Roommate",
+                    JOptionPane.PLAIN_MESSAGE
             );
             if (name != null && !name.trim().isEmpty()) {
                 householdDashboardViewModel.addUser(name.trim());
@@ -94,35 +93,36 @@ public class HouseholdDashboardView extends JPanel implements PropertyChangeList
             String errorMessage = state.getAddUserError();
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 JOptionPane.showMessageDialog(
-                    this,
-                    errorMessage,
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
+                        this,
+                        errorMessage,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
                 );
                 // Clear the error after showing it
                 state.setAddUserError(null);
             }
 
             // Set household ID, with null check
-            if (state.getHousehold() != null) {
-                householdID.setText(state.getHousehold().getHouseholdID());
+            if (state.getHouseholdID() != null) {
+                householdID.setText(state.getHouseholdID());
             } else {
                 householdID.setText("");
             }
 
             // Clear old buttons
             roommatesPanel.removeAll();
-            List<User> housemates = state.getUsers();
 
-            if (housemates != null && !housemates.isEmpty()) {
-                for (User roommate : housemates) {
-                    JButton button = new JButton(roommate.getName());
+            List<String> housemateNames = state.getUserNames();
+
+            if (housemateNames != null && !housemateNames.isEmpty()) {
+                for (String roommateName : housemateNames) {
+                    JButton button = new JButton(roommateName);
                     button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                     // Wire button click to SelectUserController
                     button.addActionListener(e -> {
                         if (SelectUserController != null) {
-                            SelectUserController.execute(roommate.getName());
+                            SelectUserController.execute(roommateName);
                         }
                     });
 
