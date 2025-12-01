@@ -1,16 +1,14 @@
 package app;
 
 import data_access.FileUserDataAccessObject;
-import entity.Entry;
 import entity.Household;
 import entity.HouseholdEntryHistory;
 import entity.HouseholdFactory;
-import entity.User;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.detailed_spending.DetailedSpendingController;
 import interface_adapter.detailed_spending.DetailedSpendingPresenter;
 import interface_adapter.detailed_spending.DetailedSpendingViewModel;
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -48,7 +46,6 @@ import use_case.add_household_entry.*;
 import javax.swing.*;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -77,7 +74,7 @@ public class AppBuilder {
     private HouseholdDashboardView householdDashboardView;
     private LoginView loginView;
     private Household household;
-    private interface_adapter.home_page.HomePageViewModel homePageViewModel;
+    private HomeDisplayViewModel homeDisplayViewModel;
     private HomePageView homePage;
     private AddHouseholdEntryView addHouseholdEntryView;
     private AddHouseholdEntryViewModel addHouseholdEntryViewModel;
@@ -118,11 +115,11 @@ public class AppBuilder {
 
     public AppBuilder addHomePageView() {
         // Ensure homePageViewModel is initialized
-        if (homePageViewModel == null) {
-            homePageViewModel = new HomePageViewModel();
+        if (homeDisplayViewModel == null) {
+            homeDisplayViewModel = new HomeDisplayViewModel();
         }
-        homePageViewModel.setDao(userDataAccessObject);
-        homePage = new HomePageView(homePageViewModel, userDataAccessObject);
+        homeDisplayViewModel.setDao(userDataAccessObject);
+        homePage = new HomePageView(homeDisplayViewModel, userDataAccessObject);
         cardPanel.add(homePage, homePage.getViewName());
         // Wire navigation
         homePage.setViewManagerModel(viewManagerModel);
@@ -165,7 +162,7 @@ public class AppBuilder {
                 userDataAccessObject
         );
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-                userDataAccessObject, loginOutputBoundary, homePageViewModel);
+                userDataAccessObject, loginOutputBoundary, homeDisplayViewModel);
 
         LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
@@ -205,7 +202,7 @@ public class AppBuilder {
         }
 
         final AddHouseholdEntryOutputBoundary addHouseholdEntryOutputBoundary = new
-                AddHouseholdEntryPresenter(addHouseholdEntryViewModel, homePageViewModel, viewManagerModel);
+                AddHouseholdEntryPresenter(addHouseholdEntryViewModel, homeDisplayViewModel, viewManagerModel);
 
         // Memento Pattern: Pass history to interactor to enable undo/redo
         final AddHouseholdEntryInputBoundary addHouseholdInteractor =
@@ -247,16 +244,16 @@ public class AppBuilder {
     public AppBuilder addSelectUserUseCase() {
         // Ensure homePageViewModel and homePageView are initialized
         FileUserDataAccessObject dao = new FileUserDataAccessObject("src/main/java/data_access/users.json", new HouseholdFactory());
-        if (homePageViewModel == null) {
-            homePageViewModel = new HomePageViewModel();
+        if (homeDisplayViewModel == null) {
+            homeDisplayViewModel = new HomeDisplayViewModel();
         }
         if (homePage == null) {
-            homePage = new HomePageView(homePageViewModel, dao);
+            homePage = new HomePageView(homeDisplayViewModel, dao);
             cardPanel.add(homePage, homePage.getViewName());
         }
 
         final SelectUserOutputBoundary selectUserPresenter = new SelectUserPresenter(
-                homePageViewModel,
+                homeDisplayViewModel,
                 viewManagerModel,
                 householdDashboardViewModel,
                 homePage

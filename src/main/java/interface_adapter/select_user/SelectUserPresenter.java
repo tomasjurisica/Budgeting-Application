@@ -3,7 +3,7 @@ package interface_adapter.select_user;
 import entity.Household;
 import entity.User;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 import interface_adapter.household_dashboard.HouseholdDashboardViewModel;
 import use_case.select_user.*;
 import use_case.select_user.SelectUserOutputData;
@@ -11,16 +11,16 @@ import view.HomePageView;
 
 public class SelectUserPresenter implements SelectUserOutputBoundary {
 
-    private final HomePageViewModel homePageViewModel;
+    private final HomeDisplayViewModel homeDisplayViewModel;
     private final ViewManagerModel viewManagerModel;
     private final HouseholdDashboardViewModel householdDashboardViewModel;
     private final HomePageView homePageView;
 
-    public SelectUserPresenter(HomePageViewModel homePageViewModel,
+    public SelectUserPresenter(HomeDisplayViewModel homeDisplayViewModel,
                                ViewManagerModel viewManagerModel,
                                HouseholdDashboardViewModel householdDashboardViewModel,
                                HomePageView homePageView) {
-        this.homePageViewModel = homePageViewModel;
+        this.homeDisplayViewModel = homeDisplayViewModel;
         this.viewManagerModel = viewManagerModel;
         this.householdDashboardViewModel = householdDashboardViewModel;
         this.homePageView = homePageView;
@@ -54,7 +54,7 @@ public class SelectUserPresenter implements SelectUserOutputBoundary {
         }
 
         // Store the current user in HomePageViewModel
-        homePageViewModel.setCurrentUser(selectedUser);
+        homeDisplayViewModel.setCurrentUser(selectedUser);
 
         // Update the HomePageView with the household
         homePageView.setHousehold();

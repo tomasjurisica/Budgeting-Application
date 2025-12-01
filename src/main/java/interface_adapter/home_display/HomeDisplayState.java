@@ -1,6 +1,6 @@
-package interface_adapter.home_page;
+package interface_adapter.home_display;
 
-public class HomePageState {
+public class HomeDisplayState {
     private String selectedUser;
 
     public String getSelectedUser() {

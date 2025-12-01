@@ -24,9 +24,8 @@ import java.util.Map;
 import javax.swing.*;
 
 import interface_adapter.detailed_spending.DetailedSpendingController;
-import interface_adapter.home_page.HomePageViewModel;
+import interface_adapter.home_display.HomeDisplayViewModel;
 import interface_adapter.ViewManagerModel;
-import view.AddHouseholdEntryView;
 import use_case.home_display.HomeDisplayInteractor;
 import use_case.home_display.HomeDisplayRequestModel;
 
@@ -36,7 +35,7 @@ public class HomePageView extends JPanel {
     private JPanel homeTopBar;
     private JPanel navTopBar;
     private JPanel currentTopBar;
-    private final HomePageViewModel viewModel;
+    private final HomeDisplayViewModel viewModel;
     private PieChartPanel piePanel;
     private JPanel categoryList;
     private JButton addButton;
@@ -68,7 +67,7 @@ public class HomePageView extends JPanel {
         return userDao.getCurrentUsername();
     }
 
-    public HomePageView(HomePageViewModel viewModel, FileUserDataAccessObject userDao) {
+    public HomePageView(HomeDisplayViewModel viewModel, FileUserDataAccessObject userDao) {
         this.viewModel = viewModel;
         this.userDao = userDao;
         this.setLayout(new BorderLayout());
