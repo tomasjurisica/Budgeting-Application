@@ -4,8 +4,9 @@ import entity.Entry;
 import entity.Household;
 import entity.HouseholdFactory;
 import entity.User;
-import use_case.detailed_spending.DetailedSpendingUserDataAccessInterface;
 import entity.*;
+// FIX: Import the new interface
+import use_case.add_user.AddUserDataAccessInterface;
 import use_case.add_household_entry.AddHouseholdEntryDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
@@ -27,14 +28,14 @@ import java.util.Map;
 
 /**
  * JSON-based DAO for Household, Users, and Entries using the org.json library.
- * This implementation is robust against structural corruption and special characters.
  */
 public class FileUserDataAccessObject implements
         SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         LogoutUserDataAccessInterface,
         DetailedSpendingUserDataAccessInterface,
-        AddHouseholdEntryDataAccessInterface
+        AddHouseholdEntryDataAccessInterface,
+        AddUserDataAccessInterface // FIX: Implement this interface
 {
 
     private final File jsonFile;
