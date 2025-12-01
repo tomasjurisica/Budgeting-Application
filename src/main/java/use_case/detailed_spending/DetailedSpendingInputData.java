@@ -16,12 +16,20 @@ public class DetailedSpendingInputData {
         this.year = year;
     }
 
-    public String getCategoryName() { return categoryName; }
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-    public String getUserName() { return userName; }
+    public String getUserName() {
+        return userName;
+    }
 
-    public int getMonth() { return month; }
+    public int getMonth() {
+        return month;
+    }
 
-    public int getYear() { return year; }
+    public int getYear() {
+        return year;
+    }
 }
 

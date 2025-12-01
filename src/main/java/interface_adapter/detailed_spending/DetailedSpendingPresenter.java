@@ -1,16 +1,15 @@
 package interface_adapter.detailed_spending;
-import data_access.FileUserDataAccessObject;
-import interface_adapter.ViewManagerModel;
-import interface_adapter.detailed_spending.DetailedSpendingState;
-import interface_adapter.detailed_spending.DetailedSpendingViewModel;
+
 import use_case.detailed_spending.DetailedSpendingOutputBoundary;
 import use_case.detailed_spending.DetailedSpendingOutputData;
 
 public class DetailedSpendingPresenter implements DetailedSpendingOutputBoundary {
     private final DetailedSpendingViewModel detailedSpendingViewModel;
+
     public DetailedSpendingPresenter(DetailedSpendingViewModel detailedSpendingViewModel) {
         this.detailedSpendingViewModel = detailedSpendingViewModel;
     }
+
     @Override
     public void prepareSuccessView(DetailedSpendingOutputData response) {
         final DetailedSpendingState detailedSpendingState = detailedSpendingViewModel.getState();
