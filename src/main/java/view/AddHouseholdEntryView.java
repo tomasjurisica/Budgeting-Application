@@ -55,22 +55,6 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
         this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(350, 600));
 
-        // Top bar with back button
-        /*
-        JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBackground(new Color(42, 42, 42));
-        topBar.setPreferredSize(new Dimension(350, 50));
-        JButton backButton = new JButton("← Back");
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
-        backButton.setFocusPainted(false);
-        backButton.setForeground(Color.white);
-        backButton.setContentAreaFilled(false);
-        backButton.setBorderPainted(false);
-        backButton.addActionListener(e -> navigateBack());
-        topBar.add(backButton, BorderLayout.WEST);
-        this.add(topBar, BorderLayout.NORTH);
-         */
-
         // Enter name
         JPanel namePanel = new JPanel();
         namePanel.add(new JLabel("Entry Name:"));
@@ -126,20 +110,17 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
         southWrapper.add(percentagePanel, BorderLayout.CENTER);
 
         // Finalize and add entry
-        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+        JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 
         JButton addButton = new JButton("Add Entry");
         addButton.addActionListener(e -> onAdd());
 
         // Memento Pattern: Undo/Redo buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton undoButton = new JButton("Undo");
-        JButton redoButton = new JButton("Redo");
+        //JButton redoButton = new JButton("Redo");
         undoButton.addActionListener(e -> onUndo());
-        redoButton.addActionListener(e -> onRedo());
-        buttonPanel.add(undoButton);
-        buttonPanel.add(redoButton);
-        buttonPanel.add(addButton);
+        //redoButton.addActionListener(e -> onRedo());
+        //buttonPanel.add(redoButton);
 
         southWrapper.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -147,6 +128,7 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
         backButton.addActionListener(e -> navigateBack());
 
         buttonPanel.add(backButton);
+        buttonPanel.add(undoButton);
         buttonPanel.add(addButton);
         southWrapper.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -375,5 +357,4 @@ public class AddHouseholdEntryView extends JPanel implements PropertyChangeListe
             }
         }
     }
-}
 }
