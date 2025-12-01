@@ -1,14 +1,15 @@
 package interface_adapter.detailed_spending;
 
-import use_case.detailed_spending.DetailedSpendingOutputData;
+// import use_case.detailed_spending.DetailedSpendingOutputData;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetailedSpendingState {
     private String userName = "";
     private String categoryName = "";
-    private List<DetailedSpendingOutputData.Purchase> purchases = new ArrayList<>();
+    private List<PurchaseUIModel> purchases = new ArrayList<>();
     private String errorMessage;
     private int month;
     private int year;
@@ -30,12 +31,9 @@ public class DetailedSpendingState {
         this.categoryName = categoryName;
     }
 
-    public List<DetailedSpendingOutputData.Purchase> getPurchases() {
-        return purchases;
-    }
+    public List<PurchaseUIModel> getPurchases() { return purchases; }
 
-    public void setPurchases(List<DetailedSpendingOutputData.Purchase> purchases) {
-
+    public void setPurchases(List<PurchaseUIModel> purchases) {
         this.purchases = purchases;
     }
 
@@ -69,5 +67,21 @@ public class DetailedSpendingState {
 
     public void setHasError(boolean hasError) {
         this.hasError = hasError;
+    }
+
+    public static class PurchaseUIModel {
+        private final String name;
+        private final LocalDate date;
+        private final float amount;
+
+        public PurchaseUIModel(String name, LocalDate date, float amount) {
+            this.name = name;
+            this.date = date;
+            this.amount = amount;
+        }
+
+        public String getName() { return name; }
+        public LocalDate getDate() { return date; }
+        public float getAmount() { return amount; }
     }
 }
