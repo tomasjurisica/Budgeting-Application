@@ -9,7 +9,8 @@ public class HouseholdDashboardState {
 
     private String username;
     private Household household;
-    private final List<User> users = new ArrayList<>();
+    // FIX: Store Strings, not Entities. The View should not know about 'User'.
+    private final List<String> userNames = new ArrayList<>();
     private String addUserError;
 
     public String getUsername() {
@@ -26,12 +27,14 @@ public class HouseholdDashboardState {
 
     public void setHousehold(Household household) {
         this.household = household;
-        // Populate users list from household when household is set
+        // FIX: Populate the list of names from the household entity
         if (household != null) {
-            users.clear();
-            users.addAll(household.getUsers());
+            userNames.clear();
+            for (User u : household.getUsers()) {
+                userNames.add(u.getName());
+            }
         } else {
-            users.clear();
+            userNames.clear();
         }
     }
 
@@ -39,8 +42,9 @@ public class HouseholdDashboardState {
         return household != null ? household.getHouseholdID() : "";
     }
 
-    public List<User> getUsers() {
-        return users;
+    // FIX: Return Strings
+    public List<String> getUserNames() {
+        return userNames;
     }
 
     public String getAddUserError() {
@@ -51,16 +55,4 @@ public class HouseholdDashboardState {
         this.addUserError = addUserError;
     }
 
-    /**
-     * Refreshes the users list from the household.
-     * Useful if the household has been updated outside of this state.
-     */
-    public void refreshUsersFromHousehold() {
-        if (household != null) {
-            users.clear();
-            users.addAll(household.getUsers());
-        } else {
-            users.clear();
-        }
-    }
 }

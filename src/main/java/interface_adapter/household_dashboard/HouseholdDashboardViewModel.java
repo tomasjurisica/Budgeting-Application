@@ -7,7 +7,7 @@ import use_case.add_user.AddUserOutputBoundary;
 import use_case.add_user.AddUserOutputData;
 
 public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardState>
-    implements AddUserOutputBoundary {
+        implements AddUserOutputBoundary {
 
     private AddUserInputBoundary addUserInteractor;
 
@@ -29,8 +29,9 @@ public class HouseholdDashboardViewModel extends ViewModel<HouseholdDashboardSta
     // Called by the interactor to update the state/UI
     @Override
     public void present(AddUserOutputData outputData) {
-        getState().setAddUserError(null); // Clear any previous errors
-        getState().getUsers().add(outputData.user());
+        getState().setAddUserError(null);
+        // FIX: Add the string name to the state list, not the User object
+        getState().getUserNames().add(outputData.user().getName());
         firePropertyChange();
     }
 
