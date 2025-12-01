@@ -5,7 +5,6 @@ import entity.Household;
 import entity.HouseholdFactory;
 import entity.User;
 import entity.*;
-// FIX: Import the new interface
 import use_case.add_user.AddUserDataAccessInterface;
 import use_case.add_household_entry.AddHouseholdEntryDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
@@ -322,6 +321,74 @@ public class FileUserDataAccessObject implements
         }
         save();
     }
+
+    /**
+     * Add an individual entry for a specific user in a specific household,
+     * then persist everything back to users.json.
+     *
+     * @param householdId the household key in users.json (e.g. "ale", "Amelia's House")
+     * @param username    the user's name inside that household (e.g. "john", "Ale")
+     * @param newEntry    the Entry to add
+     */
+    public synchronized void addIndividualEntry(String householdId, String username, Entry newEntry) {
+        // 1. Look up the household in the in-memory map.
+        Household household = accounts.get(householdId);
+        if (household == null) {
+            throw new IllegalArgumentException("Unknown household id: " + householdId);
+        }
+
+        // 2. Find the correct User object inside that household.
+        List<User> users = household.getUsers();
+        if (users == null || users.isEmpty()) {
+            throw new IllegalStateException("Household has no users: " + householdId);
+        }
+
+        User target = null;
+        for (User u : users) {
+            if (username.equals(u.getName())) {
+                target = u;
+                break;
+            }
+        }
+
+        if (target == null) {
+            throw new IllegalArgumentException(
+                    "No user named " + username + " in household " + householdId);
+        }
+
+        // 3. Add the new entry to this user's list of entries.
+        target.addEntry(newEntry);
+
+        // 4. Persist the whole accounts map back to users.json.
+        //    save() is already defined above and writes accounts -> JSON file.
+        save();
+    }
+
+    /**
+     * Get all individual entries for a specific user in a specific household.
+     *
+     * @param householdId the household key in users.json (e.g. "ale", "Amelia's House")
+     * @param username    the user's name inside that household (e.g. "john", "Ale")
+     * @return list of that user's entries (never null)
+     */
+    public synchronized List<Entry> getIndividualEntries(String householdId, String username) {
+        Household household = accounts.get(householdId);
+        if (household == null) {
+            return new ArrayList<>();
+        }
+
+        for (User u : household.getUsers()) {
+            if (username.equals(u.getName())) {
+                // Return a copy so callers can't mutate our internal list directly
+                return new ArrayList<>(u.getEntries());
+            }
+        }
+
+        // No such user in this household
+        return new ArrayList<>();
+    }
+
+
 
     @Override
     public Household get(String username) {
