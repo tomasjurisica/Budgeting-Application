@@ -190,6 +190,18 @@ public class User {
         }
     }
 
+    /**
+     * Clears all entries and sets them to the given list.
+     * Used for memento pattern restoration.
+     *
+     * @param newEntries: List of entries to set
+     */
+    public void clearAndSetEntries(ArrayList<Entry> newEntries) {
+        this.entries.clear();
+        this.entries.addAll(newEntries);
+    }
+
+
 
     // Dead classes
     /*
