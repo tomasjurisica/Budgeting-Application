@@ -43,7 +43,10 @@ public class DetailedSpendingInteractor implements DetailedSpendingInputBoundary
         if (purchases.isEmpty()) {
             presenter.prepareFailView("No purchases were found for " + categoryName);
         }
-        final DetailedSpendingOutputData outputData = new DetailedSpendingOutputData(categoryName, purchases);
-        presenter.prepareSuccessView(outputData);
+        else {
+
+            final DetailedSpendingOutputData outputData = new DetailedSpendingOutputData(categoryName, purchases);
+            presenter.prepareSuccessView(outputData);
+        }
     }
 }

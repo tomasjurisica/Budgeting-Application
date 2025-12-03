@@ -114,6 +114,7 @@ public class DetailedSpendingView extends JFrame implements PropertyChangeListen
                     "No Transactions",
                     JOptionPane.INFORMATION_MESSAGE
             );
+            return;
         }
 
         updateCategory(state.getCategoryName());
