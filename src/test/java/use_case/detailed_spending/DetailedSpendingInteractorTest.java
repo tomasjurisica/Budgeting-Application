@@ -54,12 +54,15 @@ class DetailedSpendingInteractorTest {
 
     @Test
     void failCase_whenNoMatchingPurchases() {
-        // DAO returns entries but none match category
+
+        final boolean[] failCalled = {false};
+        final boolean[] successCalled = {false};
+
         DetailedSpendingUserDataAccessInterface fakeDAO = new DetailedSpendingUserDataAccessInterface() {
             @Override
             public List<Entry> getEntries(String username, int year, int month) {
                 return List.of(
-                        new Entry("Tea", "Drinks", 20,  LocalDate.of(2024, 11, 1)),
+                        new Entry("Tea", "Drinks", 20, LocalDate.of(2024, 11, 1)),
                         new Entry("Tea", "Drinks", 50, LocalDate.of(2024, 11, 2))
                 );
             }
@@ -73,24 +76,24 @@ class DetailedSpendingInteractorTest {
         );
 
         DetailedSpendingOutputBoundary presenter = new DetailedSpendingOutputBoundary() {
-            boolean failCalled = false;
-            boolean successCalled = false;
 
             @Override
             public void prepareFailView(String error) {
-                failCalled = true;
+                failCalled[0] = true;
                 assertEquals("No purchases were found for Food", error);
             }
 
             @Override
             public void prepareSuccessView(DetailedSpendingOutputData outputData) {
-                successCalled = true;
-                assertEquals(0, outputData.getPurchases().size());
-                assertEquals("Food", outputData.getCategoryName());
+                successCalled[0] = true;
+                fail("Success should NOT be called when there are no matching purchases.");
             }
         };
 
         DetailedSpendingInputBoundary interactor = new DetailedSpendingInteractor(fakeDAO, presenter);
         interactor.execute(input);
+
+        assertTrue(failCalled[0]);
+        assertFalse(successCalled[0]);
     }
 }
